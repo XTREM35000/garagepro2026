@@ -1,0 +1,237 @@
+// =======================================================
+// 🚗 Prisma Schema - SaaS Multi-Tenant (Garages)
+// =======================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =======================================================
+// ENUMS
+// =======================================================
+
+enum UserRole {
+  super_admin
+  admin
+  agent_photo
+  caissier
+  comptable
+  comptable_instance
+  technicien
+  viewer
+}
+
+enum VehicleStatus {
+  EN_COURS
+  TERMINE
+  LIVRE
+}
+
+enum VehiclePhotoType {
+  ENTREE
+  SORTIE
+  DEGAT
+}
+
+enum CashType {
+  ENTREE
+  SORTIE
+}
+
+enum InvoiceStatus {
+  BROUILLON
+  PAYEE
+  ANNULEE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRE
+  EN_ATTENTE
+}
+
+// =======================================================
+// MODELS
+// =======================================================
+
+// 🔹 Organisation / Garage / Instance
+model Tenant {
+  id        String    @id @default(uuid())
+  name      String
+  address   String?
+  logoUrl   String?
+  rccm      String?
+  plan      String?
+  stripeId  String?   @unique
+  trialEnds DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  users         User[]
+  vehicles      Vehicle[]
+  stockItems    StockItem[]
+  invoices      Invoice[]
+  subscriptions Subscription[]
+  cashRegisters CashRegister[]
+  expenses      Expense[]
+
+  @@index([stripeId])
+}
+
+// 🔹 Utilisateurs
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String?
+  name      String?
+  role      UserRole @default(viewer)
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant   Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  photos   VehiclePhoto[]
+  invoices Invoice[]
+  cashes   CashRegister[]
+  expenses Expense[]
+
+  @@index([tenantId])
+  @@index([email])
+}
+
+// 🔹 Véhicules
+model Vehicle {
+  id          String        @id @default(uuid())
+  marque      String
+  modele      String
+  immatricule String        @unique
+  status      VehicleStatus @default(EN_COURS)
+  tenantId    String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  tenant  Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  photos  VehiclePhoto[]
+  invoice Invoice?
+
+  @@index([tenantId])
+  @@index([status])
+}
+
+// 🔹 Photos liées aux véhicules
+model VehiclePhoto {
+  id        String           @id @default(uuid())
+  type      VehiclePhotoType
+  url       String
+  takenById String
+  vehicleId String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  takenBy User    @relation(fields: [takenById], references: [id], onDelete: Cascade)
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([takenById])
+}
+
+// 🔹 Stock / Pièces détachées
+model StockItem {
+  id          String   @id @default(uuid())
+  nom         String
+  categorie   String
+  quantite    Int
+  prixAchat   Decimal
+  prixVente   Decimal
+  seuilAlerte Int
+  tenantId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([categorie])
+}
+
+// 🔹 Caisse
+model CashRegister {
+  id        String   @id @default(uuid())
+  montant   Decimal
+  type      CashType
+  motif     String
+  faitParId String
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  faitPar User   @relation(fields: [faitParId], references: [id], onDelete: Cascade)
+  tenant  Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([faitParId])
+  @@index([type])
+}
+
+// 🔹 Factures
+model Invoice {
+  id          String        @id @default(uuid())
+  numero      String        @unique
+  total       Decimal
+  statut      InvoiceStatus
+  vehicleId   String?       @unique
+  clientNom   String
+  clientTel   String?
+  createdById String?
+  tenantId    String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  createdBy User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([vehicleId])
+  @@index([statut])
+}
+
+// 🔹 Abonnements Stripe
+model Subscription {
+  id                   String             @id @default(uuid())
+  plan                 String
+  status               SubscriptionStatus
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  tenantId             String
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([status])
+}
+
+// 🔹 Dépenses
+model Expense {
+  id        String   @id @default(uuid())
+  libelle   String
+  montant   Decimal
+  categorie String
+  faitParId String
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  faitPar User   @relation(fields: [faitParId], references: [id], onDelete: Cascade)
+  tenant  Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([faitParId])
+}
