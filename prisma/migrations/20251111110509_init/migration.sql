@@ -1,23 +1,66 @@
 -- CreateEnum
-CREATE TYPE "UserRole" AS ENUM ('super_admin', 'admin', 'agent_photo', 'caissier', 'comptable', 'comptable_instance', 'technicien', 'viewer');
+-- CreateEnum (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE lower(typname) = lower('UserRole')) THEN
+        CREATE TYPE "UserRole" AS ENUM ('super_admin', 'admin', 'agent_photo', 'caissier', 'comptable', 'comptable_instance', 'technicien', 'viewer');
+    END IF;
+END
+$$;
 
 -- CreateEnum
-CREATE TYPE "VehicleStatus" AS ENUM ('EN_COURS', 'TERMINE', 'LIVRE');
+-- CreateEnum (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE lower(typname) = lower('VehicleStatus')) THEN
+        CREATE TYPE "VehicleStatus" AS ENUM ('EN_COURS', 'TERMINE', 'LIVRE');
+    END IF;
+END
+$$;
 
 -- CreateEnum
-CREATE TYPE "VehiclePhotoType" AS ENUM ('ENTREE', 'SORTIE', 'DEGAT');
+-- CreateEnum (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE lower(typname) = lower('VehiclePhotoType')) THEN
+        CREATE TYPE "VehiclePhotoType" AS ENUM ('ENTREE', 'SORTIE', 'DEGAT');
+    END IF;
+END
+$$;
 
 -- CreateEnum
-CREATE TYPE "CashType" AS ENUM ('ENTREE', 'SORTIE');
+-- CreateEnum (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE lower(typname) = lower('CashType')) THEN
+        CREATE TYPE "CashType" AS ENUM ('ENTREE', 'SORTIE');
+    END IF;
+END
+$$;
 
 -- CreateEnum
-CREATE TYPE "InvoiceStatus" AS ENUM ('BROUILLON', 'PAYEE', 'ANNULEE');
+-- CreateEnum (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE lower(typname) = lower('InvoiceStatus')) THEN
+        CREATE TYPE "InvoiceStatus" AS ENUM ('BROUILLON', 'PAYEE', 'ANNULEE');
+    END IF;
+END
+$$;
 
 -- CreateEnum
-CREATE TYPE "SubscriptionStatus" AS ENUM ('ACTIVE', 'EXPIRE', 'EN_ATTENTE');
+-- CreateEnum (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE lower(typname) = lower('SubscriptionStatus')) THEN
+        CREATE TYPE "SubscriptionStatus" AS ENUM ('ACTIVE', 'EXPIRE', 'EN_ATTENTE');
+    END IF;
+END
+$$;
 
 -- CreateTable
-CREATE TABLE "Tenant" (
+-- CreateTable (safe)
+CREATE TABLE IF NOT EXISTS "Tenant" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "address" TEXT,
@@ -33,7 +76,8 @@ CREATE TABLE "Tenant" (
 );
 
 -- CreateTable
-CREATE TABLE "User" (
+-- CreateTable (safe)
+CREATE TABLE IF NOT EXISTS "User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT,
@@ -47,7 +91,8 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "Vehicle" (
+-- CreateTable (safe)
+CREATE TABLE IF NOT EXISTS "Vehicle" (
     "id" TEXT NOT NULL,
     "marque" TEXT NOT NULL,
     "modele" TEXT NOT NULL,
@@ -61,7 +106,8 @@ CREATE TABLE "Vehicle" (
 );
 
 -- CreateTable
-CREATE TABLE "VehiclePhoto" (
+-- CreateTable (safe)
+CREATE TABLE IF NOT EXISTS "VehiclePhoto" (
     "id" TEXT NOT NULL,
     "type" "VehiclePhotoType" NOT NULL,
     "url" TEXT NOT NULL,
@@ -74,7 +120,8 @@ CREATE TABLE "VehiclePhoto" (
 );
 
 -- CreateTable
-CREATE TABLE "StockItem" (
+-- CreateTable (safe)
+CREATE TABLE IF NOT EXISTS "StockItem" (
     "id" TEXT NOT NULL,
     "nom" TEXT NOT NULL,
     "categorie" TEXT NOT NULL,
@@ -90,7 +137,8 @@ CREATE TABLE "StockItem" (
 );
 
 -- CreateTable
-CREATE TABLE "CashRegister" (
+-- CreateTable (safe)
+CREATE TABLE IF NOT EXISTS "CashRegister" (
     "id" TEXT NOT NULL,
     "montant" DECIMAL(65,30) NOT NULL,
     "type" "CashType" NOT NULL,
@@ -104,7 +152,8 @@ CREATE TABLE "CashRegister" (
 );
 
 -- CreateTable
-CREATE TABLE "Invoice" (
+-- CreateTable (safe)
+CREATE TABLE IF NOT EXISTS "Invoice" (
     "id" TEXT NOT NULL,
     "numero" TEXT NOT NULL,
     "total" DECIMAL(65,30) NOT NULL,
@@ -121,7 +170,8 @@ CREATE TABLE "Invoice" (
 );
 
 -- CreateTable
-CREATE TABLE "Subscription" (
+-- CreateTable (safe)
+CREATE TABLE IF NOT EXISTS "Subscription" (
     "id" TEXT NOT NULL,
     "plan" TEXT NOT NULL,
     "status" "SubscriptionStatus" NOT NULL,
@@ -134,8 +184,9 @@ CREATE TABLE "Subscription" (
     CONSTRAINT "Subscription_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "Expense" (
+-- CreateTablea
+-- CreateTable (safe)
+CREATE TABLE IF NOT EXISTS "Expense" (
     "id" TEXT NOT NULL,
     "libelle" TEXT NOT NULL,
     "montant" DECIMAL(65,30) NOT NULL,
@@ -149,112 +200,227 @@ CREATE TABLE "Expense" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Tenant_stripeId_key" ON "Tenant"("stripeId");
+-- CreateIndex (safe)
+CREATE UNIQUE INDEX IF NOT EXISTS "Tenant_stripeId_key" ON "Tenant"("stripeId");
 
 -- CreateIndex
-CREATE INDEX "Tenant_stripeId_idx" ON "Tenant"("stripeId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "Tenant_stripeId_idx" ON "Tenant"("stripeId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+-- CreateIndex (safe)
+CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE INDEX "User_tenantId_idx" ON "User"("tenantId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "User_tenantId_idx" ON "User"("tenantId");
 
 -- CreateIndex
-CREATE INDEX "User_email_idx" ON "User"("email");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "User_email_idx" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Vehicle_immatricule_key" ON "Vehicle"("immatricule");
+-- CreateIndex (safe)
+CREATE UNIQUE INDEX IF NOT EXISTS "Vehicle_immatricule_key" ON "Vehicle"("immatricule");
 
 -- CreateIndex
-CREATE INDEX "Vehicle_tenantId_idx" ON "Vehicle"("tenantId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "Vehicle_tenantId_idx" ON "Vehicle"("tenantId");
 
 -- CreateIndex
-CREATE INDEX "Vehicle_status_idx" ON "Vehicle"("status");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "Vehicle_status_idx" ON "Vehicle"("status");
 
 -- CreateIndex
-CREATE INDEX "VehiclePhoto_vehicleId_idx" ON "VehiclePhoto"("vehicleId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "VehiclePhoto_vehicleId_idx" ON "VehiclePhoto"("vehicleId");
 
 -- CreateIndex
-CREATE INDEX "VehiclePhoto_takenById_idx" ON "VehiclePhoto"("takenById");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "VehiclePhoto_takenById_idx" ON "VehiclePhoto"("takenById");
 
 -- CreateIndex
-CREATE INDEX "StockItem_tenantId_idx" ON "StockItem"("tenantId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "StockItem_tenantId_idx" ON "StockItem"("tenantId");
 
 -- CreateIndex
-CREATE INDEX "StockItem_categorie_idx" ON "StockItem"("categorie");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "StockItem_categorie_idx" ON "StockItem"("categorie");
 
 -- CreateIndex
-CREATE INDEX "CashRegister_tenantId_idx" ON "CashRegister"("tenantId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "CashRegister_tenantId_idx" ON "CashRegister"("tenantId");
 
 -- CreateIndex
-CREATE INDEX "CashRegister_faitParId_idx" ON "CashRegister"("faitParId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "CashRegister_faitParId_idx" ON "CashRegister"("faitParId");
 
 -- CreateIndex
-CREATE INDEX "CashRegister_type_idx" ON "CashRegister"("type");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "CashRegister_type_idx" ON "CashRegister"("type");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Invoice_numero_key" ON "Invoice"("numero");
+-- CreateIndex (safe)
+CREATE UNIQUE INDEX IF NOT EXISTS "Invoice_numero_key" ON "Invoice"("numero");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Invoice_vehicleId_key" ON "Invoice"("vehicleId");
+-- CreateIndex (safe)
+CREATE UNIQUE INDEX IF NOT EXISTS "Invoice_vehicleId_key" ON "Invoice"("vehicleId");
 
 -- CreateIndex
-CREATE INDEX "Invoice_tenantId_idx" ON "Invoice"("tenantId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "Invoice_tenantId_idx" ON "Invoice"("tenantId");
 
 -- CreateIndex
-CREATE INDEX "Invoice_vehicleId_idx" ON "Invoice"("vehicleId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "Invoice_vehicleId_idx" ON "Invoice"("vehicleId");
 
 -- CreateIndex
-CREATE INDEX "Invoice_statut_idx" ON "Invoice"("statut");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "Invoice_statut_idx" ON "Invoice"("statut");
 
 -- CreateIndex
-CREATE INDEX "Subscription_tenantId_idx" ON "Subscription"("tenantId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "Subscription_tenantId_idx" ON "Subscription"("tenantId");
 
 -- CreateIndex
-CREATE INDEX "Subscription_status_idx" ON "Subscription"("status");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "Subscription_status_idx" ON "Subscription"("status");
 
 -- CreateIndex
-CREATE INDEX "Expense_tenantId_idx" ON "Expense"("tenantId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "Expense_tenantId_idx" ON "Expense"("tenantId");
 
 -- CreateIndex
-CREATE INDEX "Expense_faitParId_idx" ON "Expense"("faitParId");
+-- CreateIndex (safe)
+CREATE INDEX IF NOT EXISTS "Expense_faitParId_idx" ON "Expense"("faitParId");
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'User_tenantId_fkey') THEN
+        ALTER TABLE "User" ADD CONSTRAINT "User_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "Vehicle" ADD CONSTRAINT "Vehicle_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Vehicle_tenantId_fkey') THEN
+        ALTER TABLE "Vehicle" ADD CONSTRAINT "Vehicle_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "VehiclePhoto" ADD CONSTRAINT "VehiclePhoto_takenById_fkey" FOREIGN KEY ("takenById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'VehiclePhoto_takenById_fkey') THEN
+        ALTER TABLE "VehiclePhoto" ADD CONSTRAINT "VehiclePhoto_takenById_fkey" FOREIGN KEY ("takenById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "VehiclePhoto" ADD CONSTRAINT "VehiclePhoto_vehicleId_fkey" FOREIGN KEY ("vehicleId") REFERENCES "Vehicle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'VehiclePhoto_vehicleId_fkey') THEN
+        ALTER TABLE "VehiclePhoto" ADD CONSTRAINT "VehiclePhoto_vehicleId_fkey" FOREIGN KEY ("vehicleId") REFERENCES "Vehicle"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "StockItem" ADD CONSTRAINT "StockItem_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'StockItem_tenantId_fkey') THEN
+        ALTER TABLE "StockItem" ADD CONSTRAINT "StockItem_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "CashRegister" ADD CONSTRAINT "CashRegister_faitParId_fkey" FOREIGN KEY ("faitParId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'CashRegister_faitParId_fkey') THEN
+        ALTER TABLE "CashRegister" ADD CONSTRAINT "CashRegister_faitParId_fkey" FOREIGN KEY ("faitParId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "CashRegister" ADD CONSTRAINT "CashRegister_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'CashRegister_tenantId_fkey') THEN
+        ALTER TABLE "CashRegister" ADD CONSTRAINT "CashRegister_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Invoice_createdById_fkey') THEN
+        ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_vehicleId_fkey" FOREIGN KEY ("vehicleId") REFERENCES "Vehicle"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Invoice_vehicleId_fkey') THEN
+        ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_vehicleId_fkey" FOREIGN KEY ("vehicleId") REFERENCES "Vehicle"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Invoice_tenantId_fkey') THEN
+        ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Subscription_tenantId_fkey') THEN
+        ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "Expense" ADD CONSTRAINT "Expense_faitParId_fkey" FOREIGN KEY ("faitParId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Expense_faitParId_fkey') THEN
+        ALTER TABLE "Expense" ADD CONSTRAINT "Expense_faitParId_fkey" FOREIGN KEY ("faitParId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END
+$$;
 
 -- AddForeignKey
-ALTER TABLE "Expense" ADD CONSTRAINT "Expense_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (safe)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Expense_tenantId_fkey') THEN
+        ALTER TABLE "Expense" ADD CONSTRAINT "Expense_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END
+$$;

@@ -1,0 +1,41 @@
+Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .nuxt, .output, .git, .bolt, .next)
+========================================
+
+📄 .eslintrc.json
+📄 .gitignore
+📄 .prettierrc
+📄 liste.mjs
+📄 next-env.d.ts
+📄 next.config.mjs
+📄 package-lock.json
+📄 package.json
+📄 project_structure.txt
+📄 README.md
+📁 src
+  📁 app
+    📁 api
+      📁 webhooks
+        📁 stripe
+          📄 route.ts
+    📁 auth
+      📄 page.tsx
+    📁 billing
+      📄 page.tsx
+    📄 globals.css
+    📄 layout.tsx
+    📄 page.tsx
+    📁 pricing
+      📄 page.tsx
+  📁 components
+    📁 hero
+      📄 hero.tsx
+    📁 ui
+      📄 base-modal.tsx
+      📄 confirm-modal.tsx
+      📄 draggable-modal-wrapper.tsx
+      📄 draggable-modal.tsx
+      📄 logo-animated.tsx
+      📄 sidebar.tsx
+  📁 scripts
+    📄 move-to-target.ps1
+📄 tsconfig.json
