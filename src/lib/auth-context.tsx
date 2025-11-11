@@ -24,16 +24,19 @@ export const AuthContext = createContext<AuthContextType>({
 
 export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const [user, setUser] = useState<AuthUser | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     // Vérifie la session initiale
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      // map Supabase SDK user to our AuthUser shape
-      const u = session?.user
-      setUser(u ? { id: u.id, email: u.email ?? null, app_metadata: (u as any).app_metadata ?? null } : null)
-      setLoading(false)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        // map Supabase SDK user to our AuthUser shape
+        const u = session?.user
+        setUser(u ? { id: u.id, email: u.email ?? null, app_metadata: (u as any).app_metadata ?? null } : null)
+      } catch (err) {
+        console.error('Session check failed:', err)
+      }
     }
 
     void checkSession()

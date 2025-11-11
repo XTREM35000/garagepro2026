@@ -26,15 +26,24 @@ export default function SignupForm() {
     setMessage(null)
 
     try {
-      const options: any = { data: { first_name: firstName, last_name: lastName } }
-      if (avatarUrl) options.data.avatar_url = avatarUrl
+      // Use server-side signup to create the Supabase auth user via service role (avoids SMTP issues in local tests)
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firstName, lastName, email, password, avatarUrl }),
+      })
 
-      const { error } = await supabase.auth.signUp({ email, password, options })
-
-      if (error) {
-        setError(error.message)
+      const json = await res.json()
+      if (!res.ok) {
+        setError(json?.error || 'Signup failed')
       } else {
-        setMessage('Vérifiez votre email pour confirmer votre compte.')
+        // Try to sign in the user automatically for dev convenience
+        try {
+          await supabase.auth.signInWithPassword({ email, password })
+          router.push('/')
+        } catch (signinErr: any) {
+          setMessage("Inscription réussie — vous pouvez maintenant vous connecter.")
+        }
       }
     } catch (err: any) {
       setError(err.message || String(err))

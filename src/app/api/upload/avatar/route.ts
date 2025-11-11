@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     const { data } = supabaseAdmin.storage.from('avatars').getPublicUrl(filePath)
     const publicUrl = data?.publicUrl ?? null
 
-    return NextResponse.json({ publicUrl })
+    return NextResponse.json({ url: publicUrl, publicUrl })
   } catch (err: any) {
     return NextResponse.json({ error: err.message || String(err) }, { status: 500 })
   }
