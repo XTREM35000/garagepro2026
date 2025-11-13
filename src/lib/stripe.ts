@@ -1,21 +1,30 @@
 import Stripe from 'stripe'
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing STRIPE_SECRET_KEY')
+let stripe: Stripe | null = null
+
+export const getStripeInstance = (): Stripe => {
+  if (!stripe) {
+    const key = process.env.STRIPE_SECRET_KEY
+    if (!key) {
+      throw new Error('Missing STRIPE_SECRET_KEY environment variable')
+    }
+    stripe = new Stripe(key, {
+      apiVersion: '2023-10-16',
+      typescript: true,
+    })
+  }
+  return stripe
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16',
-  typescript: true,
-})
-
 export const getStripeCustomer = async (email: string) => {
-  const customers = await stripe.customers.list({ email })
+  const stripeInstance = getStripeInstance()
+  const customers = await stripeInstance.customers.list({ email })
   return customers.data[0]
 }
 
 export const createStripeCustomer = async (email: string, name?: string) => {
-  return stripe.customers.create({
+  const stripeInstance = getStripeInstance()
+  return stripeInstance.customers.create({
     email,
     name,
   })
@@ -32,7 +41,8 @@ export const createStripeSession = async ({
   successUrl: string
   cancelUrl: string
 }) => {
-  return stripe.checkout.sessions.create({
+  const stripeInstance = getStripeInstance()
+  return stripeInstance.checkout.sessions.create({
     customer: customerId,
     line_items: [
       {
@@ -47,7 +57,8 @@ export const createStripeSession = async ({
 }
 
 export const getStripePortalSession = async (customerId: string, returnUrl: string) => {
-  return stripe.billingPortal.sessions.create({
+  const stripeInstance = getStripeInstance()
+  return stripeInstance.billingPortal.sessions.create({
     customer: customerId,
     return_url: returnUrl,
   })

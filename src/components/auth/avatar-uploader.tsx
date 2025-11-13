@@ -48,7 +48,9 @@ export default function AvatarUploader({ value = null, bucket = 'avatars', uploa
           body: form,
         })
 
+        const status = res.status
         const json = await res.json()
+        console.log('[AvatarUploader] upload response status:', status, 'body:', json)
         if (!res.ok) {
           setError(json?.error || 'Erreur lors de l\'upload')
           onUpload?.(null)

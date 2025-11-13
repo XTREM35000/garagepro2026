@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { stripe, createStripeSession } from '@/lib/stripe'
+import { getStripeInstance, createStripeSession } from '@/lib/stripe'
 import { supabase } from '@/lib/supabase'
 import { headers } from 'next/headers'
 import { z } from 'zod'
@@ -64,6 +64,7 @@ export async function POST(request: Request) {
 
     // Créer un client Stripe si nécessaire
     if (!customerId) {
+      const stripe = getStripeInstance()
       const customer = await stripe.customers.create({
         email: user.email,
         name: org?.name || undefined,
