@@ -1,6 +1,11 @@
 # Env vars
 .env
 .env.local
+# .gitignore
+.env
+.env.example
+.env.* 
+
 
 # Dependencies
 node_modules

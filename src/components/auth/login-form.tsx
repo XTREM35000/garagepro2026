@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { motion } from 'framer-motion'
@@ -21,23 +21,69 @@ const errorVariants = {
 }
 
 export default function LoginForm() {
+  const formRef = useRef<HTMLFormElement | null>(null)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [strength, setStrength] = useState(0)
   const [error, setError] = useState<string | null>(null)
-  const { loading, signIn } = useAuth()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { signIn } = useAuth()
   const router = useRouter()
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setIsSubmitting(true)
 
     try {
       await signIn(email, password)
-      router.push('/')
+      // show success and redirect
+      try {
+        router.push('/dashboard')
+      } catch (_) {
+        window.location.href = '/dashboard'
+      }
     } catch (err: any) {
-      setError(err.message || String(err))
+      setError(err?.message || String(err) || 'Erreur de connexion')
+      // fallback: alert
+      // alert(err?.message || String(err) || 'Erreur de connexion')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleButtonClick = () => {
+    console.log('[LoginForm] ✅ handleButtonClick called, isSubmitting=', isSubmitting)
+    console.log('[LoginForm] formRef.current:', formRef.current)
+
+    if (formRef.current) {
+      try {
+        console.log('[LoginForm] Form ref exists, attempting submit...')
+        // requestSubmit will trigger form validation and submit event if available
+        const current = formRef.current as HTMLFormElement & { requestSubmit?: () => void } | null
+        if (current) {
+          console.log('[LoginForm] current form element exists')
+          if (typeof current.requestSubmit === 'function') {
+            console.log('[LoginForm] ✅ Using requestSubmit method')
+            current.requestSubmit()
+          } else {
+            console.log('[LoginForm] ⚠️ requestSubmit not available, using dispatchEvent')
+            const event = new Event('submit', { bubbles: true, cancelable: true })
+            current.dispatchEvent(event)
+            console.log('[LoginForm] ✅ Submit event dispatched')
+          }
+        } else {
+          console.warn('[LoginForm] ❌ current is null')
+        }
+      } catch (err) {
+        console.error('[LoginForm] ❌ Error during submit attempt:', err)
+        // As a last resort call onSubmit directly with a fake event
+        console.log('[LoginForm] Calling onSubmit directly as fallback')
+        void onSubmit({ preventDefault: () => { } } as unknown as React.FormEvent)
+      }
+    } else {
+      console.warn('[LoginForm] ❌ formRef.current is null, cannot submit')
     }
   }
 
@@ -57,6 +103,7 @@ export default function LoginForm() {
 
   return (
     <motion.form
+      ref={formRef}
       onSubmit={onSubmit}
       className="space-y-4"
       initial={{ opacity: 0, y: 20 }}
@@ -121,14 +168,14 @@ export default function LoginForm() {
           <div className="h-2 w-full bg-gray-200 rounded">
             <div
               className={`h-2 rounded transition-all ${strength === 0
-                  ? 'w-0'
-                  : strength === 1
-                    ? 'w-1/4 bg-red-500'
-                    : strength === 2
-                      ? 'w-2/4 bg-yellow-400'
-                      : strength === 3
-                        ? 'w-3/4 bg-emerald-400'
-                        : 'w-full bg-emerald-600'
+                ? 'w-0'
+                : strength === 1
+                  ? 'w-1/4 bg-red-500'
+                  : strength === 2
+                    ? 'w-2/4 bg-yellow-400'
+                    : strength === 3
+                      ? 'w-3/4 bg-emerald-400'
+                      : 'w-full bg-emerald-600'
                 }`}
               style={{}}
             />
@@ -149,13 +196,14 @@ export default function LoginForm() {
       <div className="pt-2">
         <motion.button
           type="submit"
-          disabled={loading}
+          disabled={isSubmitting}
           className="w-full inline-flex items-center justify-center rounded bg-sky-600 px-4 py-2.5 text-white font-medium disabled:opacity-60 transition-colors hover:bg-sky-700"
           variants={buttonVariants}
           whileHover="hover"
           whileTap="tap"
+          onClick={handleButtonClick}
         >
-          {loading ? (
+          {isSubmitting ? (
             <motion.svg
               className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
               xmlns="http://www.w3.org/2000/svg"
@@ -170,7 +218,7 @@ export default function LoginForm() {
               ></path>
             </motion.svg>
           ) : null}
-          {loading ? 'Connexion en cours...' : 'Se connecter'}
+          {isSubmitting ? 'Connexion en cours...' : 'Se connecter'}
         </motion.button>
       </div>
     </motion.form>

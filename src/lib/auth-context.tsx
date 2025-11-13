@@ -54,21 +54,42 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   }, [])
 
   const signIn = async (email: string, password: string): Promise<void> => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      console.log('[AuthContext] 🔵 signIn called with email:', email)
+      setLoading(true)
+      console.log('[AuthContext] loading set to true')
 
-    if (error) throw error
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      console.log('[AuthContext] Supabase.auth.signInWithPassword response - error:', error)
+
+      if (error) {
+        console.error('[AuthContext] ❌ Supabase error:', error.message)
+        throw error
+      }
+      console.log('[AuthContext] ✅ signIn successful')
+    } catch (err) {
+      console.error('[AuthContext] ❌ signIn failed:', err)
+      throw err
+    } finally {
+      console.log('[AuthContext] finally: setting loading to false')
+      setLoading(false)
+    }
   }
 
   const signUp = async (email: string, password: string): Promise<void> => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-
-    if (error) throw error
+    try {
+      setLoading(true)
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+      if (error) throw error
+    } finally {
+      setLoading(false)
+    }
   }
 
   const signOut = async (): Promise<void> => {

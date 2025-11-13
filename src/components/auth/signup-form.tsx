@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import AvatarUploader from '@/components/auth/avatar-uploader'
+import { useAuth } from '@/lib/auth-context'
 
 export default function SignupForm() {
   const [firstName, setFirstName] = useState('')
@@ -16,6 +17,7 @@ export default function SignupForm() {
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const router = useRouter()
+  const auth = useAuth()
 
   // avatarUrl will be set by AvatarUploader's onUpload callback
 
@@ -26,7 +28,6 @@ export default function SignupForm() {
     setMessage(null)
 
     try {
-      // Use server-side signup to create the Supabase auth user via service role (avoids SMTP issues in local tests)
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -35,14 +36,14 @@ export default function SignupForm() {
 
       const json = await res.json()
       if (!res.ok) {
-        setError(json?.error || 'Signup failed')
+        setError(json?.error || 'Échec de l\'inscription')
       } else {
-        // Try to sign in the user automatically for dev convenience
+        // attempt auto-login via useAuth.signIn for consistency
         try {
-          await supabase.auth.signInWithPassword({ email, password })
-          router.push('/')
-        } catch (signinErr: any) {
-          setMessage("Inscription réussie — vous pouvez maintenant vous connecter.")
+          await auth.signIn(email, password)
+          router.push('/dashboard')
+        } catch (_) {
+          setMessage('Inscription réussie — vous pouvez maintenant vous connecter.')
         }
       }
     } catch (err: any) {
