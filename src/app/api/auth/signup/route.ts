@@ -62,6 +62,10 @@ export async function POST(req: Request) {
     if (createErr) {
       console.error('[api/auth/signup] createUser error:', createErr)
       const supaMsg = (createErr && (createErr as any).message) || JSON.stringify(createErr)
+      // In development, return the full Supabase response to aid debugging (do not expose in production)
+      if (process.env.NODE_ENV !== 'production') {
+        return NextResponse.json({ error: supaMsg, debug: createResp }, { status: 500 })
+      }
       return NextResponse.json({ error: supaMsg }, { status: 500 })
     }
 
@@ -85,6 +89,18 @@ export async function POST(req: Request) {
     } catch (tenantErr) {
       console.error('[api/auth/signup] error ensuring tenant exists:', tenantErr)
       return NextResponse.json({ error: 'Database error creating tenant' }, { status: 500 })
+    }
+
+    // Check if an application user already exists with this email but a different id.
+    try {
+      const existingByEmail = await prisma.user.findUnique({ where: { email } })
+      if (existingByEmail && existingByEmail.id !== userId) {
+        console.error('[api/auth/signup] conflict: existing app user with same email but different id', { existingId: existingByEmail.id, supabaseId: userId })
+        return NextResponse.json({ error: 'An application user with this email already exists. Please sign in instead.' }, { status: 409 })
+      }
+    } catch (checkErr) {
+      console.error('[api/auth/signup] error checking existing user by email:', checkErr)
+      // continue to attempt upsert; this error is non-fatal for the main flow
     }
     let upsert
     try {

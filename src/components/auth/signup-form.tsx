@@ -36,14 +36,24 @@ export default function SignupForm() {
 
       const json = await res.json()
       if (!res.ok) {
+        console.error('[SignupForm] signup failed:', json?.error)
         setError(json?.error || 'Échec de l\'inscription')
       } else {
+        console.log('[SignupForm] signup successful, attempting auto-login')
+        setMessage('✅ Inscription réussie ! Connexion en cours...')
+
         // attempt auto-login via useAuth.signIn for consistency
         try {
           await auth.signIn(email, password)
+          console.log('[SignupForm] auto-login succeeded, redirecting to /dashboard')
           router.push('/dashboard')
-        } catch (_) {
-          setMessage('Inscription réussie — vous pouvez maintenant vous connecter.')
+        } catch (loginErr) {
+          console.warn('[SignupForm] auto-login failed:', loginErr)
+          setMessage('✅ Inscription réussie ! Vous pouvez maintenant vous connecter manuellement.')
+          // Wait a moment then redirect to login/auth page
+          setTimeout(() => {
+            router.push('/auth')
+          }, 2000)
         }
       }
     } catch (err: any) {

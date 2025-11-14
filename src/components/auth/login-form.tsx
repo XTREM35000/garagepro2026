@@ -32,23 +32,30 @@ export default function LoginForm() {
   const router = useRouter()
 
   const onSubmit = async (e: React.FormEvent) => {
+    console.log('[LoginForm] onSubmit called')
     e.preventDefault()
     setError(null)
     setIsSubmitting(true)
+    console.log('[LoginForm] isSubmitting set to true, about to call signIn with email:', email)
 
     try {
+      console.log('[LoginForm] calling signIn...')
       await signIn(email, password)
+      console.log('[LoginForm] signIn succeeded, redirecting to /dashboard')
       // show success and redirect
       try {
         router.push('/dashboard')
       } catch (_) {
+        console.warn('[LoginForm] router.push failed, using window.location')
         window.location.href = '/dashboard'
       }
     } catch (err: any) {
+      console.error('[LoginForm] signIn or redirect failed:', err)
       setError(err?.message || String(err) || 'Erreur de connexion')
       // fallback: alert
       // alert(err?.message || String(err) || 'Erreur de connexion')
     } finally {
+      console.log('[LoginForm] finally: setting isSubmitting to false')
       setIsSubmitting(false)
     }
   }
