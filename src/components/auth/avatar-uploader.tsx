@@ -40,8 +40,13 @@ export default function AvatarUploader({ value = null, bucket = 'avatars', uploa
     if (upload) {
       setUploading(true)
       try {
+        console.log('[AvatarUploader] 🟢 Starting upload for file:', f.name, 'type:', f.type, 'size:', (f as any).size)
+
         const form = new FormData()
         form.append('file', f as File)
+        form.append('signed', 'false')
+
+        console.log('[AvatarUploader] FormData created, about to fetch /api/upload/avatar')
 
         const res = await fetch('/api/upload/avatar', {
           method: 'POST',
@@ -49,16 +54,21 @@ export default function AvatarUploader({ value = null, bucket = 'avatars', uploa
         })
 
         const status = res.status
+        console.log('[AvatarUploader] Response status:', status)
+
         const json = await res.json()
-        console.log('[AvatarUploader] upload response status:', status, 'body:', json)
+        console.log('[AvatarUploader] ✅ Response body:', json)
+
         if (!res.ok) {
+          console.warn('[AvatarUploader] ❌ Upload failed:', json?.error)
           setError(json?.error || 'Erreur lors de l\'upload')
           onUpload?.(null)
         } else {
+          console.log('[AvatarUploader] ✅ Upload successful, publicUrl:', json.publicUrl)
           onUpload?.(json.publicUrl ?? null)
         }
-      } catch (err) {
-        console.warn('Avatar upload exception', err)
+      } catch (err: any) {
+        console.error('[AvatarUploader] ❌ Exception during upload:', err)
         setError("Erreur lors de l'upload de l'avatar.")
         onUpload?.(null)
       } finally {
