@@ -1,3 +1,6 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
@@ -11,7 +14,6 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // log some request info to help debug 404/400 situations
     console.log('[api/upload/avatar] headers:', Object.fromEntries(req.headers))
 
     const formData = await req.formData()
@@ -27,7 +29,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // server-side validation
     const ALLOWED = ['image/png', 'image/jpeg', 'image/webp']
     const MAX_BYTES = 5 * 1024 * 1024 // 5MB
 
@@ -60,9 +61,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: uploadError.message || String(uploadError) }, { status: 400 })
     }
 
-    // If client asked for a signed url, return that (valid 24h)
     if (signedFlag === 'true' || signedFlag === '1') {
-      const expiresIn = 60 * 60 * 24 // 24 hours
+      const expiresIn = 60 * 60 * 24
       const { data: signedData, error: signedErr } = await supabaseAdmin.storage
         .from('avatars')
         .createSignedUrl(filePath, expiresIn)
