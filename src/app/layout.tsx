@@ -1,6 +1,6 @@
 import './globals.css'
 import React from 'react'
-import SplashRoot from './SplashRoot'
+import { Providers } from './Providers'
 
 export const metadata = {
   title: 'SaaS Starter',
@@ -11,7 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr">
       <body>
-        <SplashRoot>{children}</SplashRoot>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

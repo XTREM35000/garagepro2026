@@ -27,42 +27,87 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [strength, setStrength] = useState(0)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { signIn } = useAuth()
   const router = useRouter()
 
+  // Log on component mount
+  React.useEffect(() => {
+    console.log('[LoginForm] ✅ Component mounted')
+    console.log('[LoginForm] useAuth signIn available?', typeof signIn)
+
+    // Log form ref after a brief delay to ensure DOM is ready
+    setTimeout(() => {
+      console.log('[LoginForm] Form ref after DOM ready:', formRef.current)
+      console.log('[LoginForm] Form element type:', formRef.current?.tagName)
+      console.log('[LoginForm] Form onSubmit handler:', formRef.current?.onsubmit)
+    }, 100)
+  }, [signIn])
+
   const onSubmit = async (e: React.FormEvent) => {
-    console.log('[LoginForm] onSubmit called')
+    console.log('═══════════════════════════════════════════════')
+    console.log('[LoginForm] 🟡 onSubmit called with event:', e.type)
+    console.log('[LoginForm] event.target:', e.target)
     e.preventDefault()
+    console.log('[LoginForm] preventDefault called')
     setError(null)
+    setSuccess(null)
     setIsSubmitting(true)
     console.log('[LoginForm] isSubmitting set to true, about to call signIn with email:', email)
 
     try {
-      console.log('[LoginForm] calling signIn...')
-      await signIn(email, password)
-      console.log('[LoginForm] signIn succeeded, redirecting to /dashboard')
-      // show success and redirect
-      try {
-        router.push('/dashboard')
-      } catch (_) {
-        console.warn('[LoginForm] router.push failed, using window.location')
-        window.location.href = '/dashboard'
-      }
+      console.log('[LoginForm] 🟢 calling signIn...')
+      console.log('[LoginForm] signIn function:', typeof signIn)
+      const result = await signIn(email, password)
+      console.log('[LoginForm] ✅ signIn succeeded, result:', result)
+
+      // Afficher le message de succès
+      setSuccess('✅ Connexion réussie ! Redirection en cours...')
+      console.log('[LoginForm] ✅ Success message set')
+
+      // Attendre un peu avant de rediriger pour que l'utilisateur voit le message
+      await new Promise(resolve => setTimeout(resolve, 1500))
+
+      // Redirection - NE PAS RÉINITIALISER isSubmitting pendant la redirection
+      console.log('[LoginForm] ✅ Attempting redirect to /dashboard/agents')
+      router.push('/dashboard/agents')
+
+      // Double fallback pour s'assurer que la redirection fonctionne
+      setTimeout(() => {
+        console.log('[LoginForm] Fallback redirect check - current path:', window.location.pathname)
+        if (!window.location.pathname.includes('/dashboard')) {
+          console.warn('[LoginForm] router.push fallback triggered, using window.location')
+          window.location.href = '/dashboard/agents'
+        }
+      }, 1000)
+
+      // Attendre 4 secondes avant de réinitialiser isSubmitting pour éviter les re-submissions
+      setTimeout(() => {
+        console.log('[LoginForm] Resetting isSubmitting after redirect delay')
+        setIsSubmitting(false)
+      }, 4000)
+
     } catch (err: any) {
-      console.error('[LoginForm] signIn or redirect failed:', err)
-      setError(err?.message || String(err) || 'Erreur de connexion')
-      // fallback: alert
-      // alert(err?.message || String(err) || 'Erreur de connexion')
-    } finally {
-      console.log('[LoginForm] finally: setting isSubmitting to false')
+      console.error('[LoginForm] ❌ signIn or redirect failed:', err)
+      const errorMsg = err?.message || String(err) || 'Erreur de connexion'
+      console.log('[LoginForm] Setting error message:', errorMsg)
+      setError(errorMsg)
       setIsSubmitting(false)
     }
   }
 
   const handleButtonClick = () => {
-    console.log('[LoginForm] ✅ handleButtonClick called, isSubmitting=', isSubmitting)
+    console.log('═══════════════════════════════════════════════')
+    console.log('[LoginForm] 🔴 handleButtonClick CALLED')
+    console.log('[LoginForm] isSubmitting:', isSubmitting)
+    console.log('[LoginForm] email:', email)
+    console.log('[LoginForm] password length:', password.length)
+    console.log('[LoginForm] formRef.current type:', typeof formRef.current)
     console.log('[LoginForm] formRef.current:', formRef.current)
+    console.log('[LoginForm] formRef.current?.tagName:', formRef.current?.tagName)
+    console.log('[LoginForm] formRef.current?.onsubmit:', formRef.current?.onsubmit)
+    console.log('═══════════════════════════════════════════════')
 
     if (formRef.current) {
       try {
@@ -126,6 +171,17 @@ export default function LoginForm() {
           exit="exit"
         >
           {error}
+        </motion.div>
+      )}
+      {success && (
+        <motion.div
+          className="text-sm text-green-600 bg-green-50 p-3 rounded"
+          variants={errorVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+        >
+          {success}
         </motion.div>
       )}
       <div className="space-y-2">
@@ -208,7 +264,15 @@ export default function LoginForm() {
           variants={buttonVariants}
           whileHover="hover"
           whileTap="tap"
-          onClick={handleButtonClick}
+          onClick={(e) => {
+            console.log('[LoginForm] 🔵 motion.button onClick fired with event:', e)
+            console.log('[LoginForm] event.type:', e.type)
+            console.log('[LoginForm] event.target:', e.target)
+            handleButtonClick()
+          }}
+          onPointerDown={() => console.log('[LoginForm] onPointerDown fired')}
+          onMouseDown={() => console.log('[LoginForm] onMouseDown fired')}
+          onTouchStart={() => console.log('[LoginForm] onTouchStart fired')}
         >
           {isSubmitting ? (
             <motion.svg

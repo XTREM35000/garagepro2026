@@ -102,6 +102,11 @@ export async function POST(req: Request) {
       console.error('[api/auth/signup] error checking existing user by email:', checkErr)
       // continue to attempt upsert; this error is non-fatal for the main flow
     }
+    // Check if this is the first user (they should be super_admin)
+    const userCount = await prisma.user.count()
+    const roleForNewUser = userCount === 0 ? 'super_admin' : 'viewer'
+    console.log('[api/auth/signup] userCount:', userCount, 'assigning role:', roleForNewUser)
+
     let upsert
     try {
       upsert = await prisma.user.upsert({
@@ -116,7 +121,7 @@ export async function POST(req: Request) {
           email,
           name: `${firstName} ${lastName}`,
           avatarUrl: avatarUrl ?? null,
-          role: 'viewer',
+          role: roleForNewUser,
           tenantId: tenantIdToUse as string,
         },
       })

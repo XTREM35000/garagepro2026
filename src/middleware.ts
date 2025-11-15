@@ -39,6 +39,12 @@ export async function middleware(request: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
+  // In dev we allow easier local testing: do not redirect to /auth (prevents "redirect loop" when cookies
+  // are not set). Keep strict auth behavior in production.
+  if (process.env.NODE_ENV !== 'production') {
+    return res
+  }
+
   // Auth check - rediriger vers /auth si non connecté
   if (!session && !request.nextUrl.pathname.startsWith('/auth')) {
     return NextResponse.redirect(new URL('/auth', request.url))

@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import AvatarUploader from '@/components/auth/avatar-uploader'
 import { useAuth } from '@/lib/auth-context'
+import { useAuthTab } from '@/lib/auth-tab-context'
 
 export default function SignupForm() {
   const [firstName, setFirstName] = useState('')
@@ -18,6 +18,7 @@ export default function SignupForm() {
   const [message, setMessage] = useState<string | null>(null)
   const router = useRouter()
   const auth = useAuth()
+  const { setActiveTab } = useAuthTab()
 
   // avatarUrl will be set by AvatarUploader's onUpload callback
 
@@ -45,14 +46,24 @@ export default function SignupForm() {
         // attempt auto-login via useAuth.signIn for consistency
         try {
           await auth.signIn(email, password)
-          console.log('[SignupForm] auto-login succeeded, redirecting to /dashboard')
-          router.push('/dashboard')
+          console.log('[SignupForm] auto-login succeeded, redirecting to /dashboard/agents')
+
+          // Attendre un peu avant de rediriger
+          await new Promise(resolve => setTimeout(resolve, 1500))
+          router.push('/dashboard/agents')
         } catch (loginErr) {
           console.warn('[SignupForm] auto-login failed:', loginErr)
           setMessage('✅ Inscription réussie ! Vous pouvez maintenant vous connecter manuellement.')
-          // Wait a moment then redirect to login/auth page
+          // Switch to login tab instead of reloading
           setTimeout(() => {
-            router.push('/auth')
+            setActiveTab('login')
+            // Reset form
+            setFirstName('')
+            setLastName('')
+            setEmail('')
+            setPassword('')
+            setAvatarUrl(null)
+            setMessage(null)
           }, 2000)
         }
       }
