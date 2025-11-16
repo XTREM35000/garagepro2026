@@ -85,13 +85,13 @@ model Tenant {
 
 // 🔹 Utilisateurs
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String?
+  // The user `id` must match auth.users.id from Supabase (uuid). We rely on the
+  // auth layer for credential management (passwords are NOT stored here).
+  id        String   @id @db.Uuid
   name      String?
   avatarUrl String?
   role      UserRole @default(viewer)
-  tenantId  String
+  tenantId  String   @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -102,7 +102,7 @@ model User {
   expenses Expense[]
 
   @@index([tenantId])
-  @@index([email])
+  @@index([role])
 }
 
 // 🔹 Véhicules

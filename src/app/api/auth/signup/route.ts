@@ -91,17 +91,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Database error creating tenant' }, { status: 500 })
     }
 
-    // Check if an application user already exists with this email but a different id.
-    try {
-      const existingByEmail = await prisma.user.findUnique({ where: { email } })
-      if (existingByEmail && existingByEmail.id !== userId) {
-        console.error('[api/auth/signup] conflict: existing app user with same email but different id', { existingId: existingByEmail.id, supabaseId: userId })
-        return NextResponse.json({ error: 'An application user with this email already exists. Please sign in instead.' }, { status: 409 })
-      }
-    } catch (checkErr) {
-      console.error('[api/auth/signup] error checking existing user by email:', checkErr)
-      // continue to attempt upsert; this error is non-fatal for the main flow
-    }
+    // Note: email and password are handled by Supabase Auth. We do NOT store
+    // passwords in the application profile (public.User). Therefore we do not
+    // check for duplicate app users by email here: creation in Supabase will
+    // already error if an account exists with the same email.
     // Check if this is the first user (they should be super_admin)
     const userCount = await prisma.user.count()
     const roleForNewUser = userCount === 0 ? 'super_admin' : 'viewer'
@@ -112,13 +105,11 @@ export async function POST(req: Request) {
       upsert = await prisma.user.upsert({
         where: { id: userId },
         update: {
-          email,
           name: `${firstName} ${lastName}`,
           avatarUrl: avatarUrl ?? null,
         },
         create: {
           id: userId,
-          email,
           name: `${firstName} ${lastName}`,
           avatarUrl: avatarUrl ?? null,
           role: roleForNewUser,
@@ -133,7 +124,7 @@ export async function POST(req: Request) {
     }
 
     // Log sanitized user for debug (avoid printing secrets)
-    console.log('[api/auth/signup] prisma upsert result (sanitized):', { id: upsert?.id, email: upsert?.email, name: upsert?.name })
+    console.log('[api/auth/signup] prisma upsert result (sanitized):', { id: upsert?.id, name: upsert?.name })
 
     const duration = Date.now() - start
     console.log('[api/auth/signup] completed successfully in', duration, 'ms')

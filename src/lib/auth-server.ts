@@ -31,7 +31,7 @@ export async function verifyUserAndRole(
     // Fetch user profile from our User table to get role and tenantId
     const { data: userProfile, error: profileError } = await supabaseAdmin
       .from('User')
-      .select('id,email,role,tenantId')
+      .select('id,role,tenantId')
       .eq('id', userId)
       .maybeSingle()
 
