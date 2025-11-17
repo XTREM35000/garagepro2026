@@ -85,8 +85,7 @@ model Tenant {
 
 // 🔹 Utilisateurs
 model User {
-  // The user `id` must match auth.users.id from Supabase (uuid). We rely on the
-  // auth layer for credential management (passwords are NOT stored here).
+  /// ID = Supabase Auth ID (uuid)
   id        String   @id @db.Uuid
   name      String?
   avatarUrl String?

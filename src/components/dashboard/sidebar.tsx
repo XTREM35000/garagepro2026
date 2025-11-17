@@ -1,28 +1,73 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronLeftIcon, HomeIcon, Cog6ToothIcon, UsersIcon } from '@heroicons/react/24/outline'
+import { usePathname } from 'next/navigation'
 
-const roles = ['super_admin', 'admin', 'agent_photo', 'caissier', 'comptable', 'technicien', 'viewer']
+const navItems = [
+  { key: 'home', label: 'Accueil', href: '/dashboard', icon: HomeIcon },
+  { key: 'users', label: 'Utilisateurs', href: '/dashboard/users', icon: UsersIcon },
+  { key: 'settings', label: 'Paramètres', href: '/tenant/settings', icon: Cog6ToothIcon },
+]
 
 export default function Sidebar() {
+  const [collapsed, setCollapsed] = useState(false)
+  const pathname = usePathname()
+
   return (
-    <aside className="w-60 bg-white border-r">
-      <div className="p-4 border-b">
-        <h2 className="font-bold">Mon SaaS</h2>
-        <p className="text-sm text-gray-500">Tenant: Demo</p>
+    <motion.aside
+      initial={false}
+      animate={{ width: collapsed ? 72 : 240 }}
+      className="h-screen bg-white border-r flex flex-col"
+    >
+      <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-sky-600 rounded flex items-center justify-center text-white font-bold">SM</div>
+          {!collapsed && <div>
+            <div className="font-bold">SaaS Starter</div>
+            <div className="text-xs text-gray-500">Tenant: Demo</div>
+          </div>}
+        </div>
+        <button
+          aria-label="Toggle sidebar"
+          onClick={() => setCollapsed((s) => !s)}
+          className="p-1 rounded hover:bg-gray-100"
+        >
+          <ChevronLeftIcon className={`h-5 w-5 transition-transform ${collapsed ? 'rotate-180' : ''}`} />
+        </button>
       </div>
 
-      <nav className="p-4 space-y-2">
-        <Link href="/dashboard/super_admin" className="block text-sm font-medium">Accueil</Link>
-        <div className="mt-4 text-xs text-gray-500">Dashboards par rôle</div>
-        {roles.map(r => (
-          <Link key={r} href={`/dashboard/${r}`} className="block text-sm text-sky-600">{r}</Link>
-        ))}
-
-        <div className="mt-6">
-          <Link href="/tenant/settings" className="text-sm text-gray-700">Paramètres du tenant</Link>
-        </div>
+      <nav className="flex-1 p-3">
+        {navItems.map((item) => {
+          const Icon = item.icon
+          const isActive = pathname?.startsWith(item.href) ?? false
+          return (
+            <Link key={item.key} href={item.href}>
+              <motion.div
+                whileHover={{ x: 6 }}
+                className={`flex items-center gap-3 p-2 rounded ${isActive ? 'bg-sky-50 border-l-2 border-sky-600' : 'hover:bg-slate-50'}`}
+              >
+                <Icon className={`h-5 w-5 ${isActive ? 'text-sky-700' : 'text-sky-600'}`} />
+                <AnimatePresence>
+                  {!collapsed && (
+                    <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </Link>
+          )
+        })}
       </nav>
-    </aside>
+
+      <div className="p-3 border-t">
+        <Link href="/auth" className="flex items-center gap-3 p-2 rounded hover:bg-slate-50">
+          <span className="h-8 w-8 bg-gray-200 rounded-full" />
+          {!collapsed && <div className="text-sm">Se déconnecter</div>}
+        </Link>
+      </div>
+    </motion.aside>
   )
 }
