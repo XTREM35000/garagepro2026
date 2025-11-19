@@ -1,32 +1,45 @@
 "use client"
 
-import React from 'react'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import LogoAnimated from '@/components/ui/logo-animated'
-import LoginForm from './login-form'
-import SignupForm from './signup-form'
-import { motion } from 'framer-motion'
-import { AuthTabProvider, useAuthTab } from '@/lib/auth-tab-context'
+import React from "react"
+import { motion } from "framer-motion"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import AnimatedLogoGarage from "@/components/ui/AnimatedLogoGarage"
+import LoginForm from "./login-form"
+import SignupForm from "./signup-form"
+import { AuthTabProvider, useAuthTab } from "@/lib/auth-tab-context"
 
 function AuthCardContent() {
   const { activeTab, setActiveTab } = useAuthTab()
 
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="max-w-md w-full rounded-lg bg-white p-6 shadow">
-      <div className="flex items-center gap-4 mb-6">
-        <LogoAnimated className="w-12 h-12" />
+    <motion.div
+      initial={{ opacity: 0, y: 50, rotateX: 10 }}
+      animate={{ opacity: 1, y: 0, rotateX: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="relative max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-gray-200"
+      style={{ perspective: "1500px" }}
+    >
+      {/* Logo animé et titre */}
+      <div className="flex items-center gap-4 mb-8">
+        <AnimatedLogoGarage size={56} animated showText />
         <div>
-          <h2 className="text-xl font-bold">Bienvenue</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Bienvenue</h2>
           <p className="text-sm text-gray-600">Connectez-vous ou créez un compte</p>
         </div>
       </div>
 
+      {/* Tabs Auth */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="login">Connexion</TabsTrigger>
-          <TabsTrigger value="signup">Inscription</TabsTrigger>
+        <TabsList className="bg-gray-100 rounded-xl p-1 mb-6 shadow-inner">
+          <TabsTrigger value="login" className="flex-1 rounded-xl">
+            Connexion
+          </TabsTrigger>
+          <TabsTrigger value="signup" className="flex-1 rounded-xl">
+            Inscription
+          </TabsTrigger>
         </TabsList>
-        <div className="mt-4">
+
+        <div className="space-y-4">
           <TabsContent value="login">
             <LoginForm />
           </TabsContent>
@@ -35,6 +48,14 @@ function AuthCardContent() {
           </TabsContent>
         </div>
       </Tabs>
+
+      {/* Décoratif bas modale */}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-24 h-24 rounded-full bg-green-100/50 blur-2xl"
+      />
     </motion.div>
   )
 }
@@ -42,7 +63,9 @@ function AuthCardContent() {
 export default function AuthCard() {
   return (
     <AuthTabProvider>
-      <AuthCardContent />
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm z-50 p-4">
+        <AuthCardContent />
+      </div>
     </AuthTabProvider>
   )
 }

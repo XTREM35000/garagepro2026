@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeftIcon, HomeIcon, Cog6ToothIcon, UsersIcon } from '@heroicons/react/24/outline'
 import { usePathname } from 'next/navigation'
+import AnimatedLogoGarage from '@/components/ui/AnimatedLogoGarage'
 
 const navItems = [
   { key: 'home', label: 'Accueil', href: '/dashboard', icon: HomeIcon },
@@ -23,11 +24,11 @@ export default function Sidebar() {
     >
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-sky-600 rounded flex items-center justify-center text-white font-bold">SM</div>
-          {!collapsed && <div>
-            <div className="font-bold">SaaS Starter</div>
-            <div className="text-xs text-gray-500">Tenant: Demo</div>
-          </div>}
+          <div className="mx-auto py-3">
+            <div className="flex flex-col items-center">
+              <AnimatedLogoGarage size={42} animated showText />
+            </div>
+          </div>
         </div>
         <button
           aria-label="Toggle sidebar"

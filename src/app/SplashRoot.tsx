@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import SplashScreen from './splash/SplashScreen';
 import LandingPage from './landing/LandingPage';
 
@@ -8,6 +9,7 @@ export default function SplashRoot({ children }: { children: React.ReactNode }) 
   const [showSplash, setShowSplash] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   const [showLanding, setShowLanding] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     // Only show splash on first mount
@@ -50,6 +52,11 @@ export default function SplashRoot({ children }: { children: React.ReactNode }) 
   }
 
   if (showLanding) {
+    // If user navigated to a different route (e.g. /auth), render children instead
+    if (pathname && pathname !== '/') {
+      return <div className="min-h-screen bg-gray-50 text-gray-900">{children}</div>;
+    }
+
     return <LandingPage onClose={handleLandingComplete} />;
   }
 
