@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Car, Wrench, Users, CalendarCheck, CreditCard, Cpu, Camera, Repeat, Settings2, Upload, ShieldCheck } from "lucide-react";
 import AnimatedLogoGarage from '@/components/ui/AnimatedLogoGarage';
 
-type LandingPageProps = { onClose: () => void };
+type LandingPageProps = { onClose?: () => void };
 
 const features = [
   { icon: <CalendarCheck size={28} className="text-green-600" />, title: "Planning des interventions" },
@@ -32,9 +32,22 @@ const modules = [
   { icon: <ShieldCheck size={24} className="text-blue-500" />, title: "Rôles & permissions" },
 ];
 
-export default function LandingPage({ onClose }: LandingPageProps) {
+export default function LandingPage({ onClose = () => { } }: LandingPageProps) {
   const router = useRouter();
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  const handleConnectClick = async () => {
+    const res = await fetch('/api/setup/status');
+    const { superAdminExists, tenantAdminExists } = await res.json();
+
+    if (!superAdminExists) {
+      router.push('/setup?step=super_admin');
+    } else if (!tenantAdminExists) {
+      router.push('/setup?step=tenant_admin');
+    } else {
+      router.push('/auth');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
@@ -61,7 +74,7 @@ export default function LandingPage({ onClose }: LandingPageProps) {
           </nav>
 
           <div className="flex items-center space-x-3">
-            <motion.button whileHover={{ scale: 1.05 }} onClick={() => router.push('/auth?tab=login')} className="px-5 py-2 rounded-xl bg-green-600 text-white shadow-lg shadow-green-300/40 text-sm font-semibold hover:bg-green-700 transition">
+            <motion.button whileHover={{ scale: 1.05 }} onClick={handleConnectClick} className="px-5 py-2 rounded-xl bg-green-600 text-white shadow-lg shadow-green-300/40 text-sm font-semibold hover:bg-green-700 transition">
               Se connecter
             </motion.button>
             <motion.button whileHover={{ scale: 1.05 }} onClick={onClose} className="px-4 py-2 rounded-xl border shadow text-sm font-medium hover:bg-gray-100 transition">

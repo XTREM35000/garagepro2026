@@ -1,0 +1,191 @@
+Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .nuxt, .output, .git, .bolt, .next)
+========================================
+
+📄 .env.example
+📄 .env.local
+📄 .eslintrc.json
+📄 .gitignore
+📄 .prettierrc
+📁 .vercel
+  📄 project.json
+  📄 README.txt
+📁 agents
+  📁 prompts
+    📄 ai-crud-prompt.md
+    📄 ai-dashboard-prompt.md
+    📄 ai-modal-prompt.md
+📄 DELIVERY_FINAL.md
+📄 deploy-fast.ps1
+📄 deploy.ps1
+📁 docs
+  📄 01-setup.md
+  📄 COMPLETE_GUIDE.md
+  📄 DELIVERY_CHECKLIST.md
+  📄 DELIVERY_FINAL.md
+  📄 documentation.md
+  📄 EXEC_SUMMARY.md
+  📄 instructions.md
+  📄 instructions_full.md
+  📄 MODALS_GUIDE.md
+  📄 setup-avatars-bucket.md
+  📄 signup-trigger-setup.md
+  📄 structure.md
+📄 liste.mjs
+📄 next-env.d.ts
+📄 next.config.mjs
+📄 package-lock.json
+📄 package.json
+📄 postcss.config.js
+📁 prisma
+  📁 migrations
+    📁 20251111110509_init
+      📄 migration.sql
+    📁 20251111120000_add-avatar
+      📄 migration.sql
+    📁 20251111140000_trigger_auto_create_user
+      📄 migration.sql
+    📁 20251115123000_remove_email_password
+      📄 migration.sql
+    📄 migration_lock.toml
+  📄 rls.sql
+  📄 schema.prisma
+  📄 seed.ts
+📄 project_structure.txt
+📄 project_structure_1.txt
+📄 README.md
+📁 scripts
+  📄 apply-rls.sh
+  📄 generate-env.js
+📁 src
+  📁 app
+    📁 api
+      📁 agents
+        📄 route.ts
+      📁 auth
+        📁 signup
+          📁 debug
+            📄 route.ts
+          📄 route.ts
+        📁 [...supabase]
+          📄 route.ts
+      📁 checkout
+        📄 route.ts
+      📁 dashboard
+        📁 metrics
+          📄 route.ts
+        📁 overview
+          📄 route.ts
+      📁 debug
+        📁 cookies
+          📄 route.ts
+        📁 session
+      📁 photos_vehicules
+        📄 route.ts
+      📁 stock_materiel
+        📄 route.ts
+      📁 tenant
+        📄 route.ts
+      📁 upload
+        📁 avatar
+          📄 route.ts
+      📁 webhooks
+        📁 stripe
+          📄 route.ts
+    📁 auth
+      📄 page.tsx
+    📁 billing
+      📄 page.tsx
+    📁 components
+      📄 AnimatedLogo.tsx
+      📁 modals
+        📄 AddMaterielModal.tsx
+        📄 ModifyVehicleModal.tsx
+        📄 PayslipModal.tsx
+      📁 ui
+        📁 draggable-modal
+          📄 DraggableModal.tsx
+        📁 modal
+          📄 BaseModal.tsx
+          📄 ConfirmModal.tsx
+          📄 WhatsAppModal.tsx
+    📁 dashboard
+      📁 agents
+        📄 page.tsx
+      📄 layout.tsx
+      📄 page.tsx
+      📁 photos_vehicules
+        📄 page.tsx
+      📁 stock_materiel
+        📄 page.tsx
+      📁 [role]
+        📄 page.tsx
+    📄 error.tsx
+    📄 globals.css
+    📁 landing
+      📄 LandingPage.tsx
+    📄 layout.tsx
+    📄 not-found.tsx
+    📄 page.tsx
+    📁 pricing
+      📄 page.tsx
+    📄 Providers.tsx
+    📁 splash
+      📄 SplashScreen.tsx
+    📄 SplashRoot.tsx
+    📁 tenant
+      📁 settings
+        📄 page.tsx
+  📁 components
+    📁 auth
+      📄 auth-card.tsx
+      📄 AuthCard.tsx
+      📄 AuthCardLegacy.tsx
+      📄 avatar-uploader.tsx
+      📄 index.ts
+      📄 login-form.tsx
+      📄 signup-form.tsx
+    📁 dashboard
+      📄 header.tsx
+      📄 overview.tsx
+      📄 sidebar.tsx
+      📄 user-menu.tsx
+    📁 hero
+      📄 hero.tsx
+    📁 tenant
+      📄 tenant-settings.tsx
+    📁 ui
+      📄 AnimatedLogoGarage.tsx
+      📄 base-modal.tsx
+      📄 confirm-modal.tsx
+      📄 draggable-modal-wrapper.tsx
+      📄 draggable-modal.tsx
+      📄 logo-animated.tsx
+      📄 sidebar.tsx
+      📄 tabs.tsx
+      📄 toast.tsx
+  📁 config
+    📄 subscriptions.ts
+  📁 lib
+    📄 auth-context.tsx
+    📄 auth-hoc.tsx
+    📄 auth-server.ts
+    📄 auth-tab-context.tsx
+    📄 modal-schemas.ts
+    📄 prisma.ts
+    📄 stripe.ts
+    📄 supabase.ts
+    📄 utils.ts
+  📄 middleware.ts
+  📁 scripts
+    📄 move-to-target.ps1
+  📁 types
+    📄 env.d.ts
+    📄 global.d.ts
+    📄 index.ts
+    📄 subscriptions.ts
+    📄 supabase.ts
+📄 START_HERE.md
+📄 tailwind.config.js
+📄 test-avatar-upload.mjs
+📄 tsconfig.json
+📄 tsconfig.tsbuildinfo
