@@ -361,7 +361,7 @@ export default function ProfilePage() {
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
                       <div className="text-sm text-gray-500">Mode</div>
-                      <div className="text-sm text-gray-700 dark:text-gray-300">Personnalise ton thème et préférences d'affichage</div>
+                      <div className="text-sm text-gray-700 dark:text-gray-300">Personnalise ton thème et préférences d&#39;affichage</div>
                     </div>
 
                     <div>

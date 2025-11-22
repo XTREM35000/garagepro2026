@@ -1,8 +1,9 @@
 "use client";
 
 import React, { Fragment, useEffect, useState } from "react";
+import Image from 'next/image'
 import { Menu, Transition } from "@headlessui/react";
-import { User, Settings, LogOut, Users, Image, CreditCard, FileText } from "lucide-react";
+import { User, Settings, LogOut, Users, Image as ImageIcon, CreditCard, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
@@ -19,7 +20,7 @@ const MENU_ITEMS: MenuItem[] = [
   { label: "Profil", icon: <User size={18} />, href: "/profile", rolesAllowed: ["viewer", "technicien", "caissier", "agent_photo", "comptable", "admin", "super_admin"] },
   { label: "Paramètres", icon: <Settings size={18} />, href: "/tenant/settings", rolesAllowed: ["admin", "super_admin"] },
   { label: "Gestion Agents", icon: <Users size={18} />, href: "/dashboard/agents", rolesAllowed: ["admin", "super_admin"] },
-  { label: "Photos Véhicules", icon: <Image size={18} />, href: "/dashboard/photos_vehicules", rolesAllowed: ["agent_photo", "admin", "super_admin"] },
+  { label: "Photos Véhicules", icon: <ImageIcon size={18} />, href: "/dashboard/photos_vehicules", rolesAllowed: ["agent_photo", "admin", "super_admin"] },
   { label: "Caisse", icon: <CreditCard size={18} />, href: "/dashboard/caisse", rolesAllowed: ["caissier", "admin", "super_admin"] },
   { label: "Factures", icon: <FileText size={18} />, href: "/dashboard/factures", rolesAllowed: ["comptable", "admin", "super_admin"] },
   { label: "Déconnexion", icon: <LogOut size={18} />, onClick: undefined, rolesAllowed: ["viewer", "technicien", "caissier", "agent_photo", "comptable", "admin", "super_admin"] },
@@ -62,9 +63,11 @@ export default function UserMenu() {
     <Menu as="div" className="relative">
       <Menu.Button as={motion.button} whileHover={{ scale: 1.05 }} className="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-gray-200 transition">
         {profile?.avatarUrl || profile?.avatar_url || user?.user_metadata?.avatarUrl || user?.user_metadata?.avatar_url ? (
-          <img
-            src={profile?.avatarUrl || profile?.avatar_url || user?.user_metadata?.avatarUrl || user?.user_metadata?.avatar_url}
-            alt="avatar"
+          <Image
+            src={profile?.avatarUrl || profile?.avatar_url || user?.user_metadata?.avatarUrl || user?.user_metadata?.avatar_url || '/placeholder.svg'}
+            alt={profile?.name || user?.user_metadata?.full_name || user?.email || 'avatar'}
+            width={36}
+            height={36}
             className="h-9 w-9 rounded-full object-cover border-2 border-green-500"
           />
         ) : (

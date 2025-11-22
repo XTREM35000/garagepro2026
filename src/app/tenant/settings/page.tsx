@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from 'next/image'
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/dashboard/sidebar";
@@ -35,9 +36,11 @@ export default function TenantSettingsPage() {
             <div className="mb-4">
               {/* Hero image with title/subtitle overlay */}
               <div className="mt-4 w-full rounded-3xl overflow-hidden shadow relative h-[300px]">
-                <img
+                <Image
                   src={'/images/super_admin.jpg'}
                   alt={`settings hero`}
+                  width={1600}
+                  height={300}
                   className="w-full h-full object-cover"
                 />
 

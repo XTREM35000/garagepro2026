@@ -38,7 +38,7 @@ export default function SettingsForm({ tenant }: { tenant?: Tenant | null }) {
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Nom de l'instance</label>
+        <label className="block text-sm font-medium text-gray-700">Nom de l&#39;instance</label>
         <input value={name} onChange={e => setName(e.target.value)} className="mt-1 block w-full rounded-md border-gray-200 shadow-sm" />
       </div>
 

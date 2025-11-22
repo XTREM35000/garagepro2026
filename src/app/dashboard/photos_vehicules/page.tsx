@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from 'next/image'
 import DraggableModal from "@/app/components/ui/draggable-modal/DraggableModal";
 
 export default function PhotosPage() {
@@ -8,18 +9,32 @@ export default function PhotosPage() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ url: "", type: "ENTREE", vehicleId: "" });
 
-  async function load() {
-    const res = await fetch('/api/photos_vehicules');
-    const data = await res.json();
-    setPhotos(data);
-  }
-
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    let mounted = true
+      ; (async function load() {
+        try {
+          const res = await fetch('/api/photos_vehicules')
+          const data = await res.json()
+          if (!mounted) return
+          setPhotos(data || [])
+        } catch (e) {
+          if (!mounted) return
+        }
+      })()
+    return () => { mounted = false }
+  }, [])
 
   async function create() {
     await fetch('/api/photos_vehicules', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
     setOpen(false)
-    load()
+    // reload list
+    try {
+      const res = await fetch('/api/photos_vehicules')
+      const data = await res.json()
+      setPhotos(data || [])
+    } catch (e) {
+      // ignore
+    }
   }
 
   return (
@@ -32,7 +47,7 @@ export default function PhotosPage() {
       <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         {photos.map(p => (
           <div key={p.id} className="rounded border p-2">
-            <img src={p.url} alt="photo" className="h-40 w-full object-cover" />
+            <Image src={p.url || '/placeholder.svg'} alt={`photo-${p.id}`} width={600} height={160} className="h-40 w-full object-cover" />
             <div className="mt-2 text-sm text-gray-600">Type: {p.type}</div>
             <div className="text-sm text-gray-600">Véhicule: {p.vehicle?.immatricule}</div>
           </div>

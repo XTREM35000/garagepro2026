@@ -1,6 +1,7 @@
 "use client"
 
 import React from 'react'
+import Image from 'next/image'
 import Sidebar from '@/components/dashboard/sidebar'
 import Header from '@/components/dashboard/header'
 import BackButton from '@/components/ui/BackButton'
@@ -62,9 +63,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
               {/* Hero image with title/subtitle overlay (filigramme blanc) */}
               <div className="mt-4 w-full rounded-3xl overflow-hidden shadow relative h-[300px]">
-                <img
+                <Image
                   src={heroImages[segment] || '/images/dashboard.png'}
                   alt={`${segment} hero`}
+                  width={1600}
+                  height={300}
                   className="w-full h-full object-cover"
                 />
 

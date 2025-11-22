@@ -17,22 +17,37 @@ export default function AgentsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ email: "", name: "", role: "viewer", tenantId: "demo" });
 
+  // reusable loader used by effects and handlers
   async function load() {
-    setLoading(true);
-    const res = await fetch('/api/agents');
-    const data = await res.json();
-    setAgents(data || []);
-    setLoading(false);
+    setLoading(true)
+    try {
+      const res = await fetch('/api/agents')
+      const data = await res.json()
+      setAgents(data || [])
+    } catch (e) {
+      // ignore
+    } finally {
+      setLoading(false)
+    }
   }
 
-  useEffect(() => { load() }, []);
+  useEffect(() => {
+    let mounted = true
+    // call load and guard against state updates after unmount
+    void (async () => {
+      try {
+        await load()
+      } catch { }
+    })()
+    return () => { mounted = false }
+  }, []);
 
   // Open add modal if URL hash is '#add' (allows hero button to trigger modal)
   useEffect(() => {
     function checkHash() {
       if (typeof window === 'undefined') return;
       if (window.location.hash === '#add') {
-        openAdd();
+        setEditingId(null); setForm({ email: "", name: "", role: "viewer", tenantId: "demo" }); setOpen(true);
       }
     }
     checkHash();

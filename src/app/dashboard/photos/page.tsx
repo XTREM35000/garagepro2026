@@ -1,4 +1,7 @@
+export const runtime = "nodejs";
+
 import React from "react";
+import Image from 'next/image'
 import Card3D from "@/components/ui/Card3D";
 import MetricsCard from "@/components/dashboard/MetricsCard";
 
@@ -25,7 +28,7 @@ export default function PhotosPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {images.map((src, i) => (
               <div key={i} className="rounded-xl overflow-hidden bg-gray-50">
-                <img src={src} alt={`photo-${i}`} className="w-full h-36 object-cover" />
+                <Image src={src} alt={`photo-${i}`} width={400} height={144} className="w-full h-36 object-cover" />
               </div>
             ))}
           </div>
