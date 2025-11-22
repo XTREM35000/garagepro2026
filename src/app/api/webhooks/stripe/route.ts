@@ -1,4 +1,6 @@
 import { headers } from 'next/headers'
+export const runtime = "nodejs";
+
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { supabase } from '@/lib/supabase'

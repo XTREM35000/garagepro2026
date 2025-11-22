@@ -4,6 +4,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { UserIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+import Image from 'next/image'
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 
@@ -36,9 +37,11 @@ export default function UserMenu() {
       <div>
         <Menu.Button className="inline-flex items-center gap-3 rounded-full p-1 hover:bg-gray-100">
           {(profile?.avatarUrl || profile?.avatar_url || user?.user_metadata?.avatarUrl || user?.user_metadata?.avatar_url) ? (
-            <img
-              src={profile?.avatarUrl || profile?.avatar_url || user?.user_metadata?.avatarUrl || user?.user_metadata?.avatar_url || "/placeholder.svg"}
+            <Image
+              src={profile?.avatarUrl || profile?.avatar_url || user?.user_metadata?.avatarUrl || user?.user_metadata?.avatar_url || '/placeholder.svg'}
               alt={(profile?.name || user?.user_metadata?.full_name || user?.name || user?.email) ?? 'avatar'}
+              width={36}
+              height={36}
               className="h-9 w-9 rounded-full object-cover border-2 border-green-500"
             />
           ) : (

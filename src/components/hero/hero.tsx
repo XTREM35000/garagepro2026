@@ -6,6 +6,7 @@
  * Renders a contextual hero banner with preloaded image
  */
 import React from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 
 export default function Hero() {
@@ -27,7 +28,7 @@ export default function Hero() {
   return (
     <header className="rounded-lg bg-white p-6 shadow-sm">
       <div className="flex items-center gap-4">
-        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80&auto=format&fit=crop" alt="Hero" fetchPriority="high" className="w-24 h-24 rounded-md object-cover" />
+        <Image src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80&auto=format&fit=crop" alt="Hero" fetchPriority="high" width={120} height={120} className="w-24 h-24 rounded-md object-cover" priority />
         <div>
           <h1 className="text-2xl font-semibold">Bienvenue</h1>
           <p className="text-sm text-gray-600">Votre plateforme SaaS multi-tenant prête à monétiser.</p>

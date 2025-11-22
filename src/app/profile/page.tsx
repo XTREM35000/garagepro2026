@@ -66,7 +66,7 @@ export default function ProfilePage() {
         setFirstName(f);
         setLastName(r.join(" "));
         setEmail(data.email || user.email || "");
-        setAvatarUrl(data.avatarUrl || data.avatar_url || avatarUrl);
+        setAvatarUrl((prev) => data.avatarUrl || data.avatar_url || prev);
       } catch {
         // ignore fetch errors; we already have auth user values
       }

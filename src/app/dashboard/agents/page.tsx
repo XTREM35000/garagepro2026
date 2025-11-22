@@ -76,7 +76,7 @@ export default function AgentsPage() {
 
   const columns = ["Email", "Nom", "Rôle", "Tenant", "Actions"];
   const data = agents.map(a => [
-    <div className="flex items-center gap-3">
+    <div key={`profile-${a.id}`} className="flex items-center gap-3">
       <div className="w-9 h-9 rounded-full bg-[rgba(37,211,102,0.12)] flex items-center justify-center text-[hsl(var(--brand)/1)] font-semibold">
         {(a.name || a.email || "U").charAt(0).toUpperCase()}
       </div>
@@ -86,9 +86,9 @@ export default function AgentsPage() {
       </div>
     </div>,
     a.name || "—",
-    <span className={`badge badge--role ${a.role === 'super_admin' ? 'green' : ''}`}>{a.role}</span>,
-    <div className="text-sm text-gray-600">{a.tenantId}</div>,
-    <div className="flex gap-2">
+    <span key={`role-${a.id}`} className={`badge badge--role ${a.role === 'super_admin' ? 'green' : ''}`}>{a.role}</span>,
+    <div key={`tenant-${a.id}`} className="text-sm text-gray-600">{a.tenantId}</div>,
+    <div key={`actions-${a.id}`} className="flex gap-2">
       <button onClick={() => openEdit(a)} title="Éditer" className="p-2 rounded-md hover:bg-gray-100"><Edit2 size={16} /></button>
       <button onClick={() => deleteAgent(a.id)} title="Supprimer" className="p-2 rounded-md hover:bg-red-50 text-red-600"><Trash2 size={16} /></button>
     </div>

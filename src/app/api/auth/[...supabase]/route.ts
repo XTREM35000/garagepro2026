@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import { NextResponse } from 'next/server'
 
 // The package `@supabase/auth-helpers-nextjs` in this environment
