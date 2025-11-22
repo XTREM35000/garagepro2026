@@ -1,26 +1,33 @@
 "use client";
-
+import React from "react";
 import { motion } from "framer-motion";
+import Button from "@/components/ui/Button";
 
-export default function HeroBanner({ title = "", subtitle = "", image = "/image/stock.avif" }: { title?: string; subtitle?: string; image?: string }) {
+export default function HeroBanner({ title = "", subtitle = "", image = "/images/admin.jpg" }: { title?: string; subtitle?: string; image?: string }) {
   return (
-    <div className="relative w-full h-[320px] rounded-3xl overflow-hidden shadow-xl mb-6">
+    <div className="hero">
       <motion.img
         src={image}
-        initial={{ scale: 1.15 }}
+        initial={{ scale: 1.08 }}
         animate={{ scale: 1 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
         className="absolute inset-0 w-full h-full object-cover"
+        alt={title}
       />
+      <div className="overlay" />
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        className="hero-content"
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="absolute bottom-10 left-10 text-white"
+        transition={{ duration: 0.6 }}
       >
-        <h1 className="text-4xl font-bold drop-shadow-xl">{title}</h1>
-        {subtitle && <p className="text-lg mt-2 text-white/90">{subtitle}</p>}
+        <h1 className="hero-title">{title}</h1>
+        {subtitle && <p className="hero-sub">{subtitle}</p>}
+        <div className="mt-4 flex gap-3">
+          <Button>Nouvelle entrée</Button>
+          <Button variant="ghost">Exporter</Button>
+        </div>
       </motion.div>
     </div>
   );

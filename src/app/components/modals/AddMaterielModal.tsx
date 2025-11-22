@@ -85,22 +85,22 @@ export default function AddMaterielModal({ isOpen, onClose, onSubmit, initialDat
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium mb-1">Prix d&apos;achat (€)</label>
+            <label className="block text-sm font-medium mb-1">Prix d&apos;achat (FCFA)</label>
             <input
               {...register("prixAchat", { valueAsNumber: true })}
               type="number"
-              step="0.01"
+              step="1"
               className="w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:ring-sky-400"
             />
             {errors.prixAchat && <p className="text-xs text-red-600 mt-1">{errors.prixAchat.message}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Prix de vente (€)</label>
+            <label className="block text-sm font-medium mb-1">Prix de vente (FCFA)</label>
             <input
               {...register("prixVente", { valueAsNumber: true })}
               type="number"
-              step="0.01"
+              step="1"
               className="w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:ring-sky-400"
             />
             {errors.prixVente && <p className="text-xs text-red-600 mt-1">{errors.prixVente.message}</p>}

@@ -4,6 +4,8 @@ import React from 'react'
 import Sidebar from '@/components/dashboard/sidebar'
 import Header from '@/components/dashboard/header'
 import BackButton from '@/components/ui/BackButton'
+import Button from '@/components/ui/Button'
+import { UserPlus } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 const heroImages: Record<string, string> = {
@@ -69,8 +71,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {/* Overlay: filigramme blanc large */}
                 <div className="absolute inset-0 flex items-end">
                   <div className="p-6 md:p-8">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg leading-tight">{heroTitles[segment] || (segment.charAt(0).toUpperCase() + segment.slice(1))}</h1>
-                    <p className="text-lg md:text-xl text-white/90 mt-2 drop-shadow">{heroSubtitles[segment] || `Gestion ${segment}`}</p>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg leading-tight">{heroTitles[segment] || (segment.charAt(0).toUpperCase() + segment.slice(1))}</h1>
+                        <p className="text-lg md:text-xl text-white/90 mt-2 drop-shadow">{heroSubtitles[segment] || `Gestion ${segment}`}</p>
+                      </div>
+
+                      {/* Action buttons moved into hero overlay for specific sections */}
+                      {segment === 'agents' && (
+                        <div className="ml-6 hidden md:flex items-center gap-3">
+                          <Button onClick={() => { if (typeof window !== 'undefined') { window.location.hash = 'add'; } }}>
+                            <UserPlus size={16} /> Ajouter agent
+                          </Button>
+                          <Button variant="ghost">Exporter</Button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

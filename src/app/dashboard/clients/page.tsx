@@ -6,17 +6,19 @@ import TablePro from "@/components/ui/TablePro";
 export default function ClientsPage() {
   const columns = ["Nom", "Téléphone", "Véhicule", "Dernière visite"];
   const data = [
-    ["M. Kouadio", "+225 01 23 45 67", "CI-123-ABC", "2025-11-10"],
-    ["Mme Diarra", "+225 07 89 01 23", "CI-987-XYZ", "2025-11-04"],
-    ["Société X", "+225 02 34 56 78", "Flotte", "2025-10-28"],
+    ["Kouadio Serge", "+225 01 23 45 67", "GR-1000-AB", "2025-11-10"],
+    ["Konan Ahou", "+225 07 11 22 33", "DK-1001-CD", "2025-11-04"],
+    ["Adélaïde Traoré", "+225 05 44 55 66", "AB-1002-EF", "2025-10-28"],
+    ["Bamba Ibrahim", "+225 27 88 77 66", "BD-1003-GH", "2025-09-12"],
+    ["Mariam Diabaté", "+225 01 99 88 77", "KT-1004-IJ", "2025-08-03"],
   ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <MetricsCard title="Clients total" value="422" icon="Users" />
-        <MetricsCard title="Nouveaux (30j)" value="12" icon="Phone" />
-        <MetricsCard title="Zones actives" value="6" icon="MapPin" />
+        <MetricsCard title="Clients total" value="128" icon="Users" />
+        <MetricsCard title="Nouveaux (30j)" value="9" icon="Phone" />
+        <MetricsCard title="Zones actives" value="8" icon="MapPin" />
       </div>
 
       <div className="mt-8">

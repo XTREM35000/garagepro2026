@@ -1,23 +1,22 @@
-export default function TablePro({ columns, data }: { columns: string[]; data: any[][] }) {
+"use client";
+import React from "react";
+
+export default function TablePro({ columns = [], data = [] }: any) {
   return (
-    <div className="rounded-3xl overflow-hidden shadow-xl border border-gray-200">
-      <table className="w-full bg-white">
-        <thead className="bg-gray-50 text-gray-600 text-sm">
+    <div className="rounded-2xl overflow-hidden border card">
+      <table className="table-pro w-full">
+        <thead>
           <tr>
-            {columns.map((c, i) => (
-              <th key={i} className="px-4 py-3 text-left font-medium">
-                {c}
-              </th>
+            {columns.map((c: any, i: number) => (
+              <th key={i}>{c}</th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {data.map((row, ri) => (
-            <tr key={ri} className="hover:bg-gray-50 transition">
-              {row.map((cell, ci) => (
-                <td key={ci} className="px-4 py-3 border-t">
-                  {cell}
-                </td>
+          {data.map((row: any, ri: number) => (
+            <tr key={ri} className={ri % 2 === 0 ? "bg-white" : "bg-white/95"}>
+              {row.map((cell: any, ci: number) => (
+                <td key={ci}>{cell}</td>
               ))}
             </tr>
           ))}
@@ -26,3 +25,4 @@ export default function TablePro({ columns, data }: { columns: string[]; data: a
     </div>
   );
 }
+

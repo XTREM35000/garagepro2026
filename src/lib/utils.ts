@@ -8,10 +8,9 @@ export function cn(...inputs: ClassValue[]) {
 
 // Formats monétaires
 export const formatPrice = (price: number) => {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(price)
+  // Format as localized number and append FCFA (XOF)
+  const formatted = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(price)
+  return `${formatted} FCFA`
 }
 
 // Validation email simple

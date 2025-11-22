@@ -8,7 +8,7 @@ export default function FacturesPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <MetricsCard title="Factures ouvertes" value={14} icon="CreditCard" />
-        <MetricsCard title="Reçus (30j)" value="€9,120" icon="Calendar" />
+        <MetricsCard title="Reçus (30j)" value="9 120 FCFA" icon="Calendar" />
         <MetricsCard title="En retard" value={2} icon="CreditCard" />
       </div>
 

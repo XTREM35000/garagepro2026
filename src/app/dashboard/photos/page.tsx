@@ -3,19 +3,20 @@ import Card3D from "@/components/ui/Card3D";
 import MetricsCard from "@/components/dashboard/MetricsCard";
 
 export default function PhotosPage() {
-  // sample placeholder gallery entries
+  // sample placeholder gallery entries (CI-themed)
   const images = [
-    "/images/photo.jpg",
-    "/images/photo.jpg",
-    "/images/photo.jpg",
+    "/images/ci_photo_1.jpg",
+    "/images/ci_photo_2.jpg",
+    "/images/ci_photo_3.jpg",
+    "/images/ci_photo_4.jpg",
   ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <MetricsCard title="Photos total" value="4 120" icon="Camera" />
-        <MetricsCard title="Véhicules photographiés" value="1 020" icon="Image" />
-        <MetricsCard title="Albums" value="320" icon="Layers" />
+        <MetricsCard title="Photos total" value="3 820" icon="Camera" />
+        <MetricsCard title="Véhicules photographiés" value="980" icon="Image" />
+        <MetricsCard title="Albums" value="210" icon="Layers" />
       </div>
 
       <div className="mt-8">

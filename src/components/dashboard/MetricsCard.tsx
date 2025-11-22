@@ -1,21 +1,16 @@
 "use client";
+import React from "react";
 import { motion } from "framer-motion";
-import * as Icons from "lucide-react";
 
-export default function MetricsCard({ title, value, icon }: { title: string; value: string | number; icon?: string }) {
-  const IconComp: any = icon && (Icons as any)[icon];
-
+export default function MetricsCard({ title, value, icon: Icon }: any) {
   return (
-    <motion.div
-      whileHover={{ scale: 1.03 }}
-      className="p-6 rounded-3xl bg-white shadow-lg flex items-center gap-4 border"
-    >
-      <div className="p-3 bg-gray-100 rounded-2xl">
-        {IconComp ? <IconComp size={26} /> : <div className="w-6 h-6 bg-gray-300 rounded" />}
+    <motion.div whileHover={{ scale: 1.02 }} className="kpi">
+      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-[rgba(37,211,102,0.12)]">
+        {Icon ? <Icon size={18} className="text-[hsl(145 72% 34%)]" /> : null}
       </div>
       <div>
         <p className="text-sm text-gray-500">{title}</p>
-        <p className="text-2xl font-bold">{value}</p>
+        <p className="text-xl font-semibold">{value}</p>
       </div>
     </motion.div>
   );

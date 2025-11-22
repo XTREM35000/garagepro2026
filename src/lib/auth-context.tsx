@@ -10,6 +10,7 @@ type AuthContextType = {
   signIn: (email: string, password: string) => Promise<void>
   signUp: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
+  updateUser?: (data: { firstName?: string; lastName?: string; avatarUrl?: string | null; email?: string; password?: string }) => Promise<any>
 }
 
 interface AuthProviderProps {
@@ -22,11 +23,12 @@ export const AuthContext = createContext<AuthContextType>({
   signIn: async () => { },
   signUp: async () => { },
   signOut: async () => { },
+  updateUser: async () => ({}),
 })
 
 export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const [user, setUser] = useState<AuthUser | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     // Vérifie la session initiale
@@ -35,9 +37,23 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         const { data: { session } } = await supabase.auth.getSession()
         // map Supabase SDK user to our AuthUser shape
         const u = session?.user
-        setUser(u ? { id: u.id, email: u.email ?? null, app_metadata: (u as any).app_metadata ?? null } : null)
+        if (u) {
+          const mapped = {
+            id: u.id,
+            email: u.email ?? null,
+            name: (u.user_metadata as any)?.full_name ?? (u as any).user_metadata?.full_name ?? null,
+            role: (u.user_metadata as any)?.role ?? (u as any).role ?? undefined,
+            app_metadata: (u as any).app_metadata ?? null,
+            user_metadata: (u as any).user_metadata ?? null,
+          }
+          setUser(mapped)
+        } else {
+          setUser(null)
+        }
+        setLoading(false)
       } catch (err) {
         console.error('Session check failed:', err)
+        setLoading(false)
       }
     }
 
@@ -48,7 +64,19 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       const u = (session as any)?.user
-      setUser(u ? { id: u.id, email: u.email ?? null, app_metadata: u.app_metadata ?? null } : null)
+      if (u) {
+        const mapped = {
+          id: u.id,
+          email: u.email ?? null,
+          name: (u.user_metadata as any)?.full_name ?? (u as any).user_metadata?.full_name ?? null,
+          role: (u.user_metadata as any)?.role ?? (u as any).role ?? undefined,
+          app_metadata: (u as any).app_metadata ?? null,
+          user_metadata: (u as any).user_metadata ?? null,
+        }
+        setUser(mapped)
+      } else {
+        setUser(null)
+      }
       setLoading(false)
     })
 
@@ -99,12 +127,66 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     if (error) throw error
   }
 
+  const updateUser = async (data: { firstName?: string; lastName?: string; avatarUrl?: string | null; email?: string; password?: string }) => {
+    if (!user?.id) return { error: 'Not authenticated' }
+    setLoading(true)
+    try {
+      // Update Prisma user (name, avatar)
+      const body: any = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        avatarUrl: data.avatarUrl,
+      }
+
+      const res = await fetch(`/api/auth/user/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        return { error: json?.error || `Failed to update user (${res.status})` }
+      }
+
+      const updated = await res.json()
+
+      // Try to update Supabase auth user metadata and credentials so session reflects changes
+      let supErrorMsg: string | null = null
+      try {
+        const supPayload: any = { data: { full_name: updated.name ?? undefined, avatarUrl: updated.avatarUrl ?? undefined } }
+        if (data.email) supPayload.email = data.email
+        if (data.password) supPayload.password = data.password
+
+        const { error: supError } = await supabase.auth.updateUser(supPayload)
+        if (supError) {
+          console.warn('[auth-context] supabase updateUser error', supError)
+          supErrorMsg = supError.message
+        }
+      } catch (e: any) {
+        console.error('[auth-context] supabase updateUser threw', e)
+        supErrorMsg = e?.message || 'Supabase update failed'
+      }
+
+      // update local user state immediately so UI reflects changes without a full reload
+      setUser((prev) => ({ ...(prev as any), name: updated.name ?? prev?.name, avatarUrl: updated.avatarUrl ?? prev?.avatarUrl }))
+
+      return supErrorMsg ? { ok: true, user: updated, warning: supErrorMsg } : { ok: true, user: updated }
+    } catch (err: any) {
+      console.error('[auth-context] updateUser error', err)
+      return { error: err?.message || 'Update failed' }
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const value: AuthContextType = {
     user,
     loading,
     signIn,
     signUp,
     signOut,
+    updateUser,
   }
 
   return (

@@ -1,12 +1,14 @@
 "use client";
+import React from "react";
 import { motion } from "framer-motion";
+import cn from "clsx";
 
-export default function Card3D({ children }: { children: React.ReactNode }) {
+export default function Card3D({ children, className = "" }: any) {
   return (
     <motion.div
-      whileHover={{ y: -4, scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 200 }}
-      className="rounded-3xl bg-white shadow-xl p-6 border border-gray-100"
+      whileHover={{ y: -8, boxShadow: "0 22px 70px rgba(8,10,20,0.12)" }}
+      transition={{ type: "spring", stiffness: 260 }}
+      className={cn("card-3d", className)}
     >
       {children}
     </motion.div>

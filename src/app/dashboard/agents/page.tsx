@@ -1,15 +1,14 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
-import DraggableModal from "@/app/components/ui/draggable-modal/DraggableModal";
+import HeroBanner from "@/components/hero/HeroBanner";
+import BackButton from "@/components/ui/BackButton";
+import Card3D from "@/components/ui/Card3D";
+import MetricsCard from "@/components/dashboard/MetricsCard";
+import TablePro from "@/components/ui/TablePro";
+import ModalPro from "@/components/ui/ModalPro";
+import { UserPlus, Trash2, Edit2 } from "lucide-react";
 
-type Agent = {
-  id: string;
-  email: string;
-  name?: string;
-  role: string;
-  tenantId: string;
-};
+type Agent = { id: string; email: string; name?: string; role: string; tenantId: string; };
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -22,48 +21,36 @@ export default function AgentsPage() {
     setLoading(true);
     const res = await fetch('/api/agents');
     const data = await res.json();
-    setAgents(data);
+    setAgents(data || []);
     setLoading(false);
   }
 
   useEffect(() => { load() }, []);
 
-  function openAdd() {
-    setEditingId(null);
-    setForm({ email: "", name: "", role: "viewer", tenantId: "demo" });
-    setOpen(true);
-  }
+  // Open add modal if URL hash is '#add' (allows hero button to trigger modal)
+  useEffect(() => {
+    function checkHash() {
+      if (typeof window === 'undefined') return;
+      if (window.location.hash === '#add') {
+        openAdd();
+      }
+    }
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+    return () => window.removeEventListener('hashchange', checkHash);
+  }, []);
 
-  function openEdit(agent: Agent) {
-    setEditingId(agent.id);
-    setForm({ email: agent.email, name: agent.name || "", role: agent.role, tenantId: agent.tenantId });
-    setOpen(true);
-  }
+  function openAdd() { setEditingId(null); setForm({ email: "", name: "", role: "viewer", tenantId: "demo" }); setOpen(true); }
+  function openEdit(a: Agent) { setEditingId(a.id); setForm({ email: a.email, name: a.name || "", role: a.role, tenantId: a.tenantId }); setOpen(true); }
 
   async function save() {
-    if (!form.email) {
-      alert("Email requis");
-      return;
-    }
-
+    if (!form.email) { alert("Email requis"); return; }
     if (editingId) {
-      // Update
-      await fetch('/api/agents', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: editingId, ...form })
-      });
+      await fetch('/api/agents', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: editingId, ...form }) });
     } else {
-      // Create (note: creating via API without password may need adjustment for full signup flow)
-      await fetch('/api/agents', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      });
+      await fetch('/api/agents', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     }
-
-    setOpen(false);
-    load();
+    setOpen(false); load();
   }
 
   async function deleteAgent(id: string) {
@@ -72,106 +59,80 @@ export default function AgentsPage() {
     load();
   }
 
-  const roleOptions = ['super_admin', 'admin', 'agent_photo', 'caissier', 'comptable', 'comptable_instance', 'technicien', 'viewer'];
+  const columns = ["Email", "Nom", "Rôle", "Tenant", "Actions"];
+  const data = agents.map(a => [
+    <div className="flex items-center gap-3">
+      <div className="w-9 h-9 rounded-full bg-[rgba(37,211,102,0.12)] flex items-center justify-center text-[hsl(var(--brand)/1)] font-semibold">
+        {(a.name || a.email || "U").charAt(0).toUpperCase()}
+      </div>
+      <div>
+        <div className="text-sm font-medium">{a.email}</div>
+        <div className="text-xs text-gray-500">{a.name || "—"}</div>
+      </div>
+    </div>,
+    a.name || "—",
+    <span className={`badge badge--role ${a.role === 'super_admin' ? 'green' : ''}`}>{a.role}</span>,
+    <div className="text-sm text-gray-600">{a.tenantId}</div>,
+    <div className="flex gap-2">
+      <button onClick={() => openEdit(a)} title="Éditer" className="p-2 rounded-md hover:bg-gray-100"><Edit2 size={16} /></button>
+      <button onClick={() => deleteAgent(a.id)} title="Supprimer" className="p-2 rounded-md hover:bg-red-50 text-red-600"><Trash2 size={16} /></button>
+    </div>
+  ]);
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Gestion des agents</h1>
-        <button onClick={openAdd} className="rounded bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">
-          + Ajouter agent
-        </button>
+      <div className="max-w-7xl mx-auto -mt-20 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <BackButton />
+            <h1 className="text-2xl font-semibold">Agents</h1>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button onClick={openAdd} className="inline-flex items-center gap-2 bg-[hsl(var(--brand)/1)] text-white px-4 py-2 rounded-xl shadow-greenGlow">
+              <UserPlus size={16} /> Ajouter agent
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <MetricsCard title="Total agents" value={agents.length} icon={UserPlus} />
+          <MetricsCard title="Admins" value={agents.filter(a => a.role === 'admin').length} icon={Edit2} />
+          <MetricsCard title="Super admins" value={agents.filter(a => a.role === 'super_admin').length} icon={Trash2} />
+        </div>
+
+        <Card3D>
+          {loading ? <div className="py-8 text-center">Chargement...</div> :
+            agents.length === 0 ? <div className="py-8 text-center text-gray-500">Aucun agent trouvé</div> :
+              <TablePro columns={columns} data={data} />
+          }
+        </Card3D>
       </div>
 
-      {loading ? (
-        <div className="text-center py-8">Chargement...</div>
-      ) : agents.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">Aucun agent trouvé</div>
-      ) : (
-        <div className="overflow-x-auto rounded border">
-          <table className="w-full">
-            <thead className="bg-gray-100">
-              <tr className="text-left text-sm">
-                <th className="px-4 py-3">Email</th>
-                <th className="px-4 py-3">Nom</th>
-                <th className="px-4 py-3">Rôle</th>
-                <th className="px-4 py-3">Tenant</th>
-                <th className="px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {agents.map((agent) => (
-                <tr key={agent.id} className="border-t hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm">{agent.email}</td>
-                  <td className="px-4 py-3 text-sm">{agent.name || "—"}</td>
-                  <td className="px-4 py-3 text-sm">
-                    <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-                      {agent.role}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{agent.tenantId}</td>
-                  <td className="px-4 py-3 text-sm">
-                    <div className="flex gap-2">
-                      <button onClick={() => openEdit(agent)} className="text-sky-600 hover:underline">Éditer</button>
-                      <button onClick={() => deleteAgent(agent.id)} className="text-red-600 hover:underline">Supprimer</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <DraggableModal isOpen={open} onClose={() => setOpen(false)} title={editingId ? "Éditer agent" : "Ajouter agent"}>
+      <ModalPro open={open} onClose={() => setOpen(false)}>
         <div className="flex flex-col gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
-            <input
-              type="email"
-              placeholder="agent@example.com"
-              value={form.email}
-              onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))}
-              className="w-full rounded border px-3 py-2"
-              disabled={!!editingId}
-            />
-          </div>
+          <label className="text-sm font-medium">Email</label>
+          <input type="email" value={form.email} onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))} className="w-full rounded border px-3 py-2" disabled={!!editingId} />
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Nom</label>
-            <input
-              placeholder="Jean Dupont"
-              value={form.name}
-              onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
-              className="w-full rounded border px-3 py-2"
-            />
-          </div>
+          <label className="text-sm font-medium">Nom</label>
+          <input value={form.name} onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))} className="w-full rounded border px-3 py-2" />
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Rôle</label>
-            <select value={form.role} onChange={(e) => setForm(prev => ({ ...prev, role: e.target.value }))} className="w-full rounded border px-3 py-2">
-              {roleOptions.map(r => (
-                <option key={r} value={r}>{r}</option>
-              ))}
-            </select>
-          </div>
+          <label className="text-sm font-medium">Rôle</label>
+          <select value={form.role} onChange={(e) => setForm(prev => ({ ...prev, role: e.target.value }))} className="w-full rounded border px-3 py-2">
+            {['super_admin', 'admin', 'agent_photo', 'caissier', 'comptable', 'comptable_instance', 'technicien', 'viewer'].map(r => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Tenant ID</label>
-            <input
-              placeholder="demo"
-              value={form.tenantId}
-              onChange={(e) => setForm(prev => ({ ...prev, tenantId: e.target.value }))}
-              className="w-full rounded border px-3 py-2"
-            />
-          </div>
+          <label className="text-sm font-medium">Tenant ID</label>
+          <input value={form.tenantId} onChange={(e) => setForm(prev => ({ ...prev, tenantId: e.target.value }))} className="w-full rounded border px-3 py-2" />
 
           <div className="flex justify-end gap-2 mt-4">
             <button onClick={() => setOpen(false)} className="rounded border px-4 py-2 hover:bg-gray-100">Annuler</button>
-            <button onClick={save} className="rounded bg-sky-600 px-4 py-2 text-white hover:bg-sky-700">Enregistrer</button>
+            <button onClick={save} className="rounded px-4 py-2 bg-[hsl(var(--brand)/1)] text-white">Enregistrer</button>
           </div>
         </div>
-      </DraggableModal>
+      </ModalPro>
     </div>
   );
 }

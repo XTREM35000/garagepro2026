@@ -148,8 +148,16 @@ export interface Database {
 // the User type directly from the Supabase SDK (prevents namespace/type issues)
 export type AuthUser = {
   id: string
+  name?: string
+  avatarUrl?: string | null
+  role?: string
   email?: string | null
   phone?: string | null
   app_metadata?: Record<string, unknown> | null
-  user_metadata?: Record<string, unknown> | null
+  user_metadata?: {
+    full_name?: string | null
+    avatar_url?: string | null
+    avatarUrl?: string | null
+    [key: string]: any
+  } | null
 }

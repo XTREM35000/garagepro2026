@@ -10,7 +10,7 @@ export default function DashboardHome() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <MetricsCard title="Nouveaux clients" value={24} icon="Users" />
-        <MetricsCard title="CA (30j)" value="€12,340" icon="DollarSign" />
+        <MetricsCard title="CA (30j)" value="12 340 FCFA" icon="DollarSign" />
         <MetricsCard title="Interventions" value={8} icon="Activity" />
       </div>
 

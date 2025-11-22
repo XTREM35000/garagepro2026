@@ -4,6 +4,7 @@ import React from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import DraggableModal from "@/app/components/ui/draggable-modal/DraggableModal";
+import { formatPrice } from "@/lib/utils";
 import { payslipSchema, type PayslipInput } from "@/lib/modal-schemas";
 
 type PayslipModalProps = {
@@ -116,22 +117,22 @@ export default function PayslipModal({ isOpen, onClose, onSubmit, initialData }:
         <div className="border-t pt-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium mb-1">Salaire de base (€)</label>
+              <label className="block text-sm font-medium mb-1">Salaire de base (FCFA)</label>
               <input
                 {...reg("salary", { valueAsNumber: true })}
                 type="number"
-                step="0.01"
+                step="1"
                 className="w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:ring-sky-400"
               />
               {errors.salary && <p className="text-xs text-red-600 mt-1">{errors.salary.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Primes (€)</label>
+              <label className="block text-sm font-medium mb-1">Primes (FCFA)</label>
               <input
                 {...reg("bonuses", { valueAsNumber: true })}
                 type="number"
-                step="0.01"
+                step="1"
                 className="w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:ring-sky-400"
               />
               {errors.bonuses && <p className="text-xs text-red-600 mt-1">{errors.bonuses.message}</p>}
@@ -139,11 +140,11 @@ export default function PayslipModal({ isOpen, onClose, onSubmit, initialData }:
           </div>
 
           <div className="mt-3">
-            <label className="block text-sm font-medium mb-1">Retenues (€)</label>
+            <label className="block text-sm font-medium mb-1">Retenues (FCFA)</label>
             <input
               {...reg("deductions", { valueAsNumber: true })}
               type="number"
-              step="0.01"
+              step="1"
               className="w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:ring-sky-400"
             />
             {errors.deductions && <p className="text-xs text-red-600 mt-1">{errors.deductions.message}</p>}
@@ -152,7 +153,7 @@ export default function PayslipModal({ isOpen, onClose, onSubmit, initialData }:
 
         <div className="rounded bg-gradient-to-r from-sky-50 to-emerald-50 p-3">
           <p className="text-xs text-gray-600">Montant net à payer</p>
-          <p className="text-xl font-bold text-emerald-600">{net.toFixed(2)} €</p>
+          <p className="text-xl font-bold text-emerald-600">{formatPrice(Math.round(net))}</p>
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
