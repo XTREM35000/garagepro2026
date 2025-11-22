@@ -1,3 +1,71 @@
+:root {
+  /* Light */
+  --background: 0 0% 100%;
+  --foreground: 220 13% 12%;
+
+  --primary: 137 200 75;
+  /* green-ish primary (h,s,l) => adjust if needed */
+  --primary-foreground: 0 0% 100%;
+
+  --muted: 210 16% 98%;
+  --muted-foreground: 215 10% 40%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 220 13% 12%;
+
+  --border: 220 15% 90%;
+  --input: 220 15% 98%;
+  --ring: 220 55% 60%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 13% 12%;
+
+  --radius: 12px;
+}
+
+/* Dark theme */
+html.dark {
+  color-scheme: dark;
+  --background: 210 30% 6%;
+  --foreground: 210 16% 96%;
+
+  --primary: 142 70 46;
+  /* darker green */
+  --primary-foreground: 0 0% 100%;
+
+  --muted: 210 12% 8%;
+  --muted-foreground: 210 12% 68%;
+
+  --card: 210 12% 8%;
+  --card-foreground: 210 12% 96%;
+
+  --border: 210 10% 12%;
+  --input: 210 10% 12%;
+  --ring: 140 60% 50%;
+  --popover: 210 10% 8%;
+  --popover-foreground: 210 12% 96%;
+}
+
+/* Apple-ish glass */
+.bg-glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px) saturate(1.05);
+}
+
+html.dark .bg-glass {
+  background: rgba(10, 10, 10, 0.45);
+}
+
+/* Small utility for iOS toggle track */
+.toggle-track {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2px;
+  border-radius: 9999px;
+  width: 44px;
+  height: 24px;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -1,8 +1,7 @@
 Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .nuxt, .output, .git, .bolt, .next)
 ========================================
 
-📄 .env.example
-📄 .env.local
+📄 .env
 📄 .eslintrc.json
 📄 .gitignore
 📄 .prettierrc
@@ -27,6 +26,7 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
   📄 instructions.md
   📄 instructions_full.md
   📄 MODALS_GUIDE.md
+  📄 resolve01.md
   📄 setup-avatars-bucket.md
   📄 signup-trigger-setup.md
   📄 structure.md
@@ -47,6 +47,7 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
     📁 20251115123000_remove_email_password
       📄 migration.sql
     📄 migration_lock.toml
+  📄 rls.sql
   📄 schema.prisma
   📄 seed.ts
 📄 project_structure.txt
@@ -64,6 +65,9 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
           📁 debug
             📄 route.ts
           📄 route.ts
+        📁 user
+          📁 [id]
+            📄 route.ts
         📁 [...supabase]
           📄 route.ts
       📁 checkout
@@ -73,8 +77,19 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
           📄 route.ts
         📁 overview
           📄 route.ts
+      📁 debug
+        📁 cookies
+          📄 route.ts
+        📁 session
       📁 photos_vehicules
         📄 route.ts
+      📁 setup
+        📁 status
+          📄 route.ts
+        📁 super-admin
+          📄 route.ts
+        📁 tenant-admin
+          📄 route.ts
       📁 stock_materiel
         📄 route.ts
       📁 tenant
@@ -115,12 +130,19 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
         📄 page.tsx
     📄 error.tsx
     📄 globals.css
+    📁 landing
+      📄 LandingPage.tsx
     📄 layout.tsx
     📄 not-found.tsx
     📄 page.tsx
     📁 pricing
       📄 page.tsx
     📄 Providers.tsx
+    📁 setup
+      📄 page.tsx
+      📄 setup-root.tsx
+      📄 super-admin-form.tsx
+      📄 tenant-admin-form.tsx
     📁 splash
       📄 SplashScreen.tsx
     📄 SplashRoot.tsx
@@ -130,17 +152,23 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
   📁 components
     📁 auth
       📄 auth-card.tsx
+      📄 AuthCard.tsx
+      📄 AuthCardLegacy.tsx
       📄 avatar-uploader.tsx
+      📄 index.ts
       📄 login-form.tsx
       📄 signup-form.tsx
     📁 dashboard
+      📄 header.tsx
       📄 overview.tsx
       📄 sidebar.tsx
+      📄 user-menu.tsx
     📁 hero
       📄 hero.tsx
     📁 tenant
       📄 tenant-settings.tsx
     📁 ui
+      📄 AnimatedLogoGarage.tsx
       📄 base-modal.tsx
       📄 confirm-modal.tsx
       📄 draggable-modal-wrapper.tsx

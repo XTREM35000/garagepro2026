@@ -5,7 +5,18 @@ import SplashRoot from './SplashRoot'
 
 export const metadata = {
   title: 'SaaS Starter',
-  description: 'SaaS multi-tenant starter'
+  description: 'SaaS multi-tenant starter',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
+}
+
+export const icons = {
+  icon: '/logo.png',
+  shortcut: '/logo.png',
+  apple: '/logo.png',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

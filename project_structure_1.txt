@@ -1,8 +1,7 @@
 Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .nuxt, .output, .git, .bolt, .next)
 ========================================
 
-📄 .env.example
-📄 .env.local
+📄 .env
 📄 .eslintrc.json
 📄 .gitignore
 📄 .prettierrc
@@ -27,6 +26,7 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
   📄 instructions.md
   📄 instructions_full.md
   📄 MODALS_GUIDE.md
+  📄 resolve01.md
   📄 setup-avatars-bucket.md
   📄 signup-trigger-setup.md
   📄 structure.md
@@ -66,6 +66,9 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
           📁 debug
             📄 route.ts
           📄 route.ts
+        📁 user
+          📁 [id]
+            📄 route.ts
         📁 [...supabase]
           📄 route.ts
       📁 checkout
@@ -81,6 +84,13 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
         📁 session
       📁 photos_vehicules
         📄 route.ts
+      📁 setup
+        📁 status
+          📄 route.ts
+        📁 super-admin
+          📄 route.ts
+        📁 tenant-admin
+          📄 route.ts
       📁 stock_materiel
         📄 route.ts
       📁 tenant
@@ -111,8 +121,18 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
     📁 dashboard
       📁 agents
         📄 page.tsx
+      📁 atelier
+        📄 page.tsx
+      📁 clients
+        📄 page.tsx
+      📁 factures
+        📄 page.tsx
+      📁 interventions
+        📄 page.tsx
       📄 layout.tsx
       📄 page.tsx
+      📁 photos
+        📄 page.tsx
       📁 photos_vehicules
         📄 page.tsx
       📁 stock_materiel
@@ -129,6 +149,11 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
     📁 pricing
       📄 page.tsx
     📄 Providers.tsx
+    📁 setup
+      📄 page.tsx
+      📄 setup-root.tsx
+      📄 super-admin-form.tsx
+      📄 tenant-admin-form.tsx
     📁 splash
       📄 SplashScreen.tsx
     📄 SplashRoot.tsx
@@ -146,25 +171,34 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
       📄 signup-form.tsx
     📁 dashboard
       📄 header.tsx
+      📄 MetricsCard.tsx
       📄 overview.tsx
       📄 sidebar.tsx
       📄 user-menu.tsx
     📁 hero
       📄 hero.tsx
+      📄 HeroBanner.tsx
     📁 tenant
       📄 tenant-settings.tsx
     📁 ui
       📄 AnimatedLogoGarage.tsx
+      📄 BackButton.tsx
       📄 base-modal.tsx
+      📄 Card3D.tsx
       📄 confirm-modal.tsx
       📄 draggable-modal-wrapper.tsx
       📄 draggable-modal.tsx
+      📄 Header.tsx
       📄 logo-animated.tsx
       📄 sidebar.tsx
+      📄 TablePro.tsx
       📄 tabs.tsx
       📄 toast.tsx
+      📄 UserMenu.tsx
   📁 config
     📄 subscriptions.ts
+  📁 hooks
+    📄 use-theme.ts
   📁 lib
     📄 auth-context.tsx
     📄 auth-hoc.tsx

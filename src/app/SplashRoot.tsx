@@ -6,7 +6,8 @@ import SplashScreen from './splash/SplashScreen';
 import LandingPage from './landing/LandingPage';
 
 export default function SplashRoot({ children }: { children: React.ReactNode }) {
-  const [showSplash, setShowSplash] = useState(true);
+  // Only show the splash in production by default to avoid blocking dev workflows
+  const [showSplash, setShowSplash] = useState(process.env.NODE_ENV === 'production');
   const [isMounted, setIsMounted] = useState(false);
   const [showLanding, setShowLanding] = useState(false);
   const pathname = usePathname();

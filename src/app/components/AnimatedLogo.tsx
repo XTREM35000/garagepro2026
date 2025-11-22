@@ -52,11 +52,13 @@ export const AnimatedLogo = ({
     ? { rotate: 0 }
     : { rotate: [-6, 6, -6], transition: { repeat: Infinity, duration: 2.2, ease: "easeInOut" } };
 
+  const gapClass = small ? "gap-2" : showText ? "gap-2" : "gap-4";
+
   return (
     <div
       aria-label="SaaS Multi-Garages - logo animé"
       role="img"
-      className={`flex items-center ${small ? "gap-2" : "gap-4"} ${className}`}
+      className={`flex items-center ${gapClass} ${className}`}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -106,9 +108,8 @@ export const AnimatedLogo = ({
 
       {/* Branding text (optional) */}
       {showText && (
-        <div className="flex flex-col leading-tight">
-          <span className="text-lg font-extrabold text-gray-900">SaaS Multi-Garages</span>
-          {/* <span className="text-xs text-gray-500">Gestion d'ateliers • Interventions • Stock • Facturation</span> */}
+        <div className="flex flex-col leading-tight -ml-1">
+          <span className="text-lg font-bold text-green-700">Multi-Garages</span>
         </div>
       )}
     </div>
