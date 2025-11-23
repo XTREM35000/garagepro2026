@@ -100,7 +100,7 @@ export const AnimatedLogo = ({
           animate={shouldReduce ? undefined : { scale: [1, 1.4, 1], opacity: [1, 0.7, 1] }}
           transition={!shouldReduce ? { duration: 1.6, repeat: Infinity } : undefined}
           style={{ fontSize: 10 }}
-          aria-hidden
+          aria-hidden="true"
         >
           ✦
         </motion.span>

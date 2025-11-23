@@ -27,7 +27,25 @@ export default function SplashRoot({ children }: { children: React.ReactNode }) 
     if (landingShown) {
       setShowLanding(false);
     }
-  }, []);
+
+    // Ensure landing is shown if the app is not yet configured (server-side check).
+    // This prevents the landing from being bypassed in production if the DB is empty
+    // even when a client previously dismissed the landing (sessionStorage).
+    (async () => {
+      try {
+        const res = await fetch('/api/setup/status')
+        if (res.ok) {
+          const data = await res.json()
+          // If no super admin and no tenant admin, force show landing on root path
+          if (!data.superAdminExists && !data.tenantAdminExists && pathname === '/') {
+            setShowLanding(true)
+          }
+        }
+      } catch (err) {
+        // ignore — default behavior preserved
+      }
+    })()
+  }, [pathname]);
 
   const handleSplashComplete = () => {
     setShowSplash(false);

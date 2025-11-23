@@ -13,6 +13,7 @@ type Props = {
 }
 
 export default function AvatarUploader({ value = null, bucket = 'avatars', upload = true, onChange, onUpload }: Props) {
+  const isDev = process.env.NODE_ENV !== 'production'
   const [preview, setPreview] = useState<string | null>(value)
   const [file, setFile] = useState<File | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -41,13 +42,13 @@ export default function AvatarUploader({ value = null, bucket = 'avatars', uploa
     if (upload) {
       setUploading(true)
       try {
-        console.log('[AvatarUploader] 🟢 Starting upload for file:', f.name, 'type:', f.type, 'size:', (f as any).size)
+        if (isDev) console.log('[AvatarUploader] 🟢 Starting upload for file:', f.name, 'type:', f.type, 'size:', (f as any).size)
 
         const form = new FormData()
         form.append('file', f as File)
         form.append('signed', 'false')
 
-        console.log('[AvatarUploader] FormData created, about to fetch /api/upload/avatar')
+        if (isDev) console.log('[AvatarUploader] FormData created, about to fetch /api/upload/avatar')
 
         const res = await fetch('/api/upload/avatar', {
           method: 'POST',
@@ -55,21 +56,21 @@ export default function AvatarUploader({ value = null, bucket = 'avatars', uploa
         })
 
         const status = res.status
-        console.log('[AvatarUploader] Response status:', status)
+        if (isDev) console.log('[AvatarUploader] Response status:', status)
 
         const json = await res.json()
-        console.log('[AvatarUploader] ✅ Response body:', json)
+        if (isDev) console.log('[AvatarUploader] ✅ Response body:', json)
 
         if (!res.ok) {
-          console.warn('[AvatarUploader] ❌ Upload failed:', json?.error)
-          setError(json?.error || 'Erreur lors de l\'upload')
+          if (isDev) console.warn('[AvatarUploader] ❌ Upload failed:', json?.error)
+          setError(json?.error || "Erreur lors de l'upload")
           onUpload?.(null)
         } else {
-          console.log('[AvatarUploader] ✅ Upload successful, publicUrl:', json.publicUrl)
+          if (isDev) console.log('[AvatarUploader] ✅ Upload successful, publicUrl:', json.publicUrl)
           onUpload?.(json.publicUrl ?? null)
         }
       } catch (err: any) {
-        console.error('[AvatarUploader] ❌ Exception during upload:', err)
+        if (isDev) console.error('[AvatarUploader] ❌ Exception during upload:', err)
         setError("Erreur lors de l'upload de l'avatar.")
         onUpload?.(null)
       } finally {
@@ -87,7 +88,7 @@ export default function AvatarUploader({ value = null, bucket = 'avatars', uploa
     <div className="flex items-center gap-4">
       <div className="h-16 w-16 rounded-full bg-gray-100 overflow-hidden relative">
         {preview ? (
-          <Image src={preview} alt="avatar" className="object-cover" fill />
+          <Image src={preview} alt={preview ? "Aperçu de l'avatar" : 'Avatar par défaut'} className="object-cover" fill />
         ) : (
           <div className="h-full w-full flex items-center justify-center">
             <span className="text-gray-400">A</span>
@@ -97,8 +98,10 @@ export default function AvatarUploader({ value = null, bucket = 'avatars', uploa
 
       <div className="flex flex-col">
         <div className="flex items-center gap-2">
+          <label className="sr-only" htmlFor="avatar">Choisir un fichier</label>
           <button
             type="button"
+            aria-label="Choisir un avatar"
             className="rounded bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300"
             onClick={() => inputRef.current?.click()}
           >
@@ -107,6 +110,7 @@ export default function AvatarUploader({ value = null, bucket = 'avatars', uploa
           {file && (
             <button
               type="button"
+              aria-label="Supprimer l'avatar sélectionné"
               className="rounded bg-red-100 px-3 py-1 text-sm text-red-700 hover:bg-red-200"
               onClick={() => {
                 setFile(null)
@@ -121,10 +125,10 @@ export default function AvatarUploader({ value = null, bucket = 'avatars', uploa
             </button>
           )}
         </div>
-        <input ref={inputRef} type="file" accept="image/*" onChange={onInputChange} className="hidden" />
-        <p className="text-xs text-gray-500 mt-1">Taille recommandée: 256x256 (PNG/JPG)</p>
-        {uploading && <p className="text-xs text-gray-500 mt-1">Upload en cours...</p>}
-        {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+        <input id="avatar" name="avatar" ref={inputRef} type="file" accept="image/*" onChange={onInputChange} className="hidden" aria-describedby="avatar-desc" />
+        <p id="avatar-desc" className="text-xs text-gray-500 mt-1">Taille recommandée: 256x256 (PNG/JPG)</p>
+        {uploading && <p role="status" aria-live="polite" className="text-xs text-gray-500 mt-1">Upload en cours...</p>}
+        {error && <p role="alert" className="text-xs text-red-600 mt-1">{error}</p>}
       </div>
     </div>
   )
