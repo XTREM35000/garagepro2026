@@ -1,7 +1,7 @@
 "use client";
 export const runtime = "nodejs";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -18,9 +18,10 @@ import {
 } from "lucide-react";
 import AnimatedLogoGarage from "@/components/ui/AnimatedLogoGarage";
 
+type SetupState = { superAdminExists: boolean; tenantAdminExists: boolean };
 type LandingPageProps = {
   onClose?: () => void;
-  initialSetupState?: { superAdminExists: boolean; tenantAdminExists: boolean };
+  initialSetupState?: SetupState;
 };
 
 const features = [
@@ -64,38 +65,53 @@ const features = [
 
 export default function LandingPage({ onClose = () => { }, initialSetupState }: LandingPageProps) {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string>("");
+  const [setupState, setSetupState] = useState<SetupState | null>(initialSetupState ?? null);
 
   const scrollTo = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const handleConnectClick = async () => {
+    setLoading(true);
+    setMessage("Vérification de l'état du setup…");
+
     try {
-      let superAdminExists = false;
-      let tenantAdminExists = false;
+      let state: SetupState = { superAdminExists: false, tenantAdminExists: false };
 
-      if (initialSetupState && typeof initialSetupState.superAdminExists === "boolean") {
-        superAdminExists = initialSetupState.superAdminExists;
-        tenantAdminExists = initialSetupState.tenantAdminExists;
+      if (setupState) {
+        state = setupState;
       } else {
-        let json: { superAdminExists: boolean; tenantAdminExists: boolean } = { superAdminExists: false, tenantAdminExists: false };
-        try {
-          const res = await fetch("/api/setup/status", { cache: "no-store" });
-          if (res.ok) {
-            try { json = await res.json(); } catch { json = { superAdminExists: false, tenantAdminExists: false }; }
-          }
-        } catch (err) {
-          json = { superAdminExists: false, tenantAdminExists: false };
-        }
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
 
-        superAdminExists = !!json.superAdminExists;
-        tenantAdminExists = !!json.tenantAdminExists;
+        try {
+          const res = await fetch("/api/setup/status", { cache: "no-store", signal: controller.signal });
+          clearTimeout(timeout);
+          if (res.ok) state = await res.json();
+        } catch (err) {
+          console.error("Erreur fetch /api/setup/status:", err);
+        }
       }
 
-      if (!superAdminExists) router.push("/onboarding/super-admin");
-      else if (!tenantAdminExists) router.push("/onboarding/tenant-admin");
-      else router.push("/auth");
+      setSetupState(state);
+
+      if (!state.superAdminExists) {
+        setMessage("Aucun Super Admin trouvé, redirection vers création…");
+        setTimeout(() => router.push("/onboarding/super-admin"), 1500);
+      } else if (!state.tenantAdminExists) {
+        setMessage("Aucun Admin Tenant trouvé, redirection vers création…");
+        setTimeout(() => router.push("/onboarding/tenant-admin"), 1500);
+      } else {
+        setMessage("Super Admin et Admin Tenant trouvés, redirection vers authentification…");
+        setTimeout(() => router.push("/auth"), 1500);
+      }
     } catch (err) {
-      router.push("/onboarding/super-admin");
+      console.error(err);
+      setMessage("Impossible de vérifier le setup. Redirection vers création Super Admin…");
+      setTimeout(() => router.push("/onboarding/super-admin"), 2000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,6 +124,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
             <div className="flex items-center gap-4">
               <AnimatedLogoGarage size={44} animated showText />
             </div>
+
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
               <button onClick={() => scrollTo("hero")} className="flex items-center gap-2 hover:text-gray-700 transition">
                 <Home size={16} className="text-sky-600" /> Accueil
@@ -133,21 +150,10 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
               <button onClick={onClose} className="px-4 py-2 rounded-full border text-sm hover:bg-gray-100 transition">
                 D&eacute;couvrir
               </button>
-              <button
-                className="md:hidden p-2 rounded-full bg-white/60 backdrop-blur border"
-                onClick={() => scrollTo("features")}
-                aria-label="menu"
-              >
-                <svg className="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 12h16M4 17h16" />
-                </svg>
-              </button>
             </div>
           </div>
         </div>
       </header>
-
-      {/* HERO, FEATURES, HOW, PRICING ... */}
 
       {/* HERO */}
       <section id="hero" className="relative overflow-hidden">
@@ -188,11 +194,19 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
                 </motion.button>
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-3">
-                <div className="px-3 py-2 bg-white/70 rounded-full text-sm shadow">3 jours : mise en route</div>
-                <div className="px-3 py-2 bg-white/70 rounded-full text-sm shadow">Paiements FCFA (Stripe)</div>
-                <div className="px-3 py-2 bg-white/70 rounded-full text-sm shadow">Mobile-first</div>
-              </div>
+              {loading && (
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <div className="w-10 h-10 border-4 border-green-400 border-t-transparent rounded-full animate-spin" />
+                  <p className="text-gray-700">{message}</p>
+                </div>
+              )}
+
+              {!loading && setupState && (
+                <div className="mt-4 text-gray-700 space-y-1">
+                  <p>Super Admin: {setupState.superAdminExists ? "✅ trouvé" : "❌ absent"}</p>
+                  <p>Tenant Admin: {setupState.tenantAdminExists ? "✅ trouvé" : "❌ absent"}</p>
+                </div>
+              )}
             </motion.div>
 
             <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="hidden md:block">
@@ -200,13 +214,11 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
                 <div className="relative h-80 bg-gradient-to-br from-green-50 to-white">
                   <Image src="/images/atelier.jpg" alt="Illustration" fill className="object-cover" />
                 </div>
-
                 <div className="p-6 bg-white">
                   <h4 className="font-bold text-lg">Tableau de bord intelligent</h4>
                   <p className="text-sm text-gray-600 mt-2">
                     Vue synth&eacute;tique, indicateurs cl&eacute;s, actions rapides — con&ccedil;u pour usage mobile et desktop.
                   </p>
-
                   <div className="mt-4 grid grid-cols-3 gap-3">
                     <div className="bg-gray-50 p-3 rounded-xl text-center">
                       <div className="text-xs text-gray-500">CA / mois</div>
@@ -310,16 +322,9 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
               title="Essai Gratuit"
               price="0"
               period="7 jours"
-              features={[
-                "3 utilisateurs max",
-                "1 garage",
-                "Modules limit&eacute;s",
-                "Pas d&rsquo;IA",
-                "Pas de WhatsApp",
-              ]}
+              features={["3 utilisateurs max", "1 garage", "Modules limit&eacute;s", "Pas d’IA", "Pas de WhatsApp"]}
               accent="from-gray-100 to-gray-200"
             />
-
             <PricingCard
               title="Pro"
               price="25 000"
@@ -335,7 +340,6 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
               ]}
               accent="from-gray-300 to-gray-500"
             />
-
             <PricingCard
               title="Entreprise"
               price="100 000"
@@ -366,21 +370,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 }
 
 /* Pricing card */
-function PricingCard({
-  title,
-  price,
-  period,
-  features,
-  accent,
-  textColor = "text-gray-900",
-}: {
-  title: string;
-  price: string;
-  period: string;
-  features: string[];
-  accent: string;
-  textColor?: string;
-}) {
+function PricingCard({ title, price, period, features, accent, textColor = "text-gray-900" }: { title: string; price: string; period: string; features: string[]; accent: string; textColor?: string }) {
   return (
     <motion.div whileHover={{ scale: 1.02 }} className={`rounded-3xl p-8 shadow-lg bg-gradient-to-b ${accent} ${textColor}`}>
       <h3 className="text-2xl font-bold mb-2">{title}</h3>
