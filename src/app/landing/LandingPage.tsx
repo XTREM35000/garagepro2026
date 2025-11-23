@@ -1,5 +1,5 @@
-// src/app/landing/LandingPage.tsx
 "use client";
+export const runtime = "nodejs";
 
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -27,37 +27,37 @@ const features = [
   {
     icon: <CalendarCheck size={36} className="text-white drop-shadow-md" />,
     title: "Planning des interventions",
-    desc: "Calendrier visuel, créneaux, assignation rapide de techniciens.",
+    desc: "Calendrier visuel, cr&eacute;neaux, assignation rapide de techniciens.",
     color: "from-emerald-500 to-emerald-600",
   },
   {
     icon: <Wrench size={36} className="text-white drop-shadow-md" />,
     title: "Gestion du stock",
-    desc: "Suivi des pièces, alertes seuil, mouvements et inventaires rapides.",
+    desc: "Suivi des pi&egrave;ces, alertes seuil, mouvements et inventaires rapides.",
     color: "from-sky-500 to-sky-600",
   },
   {
     icon: <CreditCard size={36} className="text-white drop-shadow-md" />,
-    title: "Facturation & paiements",
-    desc: "Création de factures, paiements en ligne, reçus et historique FCFA.",
+    title: "Facturation &amp; paiements",
+    desc: "Cr&eacute;ation de factures, paiements en ligne, re&ccedil;us et historique FCFA.",
     color: "from-amber-500 to-amber-600",
   },
   {
     icon: <Users size={36} className="text-white drop-shadow-md" />,
-    title: "Gestion des équipes",
-    desc: "Rôles, permissions, planning & performances des techniciens.",
+    title: "Gestion des &eacute;quipes",
+    desc: "R&ocirc;les, permissions, planning &amp; performances des techniciens.",
     color: "from-violet-500 to-violet-600",
   },
   {
     icon: <Camera size={36} className="text-white drop-shadow-md" />,
-    title: "Photos véhicules",
-    desc: "Before/after, upload rapide et timeline visuelle des réparations.",
+    title: "Photos v&eacute;hicules",
+    desc: "Before/after, upload rapide et timeline visuelle des r&eacute;parations.",
     color: "from-pink-500 to-pink-600",
   },
   {
     icon: <Cpu size={36} className="text-white drop-shadow-md" />,
-    title: "Automatisation & IA",
-    desc: "Suggestions de pièces, diagnostics rapides et macros automatisées.",
+    title: "Automatisation &amp; IA",
+    desc: "Suggestions de pi&egrave;ces, diagnostics rapides et macros automatis&eacute;es.",
     color: "from-yellow-500 to-yellow-600",
   },
 ];
@@ -65,7 +65,8 @@ const features = [
 export default function LandingPage({ onClose = () => { }, initialSetupState }: LandingPageProps) {
   const router = useRouter();
 
-  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const scrollTo = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const handleConnectClick = async () => {
     try {
@@ -96,7 +97,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans antialiased">
-      {/* Sticky header (Apple-like blur) */}
+      {/* Sticky header */}
       <header className="sticky top-0 z-50">
         <div className="backdrop-blur bg-white/60 dark:bg-gray-900/60 border-b border-white/10 dark:border-gray-800/60">
           <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -110,11 +111,11 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
               </button>
 
               <button onClick={() => scrollTo("features")} className="flex items-center gap-2 hover:text-gray-700 transition">
-                <Settings size={16} className="text-emerald-600" /> Fonctionnalités
+                <Settings size={16} className="text-emerald-600" /> Fonctionnalit&eacute;s
               </button>
 
               <button onClick={() => scrollTo("how")} className="flex items-center gap-2 hover:text-gray-700 transition">
-                <Rocket size={16} className="text-orange-500" /> Comment ça marche
+                <Rocket size={16} className="text-orange-500" /> Comment &ccedil;a marche
               </button>
 
               <button onClick={() => scrollTo("pricing")} className="flex items-center gap-2 hover:text-gray-700 transition">
@@ -130,11 +131,8 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
                 Se connecter
               </button>
 
-              <button
-                onClick={onClose}
-                className="px-4 py-2 rounded-full border text-sm hover:bg-gray-100 transition"
-              >
-                Découvrir
+              <button onClick={onClose} className="px-4 py-2 rounded-full border text-sm hover:bg-gray-100 transition">
+                D&eacute;couvrir
               </button>
 
               <button
@@ -153,9 +151,15 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
       {/* HERO */}
       <section id="hero" className="relative overflow-hidden">
-        {/* Background illustration (large, subtle) */}
         <div className="absolute inset-0 pointer-events-none">
-          <Image src="/images/hero-bg.jpg" alt="Garage background" fill quality={60} className="object-cover opacity-30 dark:opacity-20" priority />
+          <Image
+            src="/images/hero-bg.jpg"
+            alt="Garage background"
+            fill
+            quality={60}
+            className="object-cover opacity-30 dark:opacity-20"
+            priority
+          />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/70 dark:to-black/60" />
         </div>
 
@@ -165,8 +169,9 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
               <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-tight">
                 GaragePro — <span className="text-green-600">SaaS Multi-Garages</span>
               </h1>
+
               <p className="text-lg text-gray-700 max-w-xl">
-                Centralisez interventions, stock, facturation et relation client. Interface rapide, pensée pour l'Afrique — FCFA natif, mobile-first et usage terrain.
+                Centralisez interventions, stock, facturation et relation client. Interface rapide, pens&eacute;e pour l&apos;Afrique — FCFA natif, mobile-first et usage terrain.
               </p>
 
               <div className="flex items-center gap-4">
@@ -192,14 +197,15 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
             <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="hidden md:block">
               <div className="rounded-3xl shadow-2xl overflow-hidden border">
-                {/* hero visual card */}
                 <div className="relative h-80 bg-gradient-to-br from-green-50 to-white">
                   <Image src="/images/atelier.jpg" alt="Illustration" fill className="object-cover" />
                 </div>
 
                 <div className="p-6 bg-white">
                   <h4 className="font-bold text-lg">Tableau de bord intelligent</h4>
-                  <p className="text-sm text-gray-600 mt-2">Vue synthétique, indicateurs clés, actions rapides — conçu pour usage mobile et desktop.</p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    Vue synth&eacute;tique, indicateurs cl&eacute;s, actions rapides — con&ccedil;u pour usage mobile et desktop.
+                  </p>
 
                   <div className="mt-4 grid grid-cols-3 gap-3">
                     <div className="bg-gray-50 p-3 rounded-xl text-center">
@@ -222,16 +228,15 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
         </div>
       </section>
 
-      {/* FEATURES (élargi + carte de fond illustrée) */}
+      {/* FEATURES */}
       <section id="features" className="relative py-16">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold">Fonctionnalités principales</h2>
-            <p className="text-sm text-gray-500 hidden sm:block">Pensé pour la rapidité, le terrain et la gestion multi-sites.</p>
+            <h2 className="text-3xl font-bold">Fonctionnalit&eacute;s principales</h2>
+            <p className="text-sm text-gray-500 hidden sm:block">Pens&eacute; pour la rapidit&eacute;, le terrain et la gestion multi-sites.</p>
           </div>
 
           <div className="relative grid md:grid-cols-3 gap-6">
-            {/* subtle background card */}
             <div className="absolute inset-0 pointer-events-none -z-10">
               <div className="max-w-5xl mx-auto">
                 <div className="h-56 rounded-3xl bg-gradient-to-r from-white to-green-50/40 shadow-inner opacity-60" />
@@ -269,28 +274,24 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
       {/* HOW */}
       <section id="how" className="py-12 bg-white/50">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-6">Comment ça marche ?</h2>
+          <h2 className="text-3xl font-bold text-center mb-6">Comment &ccedil;a marche ?</h2>
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
                 title: "1. Inscription",
-                text: "Créez votre espace garage ou réseau multi-sites. Entrer vos données, logo et préférences.",
+                text: "Cr&eacute;ez votre espace garage ou r&eacute;seau multi-sites. Entrer vos donn&eacute;es, logo et pr&eacute;f&eacute;rences.",
               },
               {
                 title: "2. Configuration",
-                text: "Ajoutez utilisateurs, rôles, ateliers, stocks et modèles de factures.",
+                text: "Ajoutez utilisateurs, r&ocirc;les, ateliers, stocks et mod&egrave;les de factures.",
               },
               {
                 title: "3. Lancement",
-                text: "Formez les équipes, importez votre stock et lancez les interventions.",
+                text: "Formez les &eacute;quipes, importez votre stock et lancez les interventions.",
               },
             ].map((s, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={{ y: -6 }}
-                className="bg-white p-6 rounded-2xl shadow border"
-              >
+              <motion.div key={idx} whileHover={{ y: -6 }} className="bg-white p-6 rounded-2xl shadow border">
                 <h3 className="font-semibold text-lg">{s.title}</h3>
                 <p className="mt-2 text-gray-600">{s.text}</p>
               </motion.div>
@@ -312,12 +313,13 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
               features={[
                 "3 utilisateurs max",
                 "1 garage",
-                "Modules limités",
-                "Pas d’IA",
+                "Modules limit&eacute;s",
+                "Pas d&rsquo;IA",
                 "Pas de WhatsApp",
               ]}
               accent="from-gray-100 to-gray-200"
             />
+
             <PricingCard
               title="Pro"
               price="25 000"
@@ -327,22 +329,23 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
                 "3 garages",
                 "Modules standards",
                 "IA basique",
-                "WhatsApp limité",
-                "Paiements intégrés",
+                "WhatsApp limit&eacute;",
+                "Paiements int&eacute;gr&eacute;s",
                 "Avance mise en route : 100 000 FCFA",
               ]}
               accent="from-gray-300 to-gray-500"
             />
+
             <PricingCard
               title="Entreprise"
               price="100 000"
               period="mois"
               features={[
-                "Utilisateurs illimités",
-                "Garages illimités",
+                "Utilisateurs illimit&eacute;s",
+                "Garages illimit&eacute;s",
                 "Tous modules",
-                "IA avancée",
-                "WhatsApp illimité",
+                "IA avanc&eacute;e",
+                "WhatsApp illimit&eacute;",
                 "Automatisations",
                 "Avance mise en route : 100 000 FCFA",
               ]}
@@ -355,14 +358,14 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
       <footer className="py-8">
         <div className="max-w-7xl mx-auto px-6 text-center text-sm text-gray-500">
-          © {new Date().getFullYear()} GaragePro — Conçu pour l'Afrique · FCFA nativement supporté
+          © {new Date().getFullYear()} GaragePro — Con&ccedil;u pour l&apos;Afrique · FCFA nativement support&eacute;
         </div>
       </footer>
     </div>
   );
 }
 
-/* Pricing card (internal) */
+/* Pricing card */
 function PricingCard({
   title,
   price,
