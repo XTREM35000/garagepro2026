@@ -1,3 +1,6 @@
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
 import LandingPage from './landing/LandingPage'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'

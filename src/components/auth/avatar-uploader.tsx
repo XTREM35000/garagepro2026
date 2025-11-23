@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useRef } from 'react'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 
 type Props = {
@@ -84,12 +85,13 @@ export default function AvatarUploader({ value = null, bucket = 'avatars', uploa
 
   return (
     <div className="flex items-center gap-4">
-      <div className="h-16 w-16 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center">
+      <div className="h-16 w-16 rounded-full bg-gray-100 overflow-hidden relative">
         {preview ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={preview} alt="avatar" className="h-full w-full object-cover" />
+          <Image src={preview} alt="avatar" className="object-cover" fill />
         ) : (
-          <span className="text-gray-400">A</span>
+          <div className="h-full w-full flex items-center justify-center">
+            <span className="text-gray-400">A</span>
+          </div>
         )}
       </div>
 
