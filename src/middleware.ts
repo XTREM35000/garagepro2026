@@ -4,6 +4,12 @@ import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   const res = NextResponse.next()
+  // DEBUG: log cookies and session for troubleshooting auth redirect
+  console.log('MIDDLEWARE DEBUG', {
+    cookies: request.cookies.getAll(),
+    pathname: request.nextUrl.pathname,
+    env: process.env.NODE_ENV
+  });
 
   // Skip middleware for static assets and Next internal routes to avoid
   // interfering with JS/CSS chunk responses (which can otherwise return HTML
@@ -38,6 +44,8 @@ export async function middleware(request: NextRequest) {
   const {
     data: { session },
   } = await supabase.auth.getSession()
+  // DEBUG: log session after getSession
+  console.log('MIDDLEWARE DEBUG session', { session });
 
   // In dev we allow easier local testing: do not redirect to /auth (prevents "redirect loop" when cookies
   // are not set). Keep strict auth behavior in production.

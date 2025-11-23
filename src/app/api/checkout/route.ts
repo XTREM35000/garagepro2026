@@ -38,11 +38,11 @@ export async function POST(request: Request) {
     }
 
     // Récupérer l'organisation de l'utilisateur
-    const { data: userDataRaw, error: userError } = await supabase
+    const { data: userDataRaw, error: userError } = await (supabase as any)
       .from('users')
       .select('organisation_id')
       .eq('id', user.id)
-      .single() as any
+      .single();
 
     const userData = userDataRaw as any
 
