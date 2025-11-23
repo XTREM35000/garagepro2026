@@ -6,7 +6,7 @@
 .env.example
 .env.* 
 
-
+build_output*
 # Dependencies
 node_modules
 .pnp
