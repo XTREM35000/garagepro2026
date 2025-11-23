@@ -96,13 +96,17 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
       setSetupState(state);
 
+      console.log("Setup state:", state);
       if (!state.superAdminExists) {
+        console.log("Redirection vers /onboarding/super-admin");
         setMessage("Aucun Super Admin trouvé, redirection vers création…");
         setTimeout(() => router.push("/onboarding/super-admin"), 1500);
       } else if (!state.tenantAdminExists) {
+        console.log("Redirection vers /onboarding/tenant-admin");
         setMessage("Aucun Admin Tenant trouvé, redirection vers création…");
         setTimeout(() => router.push("/onboarding/tenant-admin"), 1500);
       } else {
+        console.log("Redirection vers /auth");
         setMessage("Super Admin et Admin Tenant trouvés, redirection vers authentification…");
         setTimeout(() => router.push("/auth"), 1500);
       }
