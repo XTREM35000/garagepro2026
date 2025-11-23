@@ -74,45 +74,29 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
   const handleConnectClick = async () => {
     setLoading(true);
-    setMessage("Vérification de l'état du setup…");
+    setMessage("Vérification du setup…");
 
     try {
-      let state: SetupState = { superAdminExists: false, tenantAdminExists: false };
+      const res = await fetch("/api/setup/status", { cache: "no-store" });
 
-      if (setupState) {
-        state = setupState;
-      } else {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 8000);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        try {
-          const res = await fetch("/api/setup/status", { cache: "no-store", signal: controller.signal });
-          clearTimeout(timeout);
-          if (res.ok) state = await res.json();
-        } catch (err) {
-          console.error("Erreur fetch /api/setup/status:", err);
-        }
-      }
+      const json = await res.json();
+      setSetupState(json);
 
-      setSetupState(state);
-
-      console.log("Setup state:", state);
-      if (!state.superAdminExists) {
-        console.log("Redirection vers /onboarding/super-admin");
-        setMessage("Aucun Super Admin trouvé, redirection vers création…");
+      if (!json.superAdminExists) {
+        setMessage("Super Admin absent, redirection vers création…");
         setTimeout(() => router.push("/onboarding/super-admin"), 1500);
-      } else if (!state.tenantAdminExists) {
-        console.log("Redirection vers /onboarding/tenant-admin");
-        setMessage("Aucun Admin Tenant trouvé, redirection vers création…");
+      } else if (!json.tenantAdminExists) {
+        setMessage("Tenant Admin absent, redirection vers création…");
         setTimeout(() => router.push("/onboarding/tenant-admin"), 1500);
       } else {
-        console.log("Redirection vers /auth");
-        setMessage("Super Admin et Admin Tenant trouvés, redirection vers authentification…");
+        setMessage("Super Admin et Tenant Admin trouvés, redirection vers Auth…");
         setTimeout(() => router.push("/auth"), 1500);
       }
-    } catch (err) {
-      console.error(err);
-      setMessage("Impossible de vérifier le setup. Redirection vers création Super Admin…");
+    } catch (err: any) {
+      console.error("Erreur setup:", err);
+      setMessage("Impossible de vérifier le setup. Redirection vers Super Admin…");
       setTimeout(() => router.push("/onboarding/super-admin"), 2000);
     } finally {
       setLoading(false);
