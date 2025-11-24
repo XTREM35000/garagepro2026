@@ -23,6 +23,8 @@ export const modifyVehicleSchema = z.object({
   marque: z.string().min(1, 'Marque requise'),
   modele: z.string().min(1, 'Modèle requis'),
   status: z.enum(['EN_COURS', 'TERMINE', 'LIVRE']),
+
+
 })
 
 export const payslipSchema = z.object({

@@ -14,13 +14,11 @@ enum UserRole {
   viewer
   user
 }
-
-
-
+ 
 enum VehicleStatus {
-  AVAILABLE
-  BUSY
-  MAINTENANCE
+  EN_COURS
+  TERMINE
+  LIVRE
 }
 
 enum VehiclePhotoType {
