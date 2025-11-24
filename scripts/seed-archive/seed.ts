@@ -1,3 +1,7 @@
+// Archive of original prisma/seed.ts
+// Moved here by automated refactor on 2025-11-24 because deletion in the workspace failed.
+// Original seed content kept for reference. Remove this file when you no longer need it.
+
 import { PrismaClient, UserRole, VehicleStatus, InvoiceStatus, SubscriptionStatus } from '@prisma/client';
 import { randomUUID } from 'crypto';
 
@@ -72,7 +76,7 @@ async function main() {
         statut: InvoiceStatus.BROUILLON,
         vehicleId: vehicle.id,
         clientNom: `Client ${invIndex}`,
-        clientTel: `225700000${String(invIndex).padStart(2, '0')}`, // Obligatoire
+        clientTel: `225700000${String(invIndex).padStart(2, '0')}`,
         tenantId: tenant.id,
         createdById: createdBy.id,
       },
@@ -87,8 +91,8 @@ async function main() {
       id: randomUUID(),
       plan: 'basic',
       status: SubscriptionStatus.ACTIVE,
-      stripeCustomerId: randomUUID(),      // Obligatoire
-      stripeSubscriptionId: randomUUID(),  // Obligatoire
+      stripeCustomerId: randomUUID(),
+      stripeSubscriptionId: randomUUID(),
       tenantId: tenant.id,
     },
   });
