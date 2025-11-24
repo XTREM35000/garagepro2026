@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole, VehicleStatus, VehiclePhotoType, CashType, InvoiceStatus, SubscriptionStatus } from '@prisma/client';
+import { PrismaClient, UserRole, VehicleStatus, InvoiceStatus, SubscriptionStatus } from '@prisma/client';
 import { randomUUID } from 'crypto';
 
 const prisma = new PrismaClient();
@@ -8,7 +8,7 @@ function randFrom<T>(arr: T[]): T {
 }
 
 async function main() {
-  // Création du tenant (ou récupération si existant)
+  // Création du tenant
   let tenant = await prisma.tenant.findFirst({ where: { name: 'Garage Principal' } });
   if (!tenant) {
     tenant = await prisma.tenant.create({
@@ -60,7 +60,7 @@ async function main() {
   }
   console.log('Véhicules créés:', vehicles.length);
 
-  // Création des factures (éviter conflit vehicleId)
+  // Création des factures
   let invIndex = 1;
   for (const vehicle of vehicles) {
     const createdBy = randFrom(users);
@@ -69,15 +69,14 @@ async function main() {
         id: randomUUID(),
         numero: `INV-2025-${String(invIndex).padStart(4, '0')}`,
         total: Math.floor(Math.random() * 500000) + 50000,
-        statut: InvoiceStatus.ANNULEE, // ou BROUILLON si tu as changé l'enum en français
+        statut: InvoiceStatus.BROUILLON,
         vehicleId: vehicle.id,
         clientNom: `Client ${invIndex}`,
-        clientTel: `0700000${String(invIndex).padStart(3, '0')}`, // <- ajouté
+        clientTel: `225700000${String(invIndex).padStart(2, '0')}`, // Obligatoire
         tenantId: tenant.id,
         createdById: createdBy.id,
       },
     });
-
     invIndex++;
   }
   console.log('Factures créées:', vehicles.length);
@@ -88,6 +87,8 @@ async function main() {
       id: randomUUID(),
       plan: 'basic',
       status: SubscriptionStatus.ACTIVE,
+      stripeCustomerId: randomUUID(),      // Obligatoire
+      stripeSubscriptionId: randomUUID(),  // Obligatoire
       tenantId: tenant.id,
     },
   });
