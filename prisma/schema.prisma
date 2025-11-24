@@ -1,7 +1,3 @@
-// =======================================================
-// 🚗 Prisma Schema - SaaS Multi-Tenant (Garages)
-// =======================================================
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,227 +7,135 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// =======================================================
-// ENUMS
-// =======================================================
-
-enum UserRole {
-  super_admin
-  admin
-  agent_photo
-  caissier
-  comptable
-  comptable_instance
-  technicien
-  viewer
-}
-
-enum VehicleStatus {
-  EN_COURS
-  TERMINE
-  LIVRE
-}
-
-enum VehiclePhotoType {
-  ENTREE
-  SORTIE
-  DEGAT
-}
-
-enum CashType {
-  ENTREE
-  SORTIE
-}
-
-enum InvoiceStatus {
-  BROUILLON
-  PAYEE
-  ANNULEE
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  EXPIRE
-  EN_ATTENTE
-}
-
-// =======================================================
-// MODELS
-// =======================================================
-
-// 🔹 Organisation / Garage / Instance
 model Tenant {
-  id        String    @id @default(uuid())
+  id        String @id @default(uuid()) @db.Uuid
   name      String
-  address   String?
+  address   String
   logoUrl   String?
   rccm      String?
-  plan      String?
-  stripeId  String?   @unique
+  plan      String
+  stripeId  String?
   trialEnds DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  users         User[]
-  vehicles      Vehicle[]
-  stockItems    StockItem[]
-  invoices      Invoice[]
-  subscriptions Subscription[]
-  cashRegisters CashRegister[]
-  expenses      Expense[]
-
-  @@index([stripeId])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  
+  users          User[]
+  cashRegisters  CashRegister[]
+  expenses       Expense[]
+  invoices       Invoice[]
+  stockItems     StockItem[]
+  subscriptions  Subscription[]
+  vehicles       Vehicle[]
 }
 
-// 🔹 Utilisateurs
 model User {
-  /// ID = Supabase Auth ID (uuid)
-  id        String   @id @db.Uuid
-  name      String?
-  avatarUrl String?
-  role      UserRole @default(viewer)
-  tenantId  String   @db.Uuid
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String          @id @default(uuid()) @db.Uuid
+  name          String
+  avatarUrl     String?
+  role          String
+  tenantId      String          @db.Uuid
+  tenant        Tenant          @relation(fields: [tenantId], references: [id])
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now())
 
-  tenant   Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  photos   VehiclePhoto[]
-  invoices Invoice[]
-  cashes   CashRegister[]
-  expenses Expense[]
-
-  @@index([tenantId])
-  @@index([role])
+  cashRegisters CashRegister[]  @relation("UserCashRegisters")
+  expenses      Expense[]       @relation("UserExpenses")
+  invoices      Invoice[]       @relation("UserInvoices")
+  vehiclePhotos VehiclePhoto[]  @relation("UserVehiclePhotos")
 }
 
-// 🔹 Véhicules
-model Vehicle {
-  id          String        @id @default(uuid())
-  marque      String
-  modele      String
-  immatricule String        @unique
-  status      VehicleStatus @default(EN_COURS)
-  tenantId    String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  tenant  Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  photos  VehiclePhoto[]
-  invoice Invoice?
-
-  @@index([tenantId])
-  @@index([status])
-}
-
-// 🔹 Photos liées aux véhicules
-model VehiclePhoto {
-  id        String           @id @default(uuid())
-  type      VehiclePhotoType
-  url       String
-  takenById String
-  vehicleId String
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-
-  takenBy User    @relation(fields: [takenById], references: [id], onDelete: Cascade)
-  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-
-  @@index([vehicleId])
-  @@index([takenById])
-}
-
-// 🔹 Stock / Pièces détachées
-model StockItem {
-  id          String   @id @default(uuid())
-  nom         String
-  categorie   String
-  quantite    Int
-  prixAchat   Decimal
-  prixVente   Decimal
-  seuilAlerte Int
-  tenantId    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  @@index([tenantId])
-  @@index([categorie])
-}
-
-// 🔹 Caisse
 model CashRegister {
-  id        String   @id @default(uuid())
-  montant   Decimal
-  type      CashType
+  id        String   @id @default(uuid()) @db.Uuid
+  montant   Float
+  type      String
   motif     String
-  faitParId String
-  tenantId  String
+  faitParId String   @db.Uuid
+  faitPar   User     @relation("UserCashRegisters", fields: [faitParId], references: [id])
+  tenantId  String   @db.Uuid
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  faitPar User   @relation(fields: [faitParId], references: [id], onDelete: Cascade)
-  tenant  Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  @@index([tenantId])
-  @@index([faitParId])
-  @@index([type])
+  updatedAt DateTime @default(now())
 }
 
-// 🔹 Factures
-model Invoice {
-  id          String        @id @default(uuid())
-  numero      String        @unique
-  total       Decimal
-  statut      InvoiceStatus
-  vehicleId   String?       @unique
-  clientNom   String
-  clientTel   String?
-  createdById String?
-  tenantId    String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  createdBy User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
-  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  @@index([tenantId])
-  @@index([vehicleId])
-  @@index([statut])
-}
-
-// 🔹 Abonnements Stripe
-model Subscription {
-  id                   String             @id @default(uuid())
-  plan                 String
-  status               SubscriptionStatus
-  stripeCustomerId     String?
-  stripeSubscriptionId String?
-  tenantId             String
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  @@index([tenantId])
-  @@index([status])
-}
-
-// 🔹 Dépenses
 model Expense {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   libelle   String
-  montant   Decimal
+  montant   Float
   categorie String
-  faitParId String
-  tenantId  String
+  faitParId String   @db.Uuid
+  faitPar   User     @relation("UserExpenses", fields: [faitParId], references: [id])
+  tenantId  String   @db.Uuid
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
+}
 
-  faitPar User   @relation(fields: [faitParId], references: [id], onDelete: Cascade)
-  tenant  Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+model Invoice {
+  id          String   @id @default(uuid()) @db.Uuid
+  numero      String
+  total       Float
+  statut      String
+  vehicleId   String   @db.Uuid
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  clientNom   String
+  clientTel   String
+  createdById String   @db.Uuid
+  createdBy   User     @relation("UserInvoices", fields: [createdById], references: [id])
+  tenantId    String   @db.Uuid
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+}
 
-  @@index([tenantId])
-  @@index([faitParId])
+model StockItem {
+  id         String   @id @default(uuid()) @db.Uuid
+  nom        String
+  categorie  String
+  quantite   Int
+  prixAchat  Float
+  prixVente  Float
+  seuilAlerte Int
+  tenantId   String   @db.Uuid
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+}
+
+model Subscription {
+  id                   String   @id @default(uuid()) @db.Uuid
+  plan                 String
+  status               String
+  stripeCustomerId     String
+  stripeSubscriptionId String
+  tenantId             String   @db.Uuid
+  tenant               Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @default(now())
+}
+
+model Vehicle {
+  id        String   @id @default(uuid()) @db.Uuid
+  marque    String
+  modele    String
+  immatricule String
+  status    String
+  tenantId  String   @db.Uuid
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  invoices       Invoice[]
+  vehiclePhotos  VehiclePhoto[]
+}
+
+model VehiclePhoto {
+  id         String   @id @default(uuid()) @db.Uuid
+  type       String
+  url        String
+  takenById  String   @db.Uuid
+  takenBy    User     @relation("UserVehiclePhotos", fields: [takenById], references: [id])
+  vehicleId  String   @db.Uuid
+  vehicle    Vehicle  @relation(fields: [vehicleId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
