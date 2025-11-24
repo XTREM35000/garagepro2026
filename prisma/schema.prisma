@@ -33,9 +33,9 @@ enum CashType {
 }
 
 enum InvoiceStatus {
-  DRAFT
-  PAID
-  CANCELLED
+  PAYEE
+  BROUILLON
+  ANNULEE
 }
 
 enum SubscriptionStatus {
