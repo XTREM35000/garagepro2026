@@ -69,13 +69,15 @@ async function main() {
         id: randomUUID(),
         numero: `INV-2025-${String(invIndex).padStart(4, '0')}`,
         total: Math.floor(Math.random() * 500000) + 50000,
-        statut: InvoiceStatus.BROUILLON,
+        statut: InvoiceStatus.BROUILLON, // ou BROUILLON si tu as changé l'enum en français
         vehicleId: vehicle.id,
         clientNom: `Client ${invIndex}`,
+        clientTel: `0700000${String(invIndex).padStart(3, '0')}`, // <- ajouté
         tenantId: tenant.id,
         createdById: createdBy.id,
       },
     });
+
     invIndex++;
   }
   console.log('Factures créées:', vehicles.length);
