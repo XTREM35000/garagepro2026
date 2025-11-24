@@ -7,6 +7,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// =================== ENUMS ===================
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  BUSY
+  MAINTENANCE
+}
+
+enum VehiclePhotoType {
+  BEFORE
+  AFTER
+}
+
+enum CashType {
+  CASH
+  CARD
+  TRANSFER
+}
+
+enum InvoiceStatus {
+  DRAFT
+  PAID
+  CANCELLED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+}
+
+// =================== MODELS ===================
 model Tenant {
   id        String @id @default(uuid()) @db.Uuid
   name      String
@@ -18,7 +54,7 @@ model Tenant {
   trialEnds DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  
+
   users          User[]
   cashRegisters  CashRegister[]
   expenses       Expense[]
@@ -29,25 +65,25 @@ model Tenant {
 }
 
 model User {
-  id            String          @id @default(uuid()) @db.Uuid
-  name          String
-  avatarUrl     String?
-  role          String
-  tenantId      String          @db.Uuid
-  tenant        Tenant          @relation(fields: [tenantId], references: [id])
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @default(now())
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String
+  avatarUrl String?
+  role      UserRole  @default(USER)
+  tenantId  String    @db.Uuid
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
 
-  cashRegisters CashRegister[]  @relation("UserCashRegisters")
-  expenses      Expense[]       @relation("UserExpenses")
-  invoices      Invoice[]       @relation("UserInvoices")
-  vehiclePhotos VehiclePhoto[]  @relation("UserVehiclePhotos")
+  cashRegisters CashRegister[] @relation("UserCashRegisters")
+  expenses      Expense[]      @relation("UserExpenses")
+  invoices      Invoice[]      @relation("UserInvoices")
+  vehiclePhotos VehiclePhoto[] @relation("UserVehiclePhotos")
 }
 
 model CashRegister {
   id        String   @id @default(uuid()) @db.Uuid
   montant   Float
-  type      String
+  type      CashType
   motif     String
   faitParId String   @db.Uuid
   faitPar   User     @relation("UserCashRegisters", fields: [faitParId], references: [id])
@@ -71,71 +107,71 @@ model Expense {
 }
 
 model Invoice {
-  id          String   @id @default(uuid()) @db.Uuid
-  numero      String
+  id          String       @id @default(uuid()) @db.Uuid
+  numero      String       @unique
   total       Float
-  statut      String
-  vehicleId   String   @db.Uuid
-  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  statut      InvoiceStatus
+  vehicleId   String       @db.Uuid
+  vehicle     Vehicle      @relation(fields: [vehicleId], references: [id])
   clientNom   String
   clientTel   String
-  createdById String   @db.Uuid
-  createdBy   User     @relation("UserInvoices", fields: [createdById], references: [id])
+  createdById String       @db.Uuid
+  createdBy   User         @relation("UserInvoices", fields: [createdById], references: [id])
+  tenantId    String       @db.Uuid
+  tenant      Tenant       @relation(fields: [tenantId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now())
+}
+
+model StockItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  nom         String
+  categorie   String
+  quantite    Int
+  prixAchat   Float
+  prixVente   Float
+  seuilAlerte Int
   tenantId    String   @db.Uuid
   tenant      Tenant   @relation(fields: [tenantId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
 }
 
-model StockItem {
-  id         String   @id @default(uuid()) @db.Uuid
-  nom        String
-  categorie  String
-  quantite   Int
-  prixAchat  Float
-  prixVente  Float
-  seuilAlerte Int
-  tenantId   String   @db.Uuid
-  tenant     Tenant   @relation(fields: [tenantId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
-}
-
 model Subscription {
-  id                   String   @id @default(uuid()) @db.Uuid
+  id                   String             @id @default(uuid()) @db.Uuid
   plan                 String
-  status               String
+  status               SubscriptionStatus
   stripeCustomerId     String
   stripeSubscriptionId String
-  tenantId             String   @db.Uuid
-  tenant               Tenant   @relation(fields: [tenantId], references: [id])
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @default(now())
+  tenantId             String             @db.Uuid
+  tenant               Tenant             @relation(fields: [tenantId], references: [id])
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @default(now())
 }
 
 model Vehicle {
-  id        String   @id @default(uuid()) @db.Uuid
-  marque    String
-  modele    String
+  id         String        @id @default(uuid()) @db.Uuid
+  marque     String
+  modele     String
   immatricule String
-  status    String
-  tenantId  String   @db.Uuid
-  tenant    Tenant   @relation(fields: [tenantId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  status     VehicleStatus
+  tenantId   String        @db.Uuid
+  tenant     Tenant        @relation(fields: [tenantId], references: [id])
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @default(now())
 
-  invoices       Invoice[]
-  vehiclePhotos  VehiclePhoto[]
+  invoices      Invoice[]
+  vehiclePhotos VehiclePhoto[]
 }
 
 model VehiclePhoto {
-  id         String   @id @default(uuid()) @db.Uuid
-  type       String
+  id         String           @id @default(uuid()) @db.Uuid
+  type       VehiclePhotoType
   url        String
-  takenById  String   @db.Uuid
-  takenBy    User     @relation("UserVehiclePhotos", fields: [takenById], references: [id])
-  vehicleId  String   @db.Uuid
-  vehicle    Vehicle  @relation(fields: [vehicleId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
+  takenById  String           @db.Uuid
+  takenBy    User             @relation("UserVehiclePhotos", fields: [takenById], references: [id])
+  vehicleId  String           @db.Uuid
+  vehicle    Vehicle          @relation(fields: [vehicleId], references: [id])
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @default(now())
 }
