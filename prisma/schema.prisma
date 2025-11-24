@@ -9,10 +9,10 @@ datasource db {
 
 // =================== ENUMS ===================
 enum UserRole {
-  SUPER_ADMIN
-  TENANT_ADMIN
-  VIEWER
-  USER
+  super_admin
+  tenant_admin
+  viewer
+  user
 }
 
 
