@@ -26,31 +26,31 @@ const SIDEBAR_MENU: SidebarGroup[] = [
   {
     group: "Général",
     items: [
-      { key: "dashboard", label: "Tableau de bord", icon: AnimatedLogoGarage, href: "/dashboard", rolesAllowed: ["viewer", "technicien", "caissier", "agent_photo", "comptable", "admin", "super_admin"] },
+      { key: "dashboard", label: "Tableau de bord", icon: AnimatedLogoGarage, href: "/dashboard", rolesAllowed: ["VIEWER", "technicien", "caissier", "agent_photo", "comptable", "TENANT_ADMIN", "SUPER_ADMIN"] },
     ],
   },
   {
     group: "Atelier",
     items: [
-      { key: "interventions", label: "Interventions", icon: AnimatedLogoGarage, href: "/dashboard/interventions", rolesAllowed: ["agent_photo", "technicien", "admin", "super_admin"] },
-      { key: "atelier", label: "Atelier", icon: AnimatedLogoGarage, href: "/dashboard/atelier", rolesAllowed: ["admin", "super_admin"] },
-      { key: "stock", label: "Stock", icon: AnimatedLogoGarage, href: "/dashboard/stock", rolesAllowed: ["admin", "super_admin"] },
-      { key: "photos", label: "Photos véhicules", icon: AnimatedLogoGarage, href: "/dashboard/photos", rolesAllowed: ["agent_photo", "admin", "super_admin"] },
+      { key: "interventions", label: "Interventions", icon: AnimatedLogoGarage, href: "/dashboard/interventions", rolesAllowed: ["agent_photo", "technicien", "TENANT_ADMIN", "SUPER_ADMIN"] },
+      { key: "atelier", label: "Atelier", icon: AnimatedLogoGarage, href: "/dashboard/atelier", rolesAllowed: ["TENANT_ADMIN", "SUPER_ADMIN"] },
+      { key: "stock", label: "Stock", icon: AnimatedLogoGarage, href: "/dashboard/stock", rolesAllowed: ["TENANT_ADMIN", "SUPER_ADMIN"] },
+      { key: "photos", label: "Photos véhicules", icon: AnimatedLogoGarage, href: "/dashboard/photos", rolesAllowed: ["agent_photo", "TENANT_ADMIN", "SUPER_ADMIN"] },
     ],
   },
   {
     group: "Facturation",
     items: [
-      { key: "factures", label: "Facturation", icon: AnimatedLogoGarage, href: "/dashboard/facturation", rolesAllowed: ["comptable", "admin", "super_admin"] },
-      { key: "caisse", label: "Caisse", icon: AnimatedLogoGarage, href: "/dashboard/caisse", rolesAllowed: ["caissier", "admin", "super_admin"] },
+      { key: "factures", label: "Facturation", icon: AnimatedLogoGarage, href: "/dashboard/facturation", rolesAllowed: ["comptable", "TENANT_ADMIN", "SUPER_ADMIN"] },
+      { key: "caisse", label: "Caisse", icon: AnimatedLogoGarage, href: "/dashboard/caisse", rolesAllowed: ["caissier", "TENANT_ADMIN", "SUPER_ADMIN"] },
     ],
   },
   {
     group: "Administration",
     items: [
-      { key: "settings", label: "Paramètres", icon: AnimatedLogoGarage, href: "/tenant/settings", rolesAllowed: ["admin", "super_admin"] },
-      { key: "admin", label: "Administration", icon: AnimatedLogoGarage, href: "/dashboard/admin", rolesAllowed: ["admin", "super_admin"] },
-      { key: "super", label: "Super Admin", icon: AnimatedLogoGarage, href: "/dashboard/super", rolesAllowed: ["super_admin"] },
+      { key: "settings", label: "Paramètres", icon: AnimatedLogoGarage, href: "/tenant/settings", rolesAllowed: ["TENANT_ADMIN", "SUPER_ADMIN"] },
+      { key: "admin", label: "Administration", icon: AnimatedLogoGarage, href: "/dashboard/admin", rolesAllowed: ["TENANT_ADMIN", "SUPER_ADMIN"] },
+      { key: "super", label: "Super Admin", icon: AnimatedLogoGarage, href: "/dashboard/super", rolesAllowed: ["SUPER_ADMIN"] },
     ],
   },
 ];

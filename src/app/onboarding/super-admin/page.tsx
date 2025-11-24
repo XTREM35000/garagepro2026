@@ -1,5 +1,6 @@
 import React from 'react'
 import { prisma } from '@/lib/prisma'
+import { UserRole } from '@prisma/client'
 import { redirect } from 'next/navigation'
 import SuperAdminClient from '../SuperAdminClient'
 
@@ -9,8 +10,8 @@ export const runtime = 'nodejs'
 export default async function Page() {
   // Server-side check: if super admin already exists, skip to next step
   try {
-    const superAdmin = await prisma.user.findFirst({ where: { role: 'super_admin' } })
-    const tenantAdmin = await prisma.user.findFirst({ where: { role: 'admin' } })
+    const superAdmin = await prisma.user.findFirst({ where: { role: UserRole.SUPER_ADMIN } })
+    const tenantAdmin = await prisma.user.findFirst({ where: { role: UserRole.TENANT_ADMIN } })
 
     if (superAdmin && tenantAdmin) {
       return redirect('/auth')

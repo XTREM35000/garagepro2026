@@ -18,8 +18,8 @@ export default function TenantSettingsPage() {
   // wait for auth to initialize before deciding
   if (loading) return null;
 
-  // only allow admin / super_admin
-  if (!user || !["admin", "super_admin"].includes((user.role ?? "").toString())) {
+  // only allow tenant admin / super admin
+  if (!user || !["TENANT_ADMIN", "SUPER_ADMIN"].includes((user.role ?? "").toString())) {
     router.push("/dashboard");
     return null;
   }

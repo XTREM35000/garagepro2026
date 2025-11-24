@@ -40,7 +40,7 @@ export type SubscriptionPlan = {
   features: string[]
 }
 
-export type UserRole = 'super_admin' | 'admin' | 'agent' | 'viewer'
+export type UserRole = 'SUPER_ADMIN' | 'TENANT_ADMIN' | 'AGENT' | 'VIEWER'
 
 export type Organisation = {
   id: string

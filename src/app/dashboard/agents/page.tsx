@@ -15,7 +15,7 @@ export default function AgentsPage() {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ email: "", name: "", role: "viewer", tenantId: "demo" });
+  const [form, setForm] = useState({ email: "", name: "", role: "VIEWER", tenantId: "demo" });
 
   // reusable loader used by effects and handlers
   async function load() {
@@ -47,7 +47,7 @@ export default function AgentsPage() {
     function checkHash() {
       if (typeof window === 'undefined') return;
       if (window.location.hash === '#add') {
-        setEditingId(null); setForm({ email: "", name: "", role: "viewer", tenantId: "demo" }); setOpen(true);
+        setEditingId(null); setForm({ email: "", name: "", role: "VIEWER", tenantId: "demo" }); setOpen(true);
       }
     }
     checkHash();
@@ -55,7 +55,7 @@ export default function AgentsPage() {
     return () => window.removeEventListener('hashchange', checkHash);
   }, []);
 
-  function openAdd() { setEditingId(null); setForm({ email: "", name: "", role: "viewer", tenantId: "demo" }); setOpen(true); }
+  function openAdd() { setEditingId(null); setForm({ email: "", name: "", role: "VIEWER", tenantId: "demo" }); setOpen(true); }
   function openEdit(a: Agent) { setEditingId(a.id); setForm({ email: a.email, name: a.name || "", role: a.role, tenantId: a.tenantId }); setOpen(true); }
 
   async function save() {
@@ -86,7 +86,7 @@ export default function AgentsPage() {
       </div>
     </div>,
     a.name || "—",
-    <span key={`role-${a.id}`} className={`badge badge--role ${a.role === 'super_admin' ? 'green' : ''}`}>{a.role}</span>,
+    <span key={`role-${a.id}`} className={`badge badge--role ${a.role === 'SUPER_ADMIN' ? 'green' : ''}`}>{a.role}</span>,
     <div key={`tenant-${a.id}`} className="text-sm text-gray-600">{a.tenantId}</div>,
     <div key={`actions-${a.id}`} className="flex gap-2">
       <button onClick={() => openEdit(a)} title="Éditer" className="p-2 rounded-md hover:bg-gray-100"><Edit2 size={16} /></button>
@@ -112,8 +112,8 @@ export default function AgentsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <MetricsCard title="Total agents" value={agents.length} icon={UserPlus} />
-          <MetricsCard title="Admins" value={agents.filter(a => a.role === 'admin').length} icon={Edit2} />
-          <MetricsCard title="Super admins" value={agents.filter(a => a.role === 'super_admin').length} icon={Trash2} />
+          <MetricsCard title="Admins" value={agents.filter(a => a.role === 'TENANT_ADMIN').length} icon={Edit2} />
+          <MetricsCard title="Super admins" value={agents.filter(a => a.role === 'SUPER_ADMIN').length} icon={Trash2} />
         </div>
 
         <Card3D>
@@ -134,7 +134,7 @@ export default function AgentsPage() {
 
           <label className="text-sm font-medium">Rôle</label>
           <select value={form.role} onChange={(e) => setForm(prev => ({ ...prev, role: e.target.value }))} className="w-full rounded border px-3 py-2">
-            {['super_admin', 'admin', 'agent_photo', 'caissier', 'comptable', 'comptable_instance', 'technicien', 'viewer'].map(r => (
+            {['SUPER_ADMIN', 'TENANT_ADMIN', 'AGENT_PHOTO', 'CAISSIER', 'COMPTABLE', 'COMPTABLE_INSTANCE', 'TECHNICIEN', 'VIEWER'].map(r => (
               <option key={r} value={r}>{r}</option>
             ))}
           </select>

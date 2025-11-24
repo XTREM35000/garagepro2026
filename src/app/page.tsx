@@ -6,6 +6,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
+import { UserRole } from '@prisma/client'
 
 export default async function Page() {
   // Vérifier la session côté serveur et rediriger vers /dashboard si connecté
@@ -21,8 +22,8 @@ export default async function Page() {
 
   // Server-side check of setup state (always server-side using Prisma)
   try {
-    const superAdmin = await prisma.user.findFirst({ where: { role: 'super_admin' } })
-    const tenantAdmin = await prisma.user.findFirst({ where: { role: 'admin' } })
+    const superAdmin = await prisma.user.findFirst({ where: { role: UserRole.SUPER_ADMIN } })
+    const tenantAdmin = await prisma.user.findFirst({ where: { role: UserRole.TENANT_ADMIN } })
 
     const initialSetupState = {
       superAdminExists: !!superAdmin,

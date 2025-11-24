@@ -41,7 +41,7 @@ export async function PUT(req: Request) {
 
   let user
   try {
-    user = await verifyUserAndRole(token, 'super_admin')
+    user = await verifyUserAndRole(token, 'SUPER_ADMIN')
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 403 })
   }

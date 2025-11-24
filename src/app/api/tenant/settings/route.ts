@@ -3,6 +3,7 @@ export const runtime = "nodejs";
 
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { UserRole } from '@prisma/client'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 
@@ -15,7 +16,7 @@ export async function POST(req: Request) {
     const userId = session.user.id
     const user = await prisma.user.findUnique({ where: { id: userId } })
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    if (!(user.role === 'admin' || user.role === 'super_admin')) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    if (!(user.role === UserRole.TENANT_ADMIN || user.role === UserRole.SUPER_ADMIN)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
     const body = await req.json()
     const { tenantId, name, address, rccm, plan } = body

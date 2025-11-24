@@ -5,6 +5,7 @@ export const preferredRegion = "fra1";
 import { NextResponse } from "next/server";
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@supabase/supabase-js';
+import { UserRole } from '@prisma/client';
 
 export async function GET() {
   const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -24,7 +25,7 @@ export async function GET() {
         const { data: superData, error: superErr } = await supabaseAdmin
           .from('users')
           .select('id')
-          .eq('role', 'super_admin')
+          .eq('role', 'SUPER_ADMIN')
           .limit(1);
         if (!superErr && Array.isArray(superData) && superData.length > 0) superAdminExists = true;
         else if (superErr) console.error('Supabase super_admin error:', superErr.message ?? superErr);
@@ -34,15 +35,15 @@ export async function GET() {
         const { data: tenantData, error: tenantErr } = await supabaseAdmin
           .from('users')
           .select('id')
-          .eq('role', 'admin')
+          .eq('role', 'TENANT_ADMIN')
           .limit(1);
         if (!tenantErr && Array.isArray(tenantData) && tenantData.length > 0) tenantAdminExists = true;
         else if (tenantErr) console.error('Supabase admin error:', tenantErr.message ?? tenantErr);
       } catch (err: any) { console.error('Supabase admin query failed:', err); }
 
     } else {
-      const superAdmin = await prisma.user.findFirst({ where: { role: 'super_admin' } });
-      const tenantAdmin = await prisma.user.findFirst({ where: { role: 'admin' } });
+      const superAdmin = await prisma.user.findFirst({ where: { role: UserRole.SUPER_ADMIN } });
+      const tenantAdmin = await prisma.user.findFirst({ where: { role: UserRole.TENANT_ADMIN } });
       superAdminExists = !!superAdmin;
       tenantAdminExists = !!tenantAdmin;
     }
