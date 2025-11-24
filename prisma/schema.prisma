@@ -11,8 +11,10 @@ datasource db {
 enum UserRole {
   SUPER_ADMIN
   TENANT_ADMIN
-  VIEWER 
+  VIEWER
+  USER
 }
+
 
 
 enum VehicleStatus {
