@@ -9,9 +9,11 @@ datasource db {
 
 // =================== ENUMS ===================
 enum UserRole {
-  ADMIN
-  USER
+  SUPER_ADMIN
+  TENANT_ADMIN
+  VIEWER 
 }
+
 
 enum VehicleStatus {
   AVAILABLE
