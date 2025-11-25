@@ -1,14 +1,31 @@
-import { PrismaClient } from '@prisma/client';
-import { NextRequest, NextResponse } from 'next/server';
+// // app/api/tenants/route.ts
+// import { prisma } from '@/lib/db';
+// import { NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
+// export async function GET() {
+//   console.log('🟡 Début de GET /api/tenants');
 
-export default async function handler(req: NextRequest) {
-  try {
-    const tenants = await prisma.tenant.findMany();
-    return NextResponse.json({ tenants }, { status: 200 });
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
-  }
-}
+//   try {
+//     console.log('🟡 Avant prisma.tenant.findMany()');
+//     const tenants = await prisma.tenant.findMany();
+//     console.log('🟡 Après prisma.tenant.findMany(), count:', tenants.length);
+
+//     return NextResponse.json({
+//       success: true,
+//       tenants,
+//       count: tenants.length
+//     }, { status: 200 });
+
+//   } catch (err: any) {
+//     console.error('🔴 Erreur détaillée dans /api/tenants:');
+//     console.error('Message:', err.message);
+//     console.error('Code:', err.code);
+//     console.error('Stack:', err.stack);
+
+//     return NextResponse.json({
+//       success: false,
+//       error: err.message,
+//       code: err.code
+//     }, { status: 500 });
+//   }
+// }
