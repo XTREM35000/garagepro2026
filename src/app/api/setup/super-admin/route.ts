@@ -83,10 +83,28 @@ export async function POST(req: Request) {
     // Create user via Supabase with generated UUID
     const userId = crypto.randomUUID()
     const now = new Date().toISOString()
+
+    // First create user in auth.users
+    const { data: authUser, error: authErr } = await client.auth.admin.createUser({
+      email,
+      password,
+      user_metadata: {
+        name: `${firstName} ${lastName}`,
+        avatarUrl: avatarUrl ?? null
+      }
+    })
+
+    if (authErr) {
+      console.error('failed to create auth user', authErr)
+      return NextResponse.json({ error: 'Failed to create auth user' }, { status: 500 })
+    }
+
+    // Then create user in User table with auth user id
+    const authUserId = authUser?.user?.id ?? userId
     const { data: createdUsers, error: insertErr } = await client
       .from('User')
       .insert({
-        id: userId,
+        id: authUserId,
         email,
         password: hashed,
         name: `${firstName} ${lastName}`,
