@@ -37,7 +37,8 @@ export async function POST(req: Request) {
     const { tenantId, name, address, rccm, plan } = body
     if (!tenantId) return NextResponse.json({ error: 'Missing tenantId' }, { status: 400 })
 
-    const { data: updatedTenants, error: updateErr } = await supabaseAdmin
+    const client = supabaseAdmin as any
+    const { data: updatedTenants, error: updateErr } = await client
       .from('Tenant')
       .update({ name, address, rccm, plan })
       .eq('id', tenantId)

@@ -24,7 +24,8 @@ export async function POST(req: Request) {
     }
 
     // find platform tenant (should exist) via Supabase
-    const { data: platformRows, error: platformErr } = await supabaseAdmin
+    const client = supabaseAdmin as any
+    const { data: platformRows, error: platformErr } = await client
       .from('Tenant')
       .select('id')
       .eq('isPlatform', true)
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
       tenantId = (platformRows[0] as any).id
     } else {
       // create platform tenant
-      const { data: createdTenants, error: createErr } = await supabaseAdmin
+      const { data: createdTenants, error: createErr } = await client
         .from('Tenant')
         .insert({ name: 'PLATFORM', plan: 'platform', isPlatform: true })
         .select('id')
@@ -60,7 +61,7 @@ export async function POST(req: Request) {
     }
 
     // Check existing user
-    const { data: existingUsers, error: userErr } = await supabaseAdmin
+    const { data: existingUsers, error: userErr } = await client
       .from('User')
       .select('id')
       .eq('email', email)
@@ -78,7 +79,7 @@ export async function POST(req: Request) {
     const hashed = hashPassword(password)
 
     // Create user via Supabase
-    const { data: createdUsers, error: insertErr } = await supabaseAdmin
+    const { data: createdUsers, error: insertErr } = await client
       .from('User')
       .insert({
         email,

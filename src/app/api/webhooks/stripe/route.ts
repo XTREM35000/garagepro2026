@@ -6,6 +6,15 @@ import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { supabase } from '@/lib/supabase'
+import type { SupabaseClient } from '@supabase/supabase-js'
+
+function ensureSupabase(): SupabaseClient {
+  if (!supabase) {
+    console.error('supabase client not configured')
+    throw new Error('Supabase client not configured')
+  }
+  return supabase
+}
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', {
   apiVersion: '2023-10-16',
@@ -44,7 +53,8 @@ export async function POST(req: Request) {
             )
 
             // Récupérer l'organisation via le customer_id
-            const { data: orgRaw } = await (supabase.from('organisations') as any)
+            const client = ensureSupabase()
+            const { data: orgRaw } = await (client.from('organisations') as any)
               .select('id')
               .eq('stripe_id', checkoutSession.customer)
               .single() as any
@@ -53,7 +63,7 @@ export async function POST(req: Request) {
 
             if (org) {
               // Mettre à jour le plan de l'organisation
-              await (supabase.from('organisations') as any)
+              await (client.from('organisations') as any)
                 .update({
                   plan: subscription.items.data[0].price.lookup_key || subscription.items.data[0].price.id,
                   trial_ends: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
@@ -68,7 +78,8 @@ export async function POST(req: Request) {
           const subscription = event.data.object as Stripe.Subscription
 
           // Mettre à jour le statut de l'abonnement
-          const { data: orgRaw } = await (supabase.from('organisations') as any)
+          const client = ensureSupabase()
+          const { data: orgRaw } = await (client.from('organisations') as any)
             .select('id')
             .eq('stripe_id', subscription.customer)
             .single() as any
@@ -76,7 +87,7 @@ export async function POST(req: Request) {
           const org = orgRaw as any
 
           if (org) {
-            await (supabase.from('organisations') as any)
+            await (client.from('organisations') as any)
               .update({
                 plan: event.type === 'customer.subscription.deleted' ? null : subscription.items.data[0].price.lookup_key,
                 trial_ends: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,

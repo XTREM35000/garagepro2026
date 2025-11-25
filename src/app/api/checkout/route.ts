@@ -4,6 +4,15 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server'
 import { getStripeInstance, createStripeSession } from '@/lib/stripe'
 import { supabase } from '@/lib/supabase'
+import type { SupabaseClient } from '@supabase/supabase-js'
+
+function ensureSupabase(): SupabaseClient {
+  if (!supabase) {
+    console.error('supabase client not configured')
+    throw new Error('Supabase client not configured')
+  }
+  return supabase
+}
 import { headers } from 'next/headers'
 import { z } from 'zod'
 import type { Database } from '@/types/supabase'
@@ -28,17 +37,18 @@ export async function POST(request: Request) {
     const json = await request.json()
     const { priceId } = checkoutSchema.parse(json)
 
+    const client = ensureSupabase()
     const {
       data: { user },
       error: authError
-    } = await supabase.auth.getUser()
+    } = await client.auth.getUser()
 
     if (authError || !user) {
       return new NextResponse('Non autorisé', { status: 401 })
     }
 
     // Récupérer l'organisation de l'utilisateur
-    const { data: userDataRaw, error: userError } = await (supabase as any)
+    const { data: userDataRaw, error: userError } = await (client as any)
       .from('users')
       .select('organisation_id')
       .eq('id', user.id)
@@ -51,7 +61,7 @@ export async function POST(request: Request) {
     }
 
     // Récupérer l'organisation avec son stripe_id
-    const { data: orgRaw, error: orgError } = await supabase
+    const { data: orgRaw, error: orgError } = await client
       .from('organisations')
       .select('stripe_id, name')
       .eq('id', userData.organisation_id)
@@ -79,7 +89,7 @@ export async function POST(request: Request) {
       customerId = customer.id
 
       // Mettre à jour l'organisation avec le stripe_id
-      const { error: updateError } = await (supabase
+      const { error: updateError } = await (client
         .from('organisations') as any)
         .update({ stripe_id: customerId })
         .eq('id', userData.organisation_id)

@@ -3,12 +3,14 @@ export const runtime = "nodejs";
 
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
-function ensureAdmin() {
+function ensureAdmin(): SupabaseClient {
   if (!supabaseAdmin) {
     console.error('supabase admin client not configured')
     throw new Error('Supabase admin client not configured')
   }
+  return supabaseAdmin
 }
 
 export async function GET(
@@ -22,8 +24,8 @@ export async function GET(
       return NextResponse.json({ error: 'User ID required' }, { status: 400 })
     }
 
-    ensureAdmin()
-    const { data: rows, error } = await supabaseAdmin
+    const client = ensureAdmin()
+    const { data: rows, error } = await client
       .from('User')
       .select('id, name, avatarUrl, role, tenantId')
       .eq('id', id)
@@ -61,8 +63,8 @@ export async function PATCH(
       return NextResponse.json({ error: 'No update fields provided' }, { status: 400 })
     }
 
-    ensureAdmin()
-    const { data: updatedRows, error } = await supabaseAdmin
+    const client = ensureAdmin()
+    const { data: updatedRows, error } = await client
       .from('User')
       .update(data)
       .eq('id', id)

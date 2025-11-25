@@ -12,11 +12,11 @@ export default function TenantSettings() {
   // Fetch access token on mount
   useEffect(() => {
     const getToken = async () => {
-      const { data, error } = await supabase.auth.getSession()
+      const { data, error } = await supabase!.auth.getSession()
       if (data?.session?.access_token) {
         setToken(data.session.access_token)
         // Pre-fill tenantId from user profile if available
-        const { data: userData } = await supabase.auth.getUser()
+        const { data: userData } = await supabase!.auth.getUser()
         if (userData?.user?.id) {
           // Optionally fetch user profile to get tenantId
         }

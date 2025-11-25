@@ -1,50 +1,35 @@
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
+import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
 
-import { NextResponse } from "next/server";
-import { supabaseAdmin } from '@/lib/supabase';
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export async function GET() {
-  let superAdminExists = false;
-  let tenantAdminExists = false;
-  let dbConnected = false;
-
   try {
-    if (!supabaseAdmin) {
-      console.error('/api/setup/status: supabase admin client not configured')
-      return NextResponse.json({ superAdminExists, tenantAdminExists, dbConnected, needsSetup: true })
-    }
-
-    // Try a small query against our User table to ensure connection
-    const { data: superData, error: superErr } = await supabaseAdmin
+    // Utilise l'API REST Supabase
+    const { data: users, error } = await supabase
       .from('User')
-      .select('id')
-      .eq('role', 'SUPER_ADMIN')
-      .limit(1)
+      .select('role');
 
-    if (!superErr) {
-      dbConnected = true
-      superAdminExists = Array.isArray(superData) && superData.length > 0
-    } else {
-      console.error('supabase super admin check error', superErr)
-    }
+    if (error) throw error;
 
-    const { data: tenantData, error: tenantErr } = await supabaseAdmin
-      .from('User')
-      .select('id')
-      .eq('role', 'TENANT_ADMIN')
-      .limit(1)
+    const superAdminExists = users?.some(user => user.role === 'SUPER_ADMIN') || false;
+    const tenantAdminExists = users?.some(user => user.role === 'TENANT_ADMIN') || false;
 
-    if (!tenantErr) {
-      tenantAdminExists = Array.isArray(tenantData) && tenantData.length > 0
-    } else {
-      console.error('supabase tenant admin check error', tenantErr)
-    }
+    return NextResponse.json({
+      superAdminExists,
+      tenantAdminExists,
+      dbConnected: true
+    });
 
-  } catch (err: any) {
-    console.error('Error in /api/setup/status:', err?.message ?? err)
-    return NextResponse.json({ superAdminExists, tenantAdminExists, dbConnected, error: String(err), needsSetup: true }, { status: 200 })
+  } catch (error: any) {
+    return NextResponse.json({
+      superAdminExists: false,
+      tenantAdminExists: false,
+      dbConnected: false,
+      error: error.message
+    });
   }
-
-  return NextResponse.json({ superAdminExists, tenantAdminExists, dbConnected, needsSetup: !superAdminExists }, { status: 200 })
 }

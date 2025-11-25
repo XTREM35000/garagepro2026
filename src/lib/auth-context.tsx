@@ -34,7 +34,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     // Vérifie la session initiale
     const checkSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
+        const { data: { session } } = await supabase!.auth.getSession()
         // map Supabase SDK user to our AuthUser shape
         const u = session?.user
         if (u) {
@@ -62,7 +62,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     // Écoute les changements d'auth
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase!.auth.onAuthStateChange((event, session) => {
       const u = (session as any)?.user
       if (u) {
         const mapped = {
@@ -89,7 +89,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       setLoading(true)
       console.log('[AuthContext] loading set to true')
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase!.auth.signInWithPassword({
         email,
         password,
       })
@@ -112,7 +112,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const signUp = async (email: string, password: string): Promise<void> => {
     try {
       setLoading(true)
-      const { error } = await supabase.auth.signUp({
+      const { error } = await supabase!.auth.signUp({
         email,
         password,
       })
@@ -123,7 +123,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   }
 
   const signOut = async (): Promise<void> => {
-    const { error } = await supabase.auth.signOut()
+    const { error } = await supabase!.auth.signOut()
     if (error) throw error
   }
 
@@ -158,7 +158,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         if (data.email) supPayload.email = data.email
         if (data.password) supPayload.password = data.password
 
-        const { error: supError } = await supabase.auth.updateUser(supPayload)
+        const { error: supError } = await supabase!.auth.updateUser(supPayload)
         if (supError) {
           console.warn('[auth-context] supabase updateUser error', supError)
           supErrorMsg = supError.message
