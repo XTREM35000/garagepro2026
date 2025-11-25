@@ -85,14 +85,18 @@ export async function POST(req: Request) {
     const now = new Date().toISOString()
 
     // First create user in auth.users
-    const { data: authUser, error: authErr } = await client.auth.admin.createUser({
+    const bypassConfirm = process.env.SUPABASE_BYPASS_EMAIL_CONFIRM === 'true'
+    const createUserPayload: any = {
       email,
       password,
       user_metadata: {
         name: `${firstName} ${lastName}`,
         avatarUrl: avatarUrl ?? null
       }
-    })
+    }
+    if (bypassConfirm) createUserPayload.email_confirm = true
+
+    const { data: authUser, error: authErr } = await client.auth.admin.createUser(createUserPayload)
 
     if (authErr) {
       console.error('failed to create auth user', authErr)
