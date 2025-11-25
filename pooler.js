@@ -9,6 +9,7 @@ async function test() {
   try {
     await prisma.$connect();
     console.log('✅ Pooler Transaction Mode OK!');
+    console.log('✅ Pooler Transaction Mode OK!');
     const result = await prisma.$queryRaw`SELECT version()`;
     console.log(result[0]);
   } catch (e) {
