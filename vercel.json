@@ -2,6 +2,5 @@
   "version": 2,
   "buildCommand": "npm run vercel-build",
   "installCommand": "npm ci --include=dev",
-  "framework": "nextjs",
-  "nodejs": "18.x"
+  "framework": "nextjs"
 }
