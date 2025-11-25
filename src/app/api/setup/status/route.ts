@@ -8,44 +8,41 @@ import { UserRole } from '@prisma/client';
 export async function GET() {
   let superAdminExists = false;
   let tenantAdminExists = false;
-  let debugInfo = {};
+  let dbConnected = false;
 
   try {
-    // Debug: Afficher les infos de connexion
-    debugInfo = {
-      databaseUrl: process.env.DATABASE_URL?.substring(0, 80) + '...',
-      usesNewProject: process.env.DATABASE_URL?.includes('mgnukermjfidhmpyrxyl'),
-      usesOldProject: process.env.DATABASE_URL?.includes('tpbfszuvltclkdsjxrgw'),
-      timestamp: new Date().toISOString()
-    };
+    // Test de connexion basique d'abord
+    await prisma.$queryRaw`SELECT 1 as connection_test`;
+    dbConnected = true;
 
-    console.log('Debug setup/status:', debugInfo);
-
-    // Test de connexion simple d'abord
-    await prisma.$queryRaw`SELECT 1 as test`;
-    console.log('✅ Connexion DB OK');
-
-    // Use Prisma to check role existence
-    const superAdmin = await prisma.user.findFirst({ where: { role: UserRole.SUPER_ADMIN } });
-    const tenantAdmin = await prisma.user.findFirst({ where: { role: UserRole.TENANT_ADMIN } });
+    // Vérifier l'existence des utilisateurs
+    const superAdmin = await prisma.user.findFirst({
+      where: { role: UserRole.SUPER_ADMIN }
+    });
+    const tenantAdmin = await prisma.user.findFirst({
+      where: { role: UserRole.TENANT_ADMIN }
+    });
 
     superAdminExists = !!superAdmin;
     tenantAdminExists = !!tenantAdmin;
 
-    console.log('✅ Setup check OK:', { superAdminExists, tenantAdminExists });
-
   } catch (err: any) {
-    console.error('❌ Error in /api/setup/status:', err?.message ?? err);
-    console.error('Debug info:', debugInfo);
+    console.error('Error in /api/setup/status:', err.message);
 
-    // Retourner les infos de debug en cas d'erreur
+    // Retourner l'état même en cas d'erreur
     return NextResponse.json({
       superAdminExists,
       tenantAdminExists,
-      error: err.message,
-      debug: debugInfo
-    }, { status: 200 }); // Toujours 200 pour ne pas casser le frontend
+      dbConnected,
+      error: "Database connection issue",
+      needsSetup: true
+    }, { status: 200 });
   }
 
-  return NextResponse.json({ superAdminExists, tenantAdminExists }, { status: 200 });
+  return NextResponse.json({
+    superAdminExists,
+    tenantAdminExists,
+    dbConnected,
+    needsSetup: !superAdminExists
+  }, { status: 200 });
 }

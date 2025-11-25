@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  return NextResponse.json({
+  const config = {
     // Database
-    databaseUrl: process.env.DATABASE_URL,
+    databaseUrl: process.env.DATABASE_URL?.substring(0, 100) + '...',
     databaseUrlValid: process.env.DATABASE_URL?.includes('mgnukermjfidhmpyrxyl'),
     databaseUrlInvalid: process.env.DATABASE_URL?.includes('tpbfszuvltclkdsjxrgw'),
 
@@ -17,6 +17,9 @@ export async function GET() {
     vercel: process.env.VERCEL,
     region: process.env.VERCEL_REGION,
 
-    timestamp: new Date().toISOString()
-  });
+    timestamp: new Date().toISOString(),
+    status: process.env.DATABASE_URL?.includes('mgnukermjfidhmpyrxyl') ? '✅ CONFIGURATION CORRECTE' : '❌ MAUVAISE CONFIGURATION'
+  };
+
+  return NextResponse.json(config);
 }
