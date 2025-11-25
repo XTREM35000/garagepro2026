@@ -50,9 +50,9 @@ export default function SignupForm() {
       if (!res.ok) {
         setError(json?.error || "Erreur inscription")
       } else {
-        setMessage("✅ Inscription réussie ! Redirection...")
-        // Since email_confirm=true is set on user creation, we can redirect directly
-        // without waiting for email verification
+        setMessage("✅ Inscription réussie ! Connexion...")
+        // Sign in with the credentials - email_confirm=true allows this without email verification
+        await auth.signIn(email, password)
         await new Promise((r) => setTimeout(r, 1200))
         router.push("/dashboard/agents")
       }
