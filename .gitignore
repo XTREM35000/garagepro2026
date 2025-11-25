@@ -1,6 +1,7 @@
 # Env vars
 .env
 .env.local
+.env.production
 # .gitignore
 .env
 .env.example
