@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
@@ -13,7 +13,11 @@
     "env:setup": "node scripts/generate-env.js",
     "db:push": "prisma db push",
     "db:seed": "node -e \"console.error('Seeding disabled by project configuration'); process.exit(1)\"",
-    "apply-rls": "sh scripts/apply-rls.sh"
+    "apply-rls": "sh scripts/apply-rls.sh",
+    "db:migrate": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset --force",
+    "vercel-build": "prisma generate && prisma db push && next build"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
@@ -57,5 +61,8 @@
     "tailwindcss": "^3.3.5",
     "ts-node": "^10.9.1",
     "typescript": "^5.9.3"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   }
 }
