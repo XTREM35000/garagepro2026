@@ -77,15 +77,18 @@ export async function POST(req: Request) {
     const userId = crypto.randomUUID()
     const signupNow = new Date().toISOString()
 
-    // First create user in auth.users
-    const { data: authUser, error: authErr } = await clientAny.auth.admin.createUser({
+    // First create user in auth.users with email_confirm=true to bypass email verification
+    const createUserPayload: any = {
       email,
       password,
+      email_confirm: true,
       user_metadata: {
         name: `${firstName || ""} ${lastName || ""}`.trim() || undefined,
         avatarUrl: avatarUrl ?? null
       }
-    })
+    }
+
+    const { data: authUser, error: authErr } = await clientAny.auth.admin.createUser(createUserPayload)
 
     if (authErr) {
       console.error('failed to create auth user', authErr)
@@ -117,7 +120,13 @@ export async function POST(req: Request) {
 
     const user = (createdUsers as any[])[0];
     const publicUser = { id: user.id, email: user.email, name: user.name, role: user.role, tenantId: user.tenantId };
-    return NextResponse.json({ ok: true, user: publicUser }, { status: 201 });
+
+    // Return session data for automatic login (since email_confirm bypasses the email confirmation requirement)
+    return NextResponse.json({
+      ok: true,
+      user: publicUser,
+      autoLogin: true
+    }, { status: 201 });
   } catch (err: any) {
     console.error(err);
     return NextResponse.json({ error: err.message || "Server error" }, { status: 500 });
