@@ -6,6 +6,7 @@ export async function GET() {
   console.log('🟡 Début de GET /api/tenants');
 
   try {
+    console.log('🟡 Avant ');
     console.log('🟡 Avant prisma.tenant.findMany()');
     const tenants = await prisma.tenant.findMany();
     console.log('🟡 Après prisma.tenant.findMany(), count:', tenants.length);
