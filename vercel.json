@@ -2,16 +2,5 @@
   "version": 2,
   "buildCommand": "npm run vercel-build",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "outputDirectory": ".next",
-  "functions": {
-    "app/api/**/*.ts": {
-      "maxDuration": 30
-    }
-  },
-  "env": {
-    "PRISMA_GENERATE_DATAPROXY": "false",
-    "PRISMA_CLI_QUERY_ENGINE_TYPE": "binary",
-    "PRISMA_CLIENT_ENGINE_TYPE": "binary"
-  }
+  "framework": "nextjs"
 }
