@@ -1,28 +1,27 @@
-import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase'
 
 export async function GET() {
   try {
-    const prisma = new PrismaClient();
+    if (!supabaseAdmin) {
+      return NextResponse.json({ success: false, error: 'Supabase admin client not configured' }, { status: 500 })
+    }
 
-    // Test simple
-    const result = await prisma.$queryRaw<{ version: string }[]>`SELECT version() as version`;
-    const version = result[0].version;
-
-    await prisma.$disconnect();
+    // Simple connectivity check: query a light table
+    const { data, error } = await supabaseAdmin.from('Tenant').select('id').limit(1)
+    if (error) throw error
 
     return NextResponse.json({
       success: true,
       database: 'connected',
-      version: version,
+      sample: Array.isArray(data) ? data.length : 0,
       timestamp: new Date().toISOString()
-    });
+    })
 
   } catch (error: any) {
     return NextResponse.json({
       success: false,
-      error: error.message,
-      databaseUrl: process.env.DATABASE_URL?.substring(0, 50) + '...',
+      error: error?.message ?? String(error),
       timestamp: new Date().toISOString()
     }, { status: 500 });
   }

@@ -1,9 +1,7 @@
 // Next.js App Router - POST
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import crypto from 'crypto'
-
-const prisma = new PrismaClient();
+import { supabaseAdmin } from '@/lib/supabase'
 
 function hashPassword(password: string) {
   const salt = crypto.randomBytes(16).toString('hex')
@@ -13,6 +11,11 @@ function hashPassword(password: string) {
 
 export async function POST(req: Request) {
   try {
+    if (!supabaseAdmin) {
+      console.error('/api/setup/super-admin: supabase admin client not configured')
+      return NextResponse.json({ error: 'Supabase admin client not configured' }, { status: 500 })
+    }
+
     const body = await req.json();
     const { firstName, lastName, email, password, avatarUrl } = body;
 
@@ -20,47 +23,84 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    // find platform tenant (should exist via SQL but if not create)
-    let platform = await prisma.tenant.findFirst({ where: { isPlatform: true } as any } as any);
-    if (!platform) {
-      platform = await prisma.tenant.create({
-        data: {
-          name: "PLATFORM",
-          plan: "platform",
-          isPlatform: true
-        }
-      } as any) as any;
+    // find platform tenant (should exist) via Supabase
+    const { data: platformRows, error: platformErr } = await supabaseAdmin
+      .from('Tenant')
+      .select('id')
+      .eq('isPlatform', true)
+      .limit(1)
+
+    if (platformErr) {
+      console.error('error querying Tenant', platformErr)
+      return NextResponse.json({ error: 'Tenant query failed' }, { status: 500 })
     }
 
-    // ensure platform has an id before using it (TS strict null check)
-    const tenantId = (platform as any)?.id
+    let tenantId: string | null = null
+    if (Array.isArray(platformRows) && platformRows.length > 0) {
+      tenantId = (platformRows[0] as any).id
+    } else {
+      // create platform tenant
+      const { data: createdTenants, error: createErr } = await supabaseAdmin
+        .from('Tenant')
+        .insert({ name: 'PLATFORM', plan: 'platform', isPlatform: true })
+        .select('id')
+        .limit(1)
+
+      if (createErr) {
+        console.error('failed to create platform tenant', createErr)
+        return NextResponse.json({ error: 'Failed to create platform tenant' }, { status: 500 })
+      }
+
+      tenantId = (createdTenants as any[])[0]?.id ?? null
+    }
+
     if (!tenantId) {
-      console.error('Platform tenant created but missing id', platform)
-      return NextResponse.json({ error: 'Platform tenant error' }, { status: 500 })
+      console.error('Platform tenant not available')
+      return NextResponse.json({ error: 'Platform tenant missing' }, { status: 500 })
     }
 
-    // check existing super admin with same email
-    const existing = await prisma.user.findFirst({ where: { email } as any } as any);
-    if (existing) return NextResponse.json({ error: "User already exists" }, { status: 400 });
+    // Check existing user
+    const { data: existingUsers, error: userErr } = await supabaseAdmin
+      .from('User')
+      .select('id')
+      .eq('email', email)
+      .limit(1)
 
-    const hashed = hashPassword(password);
+    if (userErr) {
+      console.error('user lookup failed', userErr)
+      return NextResponse.json({ error: 'User lookup failed' }, { status: 500 })
+    }
 
-    const user = await prisma.user.create({
-      data: {
+    if (Array.isArray(existingUsers) && existingUsers.length > 0) {
+      return NextResponse.json({ error: 'User already exists' }, { status: 400 })
+    }
+
+    const hashed = hashPassword(password)
+
+    // Create user via Supabase
+    const { data: createdUsers, error: insertErr } = await supabaseAdmin
+      .from('User')
+      .insert({
         email,
         password: hashed,
         name: `${firstName} ${lastName}`,
-        avatarUrl,
-        role: ('SUPER_ADMIN' as any),
-        tenantId: tenantId
-      } as any,
-    } as any) as any;
+        avatarUrl: avatarUrl ?? null,
+        role: 'SUPER_ADMIN',
+        tenantId
+      })
+      .select()
+      .limit(1)
 
-    return NextResponse.json({ ok: true, user }, { status: 201 });
+    if (insertErr) {
+      console.error('failed to create user', insertErr)
+      return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
+    }
+
+    const user = (createdUsers as any[])[0] ?? null
+
+    return NextResponse.json({ ok: true, user }, { status: 201 })
   } catch (err: any) {
-    console.error(err);
-    return NextResponse.json({ error: err.message || "Server error" }, { status: 500 });
-  } finally {
-    // don't call prisma.$disconnect() for serverless — let runtime handle pooling
+    console.error(err)
+    return NextResponse.json({ error: err.message || "Server error" }, { status: 500 })
   }
 }
