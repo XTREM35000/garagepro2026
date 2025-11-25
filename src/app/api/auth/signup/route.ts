@@ -75,6 +75,7 @@ export async function POST(req: Request) {
 
     // Create user with generated UUID
     const userId = crypto.randomUUID()
+    const signupNow = new Date().toISOString()
     const { data: createdUsers, error: createUserErr } = await clientAny
       .from('User')
       .insert({
@@ -84,7 +85,9 @@ export async function POST(req: Request) {
         name: `${firstName || ""} ${lastName || ""}`.trim() || undefined,
         avatarUrl: avatarUrl ?? null,
         role: 'VIEWER',
-        tenantId: tenant.id
+        tenantId: tenant.id,
+        createdAt: signupNow,
+        updatedAt: signupNow
       })
       .select('id, email, name, role, tenantId')
       .limit(1);

@@ -42,9 +42,10 @@ export async function POST(req: Request) {
     } else {
       // create platform tenant
       const platformTenantId = crypto.randomUUID()
+      const now = new Date().toISOString()
       const { data: createdTenants, error: createErr } = await client
         .from('Tenant')
-        .insert({ id: platformTenantId, name: 'PLATFORM', plan: 'platform', isPlatform: true })
+        .insert({ id: platformTenantId, name: 'PLATFORM', plan: 'platform', isPlatform: true, createdAt: now, updatedAt: now })
         .select('id')
         .limit(1)
 
@@ -81,6 +82,7 @@ export async function POST(req: Request) {
 
     // Create user via Supabase with generated UUID
     const userId = crypto.randomUUID()
+    const now = new Date().toISOString()
     const { data: createdUsers, error: insertErr } = await client
       .from('User')
       .insert({
@@ -90,7 +92,9 @@ export async function POST(req: Request) {
         name: `${firstName} ${lastName}`,
         avatarUrl: avatarUrl ?? null,
         role: 'SUPER_ADMIN',
-        tenantId
+        tenantId,
+        createdAt: now,
+        updatedAt: now
       })
       .select()
       .limit(1)

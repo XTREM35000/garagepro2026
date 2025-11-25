@@ -46,9 +46,10 @@ export async function POST(req: Request) {
 
     // Create tenant
     const tenantId = crypto.randomUUID()
+    const now = new Date().toISOString()
     const { data: createdTenants, error: createTenantErr } = await clientAny
       .from('Tenant')
-      .insert({ id: tenantId, name: tenantName, plan: 'basic' })
+      .insert({ id: tenantId, name: tenantName, plan: 'basic', createdAt: now, updatedAt: now })
       .select('id, name, plan')
       .limit(1);
 
@@ -66,6 +67,7 @@ export async function POST(req: Request) {
 
     // Create user with generated UUID
     const userId = crypto.randomUUID()
+    const userNow = new Date().toISOString()
     const { data: createdUsers, error: createUserErr } = await clientAny
       .from('User')
       .insert({
@@ -75,7 +77,9 @@ export async function POST(req: Request) {
         name: `${firstName} ${lastName}`,
         avatarUrl: avatarUrl ?? null,
         role: 'TENANT_ADMIN',
-        tenantId: tenant.id
+        tenantId: tenant.id,
+        createdAt: userNow,
+        updatedAt: userNow
       })
       .select('id, email, name, role, tenantId')
       .limit(1);
