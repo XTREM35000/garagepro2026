@@ -73,10 +73,12 @@ export async function POST(req: Request) {
 
     const hashed = hashPassword(password);
 
-    // Create user
+    // Create user with generated UUID
+    const userId = crypto.randomUUID()
     const { data: createdUsers, error: createUserErr } = await clientAny
       .from('User')
       .insert({
+        id: userId,
         email,
         password: hashed,
         name: `${firstName || ""} ${lastName || ""}`.trim() || undefined,

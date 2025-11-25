@@ -45,9 +45,10 @@ export async function POST(req: Request) {
     }
 
     // Create tenant
+    const tenantId = crypto.randomUUID()
     const { data: createdTenants, error: createTenantErr } = await clientAny
       .from('Tenant')
-      .insert({ name: tenantName, plan: 'basic' })
+      .insert({ id: tenantId, name: tenantName, plan: 'basic' })
       .select('id, name, plan')
       .limit(1);
 
@@ -63,10 +64,12 @@ export async function POST(req: Request) {
 
     const hashed = hashPassword(password);
 
-    // Create user
+    // Create user with generated UUID
+    const userId = crypto.randomUUID()
     const { data: createdUsers, error: createUserErr } = await clientAny
       .from('User')
       .insert({
+        id: userId,
         email,
         password: hashed,
         name: `${firstName} ${lastName}`,
