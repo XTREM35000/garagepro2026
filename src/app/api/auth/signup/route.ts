@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import crypto from 'crypto'
-
-const prisma = new PrismaClient();
+import { supabaseAdmin } from '@/lib/supabase'
 
 function hashPassword(password: string) {
   const salt = crypto.randomBytes(16).toString('hex')
@@ -10,47 +8,92 @@ function hashPassword(password: string) {
   return `${salt}:${derived.toString('hex')}`
 }
 
+function ensureAdmin() {
+  if (!supabaseAdmin) {
+    console.error('supabase admin client not configured')
+    throw new Error('Supabase admin client not configured')
+  }
+  return supabaseAdmin
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { firstName, lastName, email, password, avatarUrl, tenantId } = body;
 
-    // tenantId optional: if not provided, try to sign up into PLATFORM? prefer tenantId required for normal users
     if (!email || !password) {
       return NextResponse.json({ error: "Missing credentials" }, { status: 400 });
     }
 
-    // Check tenant: if tenantId provided use it; otherwise attempt find first non-platform tenant
+    const client = ensureAdmin();
+    const clientAny = client as any;
+
+    // Check tenant: if tenantId provided use it; otherwise find first non-platform tenant
     let tenant = null as any;
     if (tenantId) {
-      tenant = await prisma.tenant.findUnique({ where: { id: tenantId } as any } as any);
+      const { data: tenants, error: tenantErr } = await clientAny
+        .from('Tenant')
+        .select('id, name, plan')
+        .eq('id', tenantId)
+        .limit(1);
+      if (tenantErr) {
+        console.error('error fetching tenant', tenantErr);
+        return NextResponse.json({ error: 'Tenant lookup failed' }, { status: 500 });
+      }
+      tenant = Array.isArray(tenants) && tenants.length > 0 ? (tenants[0] as any) : null;
       if (!tenant) return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
     } else {
       // fallback: pick first non-platform tenant
-      tenant = await prisma.tenant.findFirst({ where: { isPlatform: false } as any } as any);
+      const { data: tenants, error: tenantErr } = await clientAny
+        .from('Tenant')
+        .select('id, name, plan')
+        .eq('isPlatform', false)
+        .limit(1);
+      if (tenantErr) {
+        console.error('error fetching tenant', tenantErr);
+        return NextResponse.json({ error: 'Tenant lookup failed' }, { status: 500 });
+      }
+      tenant = Array.isArray(tenants) && tenants.length > 0 ? (tenants[0] as any) : null;
       if (!tenant) return NextResponse.json({ error: "No tenant available. Create a tenant first." }, { status: 400 });
     }
 
-    const existing = await prisma.user.findFirst({ where: { email } as any } as any);
-    if (existing) return NextResponse.json({ error: "Email already used" }, { status: 400 });
+    // Check if email already exists
+    const { data: existingUsers, error: userCheckErr } = await clientAny
+      .from('User')
+      .select('id')
+      .eq('email', email)
+      .limit(1);
+    if (userCheckErr) {
+      console.error('error checking user', userCheckErr);
+      return NextResponse.json({ error: 'User lookup failed' }, { status: 500 });
+    }
+    if (Array.isArray(existingUsers) && existingUsers.length > 0) {
+      return NextResponse.json({ error: "Email already used" }, { status: 400 });
+    }
 
     const hashed = hashPassword(password);
 
-    const user = await prisma.user.create({
-      // cast to any to avoid strict Prisma typing issues in this file
-      data: {
+    // Create user
+    const { data: createdUsers, error: createUserErr } = await clientAny
+      .from('User')
+      .insert({
         email,
         password: hashed,
         name: `${firstName || ""} ${lastName || ""}`.trim() || undefined,
-        avatarUrl,
-        role: ('VIEWER' as any),
+        avatarUrl: avatarUrl ?? null,
+        role: 'VIEWER',
         tenantId: tenant.id
-      } as any,
-    } as any) as any;
+      })
+      .select('id, email, name, role, tenantId')
+      .limit(1);
 
-    // NOTE: you may want to create an auth session here (JWT / Supabase Auth) — leaving out to match your stack
-    // return safe public user object (omit password)
-    const publicUser = { id: user.id, email: user.email, name: user.name, role: user.role, tenantId: user.tenantId }
+    if (createUserErr) {
+      console.error('failed to create user', createUserErr);
+      return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
+    }
+
+    const user = (createdUsers as any[])[0];
+    const publicUser = { id: user.id, email: user.email, name: user.name, role: user.role, tenantId: user.tenantId };
     return NextResponse.json({ ok: true, user: publicUser }, { status: 201 });
   } catch (err: any) {
     console.error(err);
