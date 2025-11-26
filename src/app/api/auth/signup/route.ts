@@ -111,7 +111,7 @@ export async function POST(req: Request) {
         createdAt: signupNow,
         updatedAt: signupNow
       })
-      .select('id, email, name, role, tenantId')
+      .select('id, email, name, role, tenantId, avatarUrl')
       .limit(1);
 
     if (createUserErr) {
@@ -120,7 +120,7 @@ export async function POST(req: Request) {
     }
 
     const user = (createdUsers as any[])[0];
-    const publicUser = { id: user.id, email: user.email, name: user.name, role: user.role, tenantId: user.tenantId };
+    const publicUser = { id: user.id, email: user.email, name: user.name, role: user.role, tenantId: user.tenantId, avatarUrl: user.avatarUrl };
 
     // Return session data for automatic login (since email_confirm bypasses the email confirmation requirement)
     return NextResponse.json({

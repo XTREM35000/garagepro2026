@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import Image from 'next/image'
+import React, { useEffect } from "react";
+import HeroBanner from '@/components/ui/HeroBanner'
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/dashboard/sidebar";
@@ -16,11 +16,23 @@ export default function TenantSettingsPage() {
   const router = useRouter();
 
   // wait for auth to initialize before deciding
+  useEffect(() => {
+    if (loading) return;
+
+    // only allow tenant admin / super admin
+    if (!user || !["TENANT_ADMIN", "SUPER_ADMIN"].includes((user.role ?? "").toString())) {
+      alert("Vous n'avez pas accès à cette page. Privilèges élevés requis.");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 500);
+    }
+  }, [user, loading, router]);
+
+  // wait for auth to initialize before deciding
   if (loading) return null;
 
   // only allow tenant admin / super admin
   if (!user || !["TENANT_ADMIN", "SUPER_ADMIN"].includes((user.role ?? "").toString())) {
-    router.push("/dashboard");
     return null;
   }
 
@@ -35,22 +47,12 @@ export default function TenantSettingsPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="mb-4">
               {/* Hero image with title/subtitle overlay */}
-              <div className="mt-4 w-full rounded-3xl overflow-hidden shadow relative h-[300px]">
-                <Image
-                  src={'/images/super_admin.jpg'}
-                  alt={`settings hero`}
-                  width={1600}
-                  height={300}
-                  className="w-full h-full object-cover"
-                />
-
-                <div className="absolute inset-0 flex items-end">
-                  <div className="p-6 md:p-8">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg leading-tight">Paramètres du Tenant</h1>
-                    <p className="text-lg md:text-xl text-white/90 mt-2 drop-shadow">Configurez les fonctionnalités, les utilisateurs et les préférences générales</p>
-                  </div>
+              <HeroBanner image={'/images/super_admin.jpg'} alt={`settings hero`}>
+                <div>
+                  <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg leading-tight">Paramètres du Tenant</h1>
+                  <p className="text-lg md:text-xl text-white/90 mt-2 drop-shadow">Configurez les fonctionnalités, les utilisateurs et les préférences générales</p>
                 </div>
-              </div>
+              </HeroBanner>
             </div>
 
             <PageSection title="Paramètres généraux">

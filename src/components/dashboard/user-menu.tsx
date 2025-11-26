@@ -35,7 +35,7 @@ export default function UserMenu() {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex items-center gap-3 rounded-full p-1 hover:bg-gray-100">
+        <Menu.Button as="button" type="button" className="inline-flex items-center gap-3 rounded-full p-1 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-300">
           {(profile?.avatarUrl || profile?.avatar_url || user?.user_metadata?.avatarUrl || user?.user_metadata?.avatar_url) ? (
             <Image
               src={profile?.avatarUrl || profile?.avatar_url || user?.user_metadata?.avatarUrl || user?.user_metadata?.avatar_url || '/placeholder.svg'}
@@ -56,7 +56,7 @@ export default function UserMenu() {
 
       <Transition as={Fragment} enter="transition ease-out duration-150" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100"
         leave="transition ease-in duration-100" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-        <Menu.Items className="absolute right-0 mt-2 w-56 bg-white/80 backdrop-blur border rounded-2xl py-2 shadow-xl z-50">
+        <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right bg-white/80 backdrop-blur border rounded-2xl py-2 shadow-xl z-60">
           <Menu.Item>
             {({ active }) => (
               <button onClick={() => router.push("/profile")} className={`flex items-center gap-3 px-4 py-2 w-full text-left ${active ? "bg-gray-100" : ""}`}>

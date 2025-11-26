@@ -38,11 +38,26 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         // map Supabase SDK user to our AuthUser shape
         const u = session?.user
         if (u) {
+          let role = (u.user_metadata as any)?.role ?? (u as any).role ?? undefined
+
+          // If no role in metadata, fetch from Prisma
+          if (!role) {
+            try {
+              const res = await fetch(`/api/auth/user/${u.id}`)
+              if (res.ok) {
+                const profile = await res.json()
+                role = profile?.role
+              }
+            } catch (err) {
+              console.warn('[AuthContext] Failed to fetch profile:', err)
+            }
+          }
+
           const mapped = {
             id: u.id,
             email: u.email ?? null,
             name: (u.user_metadata as any)?.full_name ?? (u as any).user_metadata?.full_name ?? null,
-            role: (u.user_metadata as any)?.role ?? (u as any).role ?? undefined,
+            role: role,
             app_metadata: (u as any).app_metadata ?? null,
             user_metadata: (u as any).user_metadata ?? null,
           }
@@ -65,11 +80,13 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     } = supabase!.auth.onAuthStateChange((event, session) => {
       const u = (session as any)?.user
       if (u) {
+        let role = (u.user_metadata as any)?.role ?? (u as any).role ?? undefined
+
         const mapped = {
           id: u.id,
           email: u.email ?? null,
           name: (u.user_metadata as any)?.full_name ?? (u as any).user_metadata?.full_name ?? null,
-          role: (u.user_metadata as any)?.role ?? (u as any).role ?? undefined,
+          role: role,
           app_metadata: (u as any).app_metadata ?? null,
           user_metadata: (u as any).user_metadata ?? null,
         }
@@ -99,6 +116,36 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         console.error('[AuthContext] ❌ Supabase error:', error.message)
         throw error
       }
+
+      // After successful signin, fetch the user profile to get the role from Prisma
+      try {
+        const { data: { session } } = await supabase!.auth.getSession()
+        if (session?.user?.id) {
+          const res = await fetch(`/api/auth/user/${session.user.id}`)
+          if (res.ok) {
+            const profile = await res.json()
+            // Update user_metadata in Supabase with the role from Prisma
+            if (profile?.role) {
+              await supabase!.auth.updateUser({
+                data: { role: profile.role }
+              })
+              // Update local user state with the role
+              const mapped = {
+                id: session.user.id,
+                email: session.user.email ?? null,
+                name: (session.user.user_metadata as any)?.full_name ?? null,
+                role: profile.role,
+                app_metadata: (session.user as any).app_metadata ?? null,
+                user_metadata: { ...(session.user.user_metadata as any), role: profile.role },
+              }
+              setUser(mapped)
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[AuthContext] Failed to fetch profile after signin:', err)
+      }
+
       console.log('[AuthContext] ✅ signIn successful')
     } catch (err) {
       console.error('[AuthContext] ❌ signIn failed:', err)

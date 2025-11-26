@@ -81,11 +81,29 @@ const groupedNav = [
 /* ---------------------------------------------
    COMPONENT
 ----------------------------------------------*/
-export default function Sidebar() {
+export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: setOpenMobileProp }: { openMobile?: boolean; setOpenMobile?: (v: boolean) => void } = {}) {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
-  const [openMobile, setOpenMobile] = useState(false);
+  const [internalOpenMobile, setInternalOpenMobile] = useState(false);
+
+  // Controlled vs uncontrolled behavior: prefer parent props when provided
+  const openMobile = typeof openMobileProp === 'boolean' ? openMobileProp : internalOpenMobile
+  const setOpenMobile = setOpenMobileProp ?? setInternalOpenMobile
+
+  React.useEffect(() => {
+    // legacy support: listen to document event only when no parent controller provided
+    if (setOpenMobileProp) return
+    const handler = () => setInternalOpenMobile(true);
+    document.addEventListener("open-mobile-sidebar", handler);
+    return () => document.removeEventListener("open-mobile-sidebar", handler);
+  }, [setOpenMobileProp]);
+
+  // Close mobile drawer on route change
+  React.useEffect(() => {
+    if (!openMobile) return
+    setOpenMobile(false)
+  }, [pathname]);
 
   /* ----------- ICON 3D EFFECT ----------- */
   const icon3D = {
@@ -100,7 +118,7 @@ export default function Sidebar() {
     const active = pathname?.startsWith(item.href);
 
     return (
-      <Link key={item.key} href={item.href}>
+      <Link key={item.key} href={item.href} onClick={() => setOpenMobile(false)}>
         <motion.div
           whileHover={{ scale: 1.03, x: 5 }}
           whileTap={{ scale: 0.97 }}
@@ -109,8 +127,6 @@ export default function Sidebar() {
             px-3 py-2                          /* Hauteur réduite */
             rounded-xl cursor-pointer 
             transition-all 
-            shadow-lg 
-            border border-black/10 
             ${active
               ? `bg-gradient-to-r ${groupColors[group]} text-white`
               : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -124,10 +140,10 @@ export default function Sidebar() {
               w-10 h-10                         /* Taille icône plus visible */
               flex items-center justify-center 
               rounded-xl 
-              shadow-md shadow-black/40         /* Vraie ombre 3D */
+              /* keep icon gradient/contrast but remove extra shadow */
               ${active
                 ? "bg-white/20 text-white"
-                : `bg-gradient-to-tr ${groupColors[group]} text-white shadow-lg`
+                : `bg-gradient-to-tr ${groupColors[group]} text-white`
               }
             `}
           >
@@ -138,7 +154,7 @@ export default function Sidebar() {
             <motion.span
               initial={{ opacity: 0, x: -6 }}
               animate={{ opacity: 1, x: 0 }}
-              className="font-semibold text-sm tracking-wide"
+              className="font-semibold text-sm tracking-wide min-w-0 truncate"
             >
               {item.label}
             </motion.span>
@@ -153,20 +169,6 @@ export default function Sidebar() {
   ----------------------------------------------*/
   return (
     <>
-      {/* ---------------- MOBILE TOPBAR ---------------- */}
-      <div className="md:hidden flex items-center justify-between bg-white/90 dark:bg-gray-900/90 backdrop-blur border-b px-4 py-2 sticky top-0 z-40">
-        <AnimatedLogoGarage size={34} animated showText={false} />
-
-        <div className="flex items-center gap-3">
-          <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-            {theme === "dark" ? <Sun /> : <Moon />}
-          </button>
-
-          <button onClick={() => setOpenMobile(true)} className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg">
-            <MenuIcon />
-          </button>
-        </div>
-      </div>
 
       {/* ---------------- DESKTOP SIDEBAR ---------------- */}
       <aside
@@ -174,7 +176,7 @@ export default function Sidebar() {
           hidden md:flex flex-col h-screen border-r shadow-2xl
           bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl
           transition-all duration-300
-          ${collapsed ? "w-[80px]" : "w-[260px]"}
+          ${collapsed ? "w-28" : "w-[260px]"}
         `}
       >
         {/* Logo */}
@@ -233,15 +235,18 @@ export default function Sidebar() {
 
             {/* Drawer */}
             <motion.aside
-              className="fixed top-0 left-0 h-full w-80 bg-white dark:bg-gray-900 shadow-2xl z-50 p-6 flex flex-col"
-              initial={{ x: -320 }}
+              className="fixed top-0 left-0 h-full w-full max-w-[80vw] sm:w-80 bg-white dark:bg-gray-900 shadow-2xl z-50 p-6 flex flex-col"
+              initial={{ x: '-100%' }}
               animate={{ x: 0 }}
-              exit={{ x: -320 }}
+              exit={{ x: '-100%' }}
               transition={{ type: "spring", stiffness: 240 }}
             >
-              {/* Header */}
+              {/* Header (close only) */}
               <div className="flex items-center justify-between mb-6">
-                <AnimatedLogoGarage size={40} animated showText />
+                <div className="flex items-center gap-3">
+                  <AnimatedLogoGarage size={36} animated showText={false} />
+                  <div className="text-sm font-semibold">Menu</div>
+                </div>
                 <button onClick={() => setOpenMobile(false)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
                   <X />
                 </button>

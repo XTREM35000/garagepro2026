@@ -88,7 +88,7 @@ export default function AvatarUploader({ value = null, bucket = 'avatars', uploa
     <div className="flex items-center gap-4">
       <div className="h-16 w-16 rounded-full bg-gray-100 overflow-hidden relative">
         {preview ? (
-          <Image src={preview} alt={preview ? "Aperçu de l'avatar" : 'Avatar par défaut'} className="object-cover" fill />
+          <Image src={preview} alt={preview ? "Aperçu de l'avatar" : 'Avatar par défaut'} className="object-cover" fill sizes="64px" />
         ) : (
           <div className="h-full w-full flex items-center justify-center">
             <span className="text-gray-400">A</span>

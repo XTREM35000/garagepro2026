@@ -1,7 +1,7 @@
 "use client"
 
-import React from 'react'
-import Image from 'next/image'
+import React, { useState } from 'react'
+import HeroBanner from '@/components/ui/HeroBanner'
 import Sidebar from '@/components/dashboard/sidebar'
 import Header from '@/components/dashboard/header'
 import BackButton from '@/components/ui/BackButton'
@@ -51,48 +51,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname() || ''
   const segment = pathname.split('/').filter(Boolean)[1] || 'dashboard'
 
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      <Sidebar />
+    <div className="min-h-screen flex bg-gray-50 overflow-x-hidden">
+      <Sidebar openMobile={mobileSidebarOpen} setOpenMobile={setMobileSidebarOpen} />
       <div className="flex-1 flex flex-col">
-        <Header />
+        <Header onOpenMobile={() => setMobileSidebarOpen(true)} isMobileOpen={mobileSidebarOpen} />
         <main className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="mb-4">
               <BackButton />
 
               {/* Hero image with title/subtitle overlay (filigramme blanc) */}
-              <div className="mt-4 w-full rounded-3xl overflow-hidden shadow relative h-[300px]">
-                <Image
-                  src={heroImages[segment] || '/images/dashboard.png'}
-                  alt={`${segment} hero`}
-                  width={1600}
-                  height={300}
-                  className="w-full h-full object-cover"
-                />
-
-                {/* Overlay: filigramme blanc large */}
-                <div className="absolute inset-0 flex items-end">
-                  <div className="p-6 md:p-8">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg leading-tight">{heroTitles[segment] || (segment.charAt(0).toUpperCase() + segment.slice(1))}</h1>
-                        <p className="text-lg md:text-xl text-white/90 mt-2 drop-shadow">{heroSubtitles[segment] || `Gestion ${segment}`}</p>
-                      </div>
-
-                      {/* Action buttons moved into hero overlay for specific sections */}
-                      {segment === 'agents' && (
-                        <div className="ml-6 hidden md:flex items-center gap-3">
-                          <Button onClick={() => { if (typeof window !== 'undefined') { window.location.hash = 'add'; } }}>
-                            <UserPlus size={16} /> Ajouter agent
-                          </Button>
-                          <Button variant="ghost">Exporter</Button>
-                        </div>
-                      )}
-                    </div>
+              {/* Centralized hero banner */}
+              <HeroBanner image={heroImages[segment] || '/images/dashboard.png'} alt={`${segment} hero`}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg leading-tight">{heroTitles[segment] || (segment.charAt(0).toUpperCase() + segment.slice(1))}</h1>
+                    <p className="text-lg md:text-xl text-white/90 mt-2 drop-shadow">{heroSubtitles[segment] || `Gestion ${segment}`}</p>
                   </div>
+
+                  {segment === 'agents' && (
+                    <div className="ml-6 hidden md:flex items-center gap-3">
+                      <Button onClick={() => { if (typeof window !== 'undefined') { window.location.hash = 'add'; } }}>
+                        <UserPlus size={16} /> Ajouter agent
+                      </Button>
+                      <Button variant="ghost">Exporter</Button>
+                    </div>
+                  )}
                 </div>
-              </div>
+              </HeroBanner>
             </div>
 
             {children}

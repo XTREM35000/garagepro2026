@@ -5,6 +5,11 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
+
+// Fonction utilitaire pour formater les montants en FCFA
+function formatFCFA(amount: number | string): string {
+  return `${Number(amount).toLocaleString('fr-FR')} FCFA`;
+}
 import {
   Home,
   Settings,
@@ -15,6 +20,12 @@ import {
   Users,
   Camera,
   Cpu,
+  UserPlus,
+  Sliders,
+  PlayCircle,
+  Star,
+  Crown,
+  Building2,
 } from "lucide-react";
 import AnimatedLogoGarage from "@/components/ui/AnimatedLogoGarage";
 
@@ -28,37 +39,37 @@ const features = [
   {
     icon: <CalendarCheck size={36} className="text-white drop-shadow-md" />,
     title: "Planning des interventions",
-    desc: "Calendrier visuel, cr&eacute;neaux, assignation rapide de techniciens.",
+    desc: "Calendrier visuel, créneaux, assignation rapide de techniciens.",
     color: "from-emerald-500 to-emerald-600",
   },
   {
     icon: <Wrench size={36} className="text-white drop-shadow-md" />,
     title: "Gestion du stock",
-    desc: "Suivi des pi&egrave;ces, alertes seuil, mouvements et inventaires rapides.",
+    desc: "Suivi des pièces, alertes seuil, mouvements et inventaires rapides.",
     color: "from-sky-500 to-sky-600",
   },
   {
     icon: <CreditCard size={36} className="text-white drop-shadow-md" />,
-    title: "Facturation &amp; paiements",
-    desc: "Cr&eacute;ation de factures, paiements en ligne, re&ccedil;us et historique FCFA.",
+    title: "Facturation & paiements",
+    desc: "Création de factures, paiements en ligne, reçus et historique FCFA.",
     color: "from-amber-500 to-amber-600",
   },
   {
     icon: <Users size={36} className="text-white drop-shadow-md" />,
-    title: "Gestion des &eacute;quipes",
-    desc: "R&ocirc;les, permissions, planning &amp; performances des techniciens.",
+    title: "Gestion des équipes",
+    desc: "Rôles, permissions, planning & performances des techniciens.",
     color: "from-violet-500 to-violet-600",
   },
   {
     icon: <Camera size={36} className="text-white drop-shadow-md" />,
-    title: "Photos v&eacute;hicules",
-    desc: "Before/after, upload rapide et timeline visuelle des r&eacute;parations.",
+    title: "Photos véhicules",
+    desc: "Before/after, upload rapide et timeline visuelle des réparations.",
     color: "from-pink-500 to-pink-600",
   },
   {
     icon: <Cpu size={36} className="text-white drop-shadow-md" />,
-    title: "Automatisation &amp; IA",
-    desc: "Suggestions de pi&egrave;ces, diagnostics rapides et macros automatis&eacute;es.",
+    title: "Automatisation & IA",
+    desc: "Suggestions de pièces, diagnostics rapides et macros automatisées.",
     color: "from-yellow-500 to-yellow-600",
   },
 ];
@@ -68,6 +79,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [setupState, setSetupState] = useState<SetupState | null>(initialSetupState ?? null);
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const scrollTo = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -106,11 +118,24 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans antialiased">
       {/* Sticky header */}
-      <header className="sticky top-0 z-50">
+      <header className="sticky top-0 z-50 max-w-full overflow-x-hidden">
         <div className="backdrop-blur bg-white/60 dark:bg-gray-900/60 border-b border-white/10 dark:border-gray-800/60">
-          <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+          <div className="w-full max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <AnimatedLogoGarage size={44} animated showText />
+              {/* Desktop: Logo + Title */}
+              <div className="hidden md:flex items-center gap-3">
+                <AnimatedLogoGarage size={40} animated showText={false} />
+                <span className="text-lg font-bold text-gray-900 dark:text-white">Multi-Garages</span>
+              </div>
+
+              {/* Mobile: burger + logo (logo hidden on md+) */}
+              <button className="md:hidden p-2 mr-2 rounded-lg bg-gray-100" aria-label="Ouvrir le menu" onClick={() => setMobileOpen(true)}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12h18M3 6h18M3 18h18" /></svg>
+              </button>
+
+              <div className="md:hidden">
+                <AnimatedLogoGarage size={40} animated showText={false} />
+              </div>
             </div>
 
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
@@ -118,10 +143,10 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
                 <Home size={16} className="text-sky-600" /> Accueil
               </button>
               <button onClick={() => scrollTo("features")} className="flex items-center gap-2 hover:text-gray-700 transition">
-                <Settings size={16} className="text-emerald-600" /> Fonctionnalit&eacute;s
+                <Settings size={16} className="text-emerald-600" /> Fonctionnalités
               </button>
               <button onClick={() => scrollTo("how")} className="flex items-center gap-2 hover:text-gray-700 transition">
-                <Rocket size={16} className="text-orange-500" /> Comment &ccedil;a marche
+                <Rocket size={16} className="text-orange-500" /> Comment ça marche
               </button>
               <button onClick={() => scrollTo("pricing")} className="flex items-center gap-2 hover:text-gray-700 transition">
                 <CreditCard size={16} className="text-yellow-600" /> Tarifs
@@ -141,6 +166,33 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
             </div>
           </div>
         </div>
+
+        {/* Mobile drawer for landing nav */}
+        {mobileOpen && (
+          <div className="fixed inset-0 z-50">
+            <div className="fixed inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
+            <div className="fixed top-0 left-0 w-full max-w-[80vw] bg-white dark:bg-gray-900 h-full p-6">
+              <div className="flex items-center justify-between mb-6">
+                <AnimatedLogoGarage size={36} animated showText={false} />
+                <button onClick={() => setMobileOpen(false)} className="p-2 rounded-md">✕</button>
+              </div>
+              <nav className="flex flex-col gap-4">
+                <button onClick={() => { setMobileOpen(false); scrollTo('hero'); }} className="flex items-center gap-3 py-2">
+                  <Home size={18} /> Accueil
+                </button>
+                <button onClick={() => { setMobileOpen(false); scrollTo('features'); }} className="flex items-center gap-3 py-2">
+                  <Settings size={18} /> Fonctionnalités
+                </button>
+                <button onClick={() => { setMobileOpen(false); scrollTo('how'); }} className="flex items-center gap-3 py-2">
+                  <Rocket size={18} /> Comment ça marche
+                </button>
+                <button onClick={() => { setMobileOpen(false); scrollTo('pricing'); }} className="flex items-center gap-3 py-2">
+                  <CreditCard size={18} /> Tarifs
+                </button>
+              </nav>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* HERO */}
@@ -150,6 +202,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
             src="/images/hero-bg.jpg"
             alt="Garage background"
             fill
+            sizes="90vw"
             quality={60}
             className="object-cover opacity-30 dark:opacity-20"
             priority
@@ -157,7 +210,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/70 dark:to-black/60" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-6 py-24 md:py-36">
+        <div className="relative max-w-7xl mx-auto px-6 py-12 md:py-26">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} className="space-y-6">
               <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-tight">
@@ -165,7 +218,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
               </h1>
 
               <p className="text-lg text-gray-700 max-w-xl">
-                Centralisez interventions, stock, facturation et relation client. Interface rapide, pens&eacute;e pour l&apos;Afrique — FCFA natif, mobile-first et usage terrain.
+                Centralisez interventions, stock, facturation et relation client. Interface rapide, pensée pour l'Afrique — FCFA natif, mobile-first et usage terrain.
               </p>
 
               <div className="flex items-center gap-4">
@@ -199,18 +252,18 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
             <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="hidden md:block">
               <div className="rounded-3xl shadow-2xl overflow-hidden border">
-                <div className="relative h-80 bg-gradient-to-br from-green-50 to-white">
-                  <Image src="/images/atelier.jpg" alt="Illustration" fill className="object-cover" />
+                <div className="relative h-64 bg-gradient-to-br from-green-50 to-white">
+                  <Image src="/images/atelier.jpg" alt="Illustration" fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
                 </div>
                 <div className="p-6 bg-white">
                   <h4 className="font-bold text-lg">Tableau de bord intelligent</h4>
                   <p className="text-sm text-gray-600 mt-2">
-                    Vue synth&eacute;tique, indicateurs cl&eacute;s, actions rapides — con&ccedil;u pour usage mobile et desktop.
+                    Vue synthétique, indicateurs clés, actions rapides — conçu pour usage mobile et desktop.
                   </p>
                   <div className="mt-4 grid grid-cols-3 gap-3">
                     <div className="bg-gray-50 p-3 rounded-xl text-center">
                       <div className="text-xs text-gray-500">CA / mois</div>
-                      <div className="font-semibold">FCFA 0</div>
+                      <div className="font-semibold">{formatFCFA(0)}</div>
                     </div>
                     <div className="bg-gray-50 p-3 rounded-xl text-center">
                       <div className="text-xs text-gray-500">Interventions</div>
@@ -232,8 +285,8 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
       <section id="features" className="relative py-16">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold">Fonctionnalit&eacute;s principales</h2>
-            <p className="text-sm text-gray-500 hidden sm:block">Pens&eacute; pour la rapidit&eacute;, le terrain et la gestion multi-sites.</p>
+            <h2 className="text-3xl font-bold">Fonctionnalités principales</h2>
+            <p className="text-sm text-gray-500 hidden sm:block">Pensé pour la rapidité, le terrain et la gestion multi-sites.</p>
           </div>
 
           <div className="relative grid md:grid-cols-3 gap-6">
@@ -274,26 +327,35 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
       {/* HOW */}
       <section id="how" className="py-12 bg-white/50">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-6">Comment &ccedil;a marche ?</h2>
+          <h2 className="text-3xl font-bold text-center mb-6">Comment ça marche ?</h2>
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
+                icon: <UserPlus size={36} className="text-white drop-shadow-md" />,
                 title: "1. Inscription",
-                text: "Cr&eacute;ez votre espace garage ou r&eacute;seau multi-sites. Entrer vos donn&eacute;es, logo et pr&eacute;f&eacute;rences.",
+                text: "Créez votre espace garage ou réseau multi-sites. Entrer vos données, logo et préférences.",
+                color: "from-blue-500 to-blue-600",
               },
               {
+                icon: <Sliders size={36} className="text-white drop-shadow-md" />,
                 title: "2. Configuration",
-                text: "Ajoutez utilisateurs, r&ocirc;les, ateliers, stocks et mod&egrave;les de factures.",
+                text: "Ajoutez utilisateurs, rôles, ateliers, stocks et modèles de factures.",
+                color: "from-purple-500 to-purple-600",
               },
               {
+                icon: <PlayCircle size={36} className="text-white drop-shadow-md" />,
                 title: "3. Lancement",
-                text: "Formez les &eacute;quipes, importez votre stock et lancez les interventions.",
+                text: "Formez les équipes, importez votre stock et lancez les interventions.",
+                color: "from-green-500 to-green-600",
               },
             ].map((s, idx) => (
-              <motion.div key={idx} whileHover={{ y: -6 }} className="bg-white p-6 rounded-2xl shadow border">
+              <motion.div key={idx} whileHover={{ y: -6 }} className="bg-white p-6 rounded-2xl shadow border flex flex-col gap-3">
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center bg-gradient-to-br ${s.color}`}>
+                  {s.icon}
+                </div>
                 <h3 className="font-semibold text-lg">{s.title}</h3>
-                <p className="mt-2 text-gray-600">{s.text}</p>
+                <p className="text-gray-600">{s.text}</p>
               </motion.div>
             ))}
           </div>
@@ -307,41 +369,47 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
           <div className="grid md:grid-cols-3 gap-6">
             <PricingCard
+              icon={<Star size={36} className="text-white drop-shadow-md" />}
               title="Essai Gratuit"
-              price="0"
+              price={0}
               period="7 jours"
-              features={["3 utilisateurs max", "1 garage", "Modules limit&eacute;s", "Pas d’IA", "Pas de WhatsApp"]}
+              features={["3 utilisateurs max", "1 garage", "Modules limités", "Pas d'IA", "Pas de WhatsApp"]}
               accent="from-gray-100 to-gray-200"
+              iconColor="from-gray-400 to-gray-500"
             />
             <PricingCard
+              icon={<Crown size={36} className="text-white drop-shadow-md" />}
               title="Pro"
-              price="25 000"
+              price={25000}
               period="mois"
               features={[
                 "3 utilisateurs",
                 "3 garages",
                 "Modules standards",
                 "IA basique",
-                "WhatsApp limit&eacute;",
-                "Paiements int&eacute;gr&eacute;s",
+                "WhatsApp limité",
+                "Paiements intégrés",
                 "Avance mise en route : 100 000 FCFA",
               ]}
               accent="from-gray-300 to-gray-500"
+              iconColor="from-amber-500 to-amber-600"
             />
             <PricingCard
+              icon={<Building2 size={36} className="text-white drop-shadow-md" />}
               title="Entreprise"
-              price="100 000"
+              price={100000}
               period="mois"
               features={[
-                "Utilisateurs illimit&eacute;s",
-                "Garages illimit&eacute;s",
+                "Utilisateurs illimités",
+                "Garages illimités",
                 "Tous modules",
-                "IA avanc&eacute;e",
-                "WhatsApp illimit&eacute;",
+                "IA avancée",
+                "WhatsApp illimité",
                 "Automatisations",
                 "Avance mise en route : 100 000 FCFA",
               ]}
               accent="from-gray-500 to-gray-800"
+              iconColor="from-indigo-500 to-indigo-600"
               textColor="text-white"
             />
           </div>
@@ -350,7 +418,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
       <footer className="py-8">
         <div className="max-w-7xl mx-auto px-6 text-center text-sm text-gray-500">
-          © {new Date().getFullYear()} GaragePro — Con&ccedil;u pour l&apos;Afrique · FCFA nativement support&eacute;
+          © {new Date().getFullYear()} GaragePro — Conçu pour l'Afrique · FCFA nativement supporté
         </div>
       </footer>
     </div>
@@ -358,22 +426,29 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 }
 
 /* Pricing card */
-function PricingCard({ title, price, period, features, accent, textColor = "text-gray-900" }: { title: string; price: string; period: string; features: string[]; accent: string; textColor?: string }) {
+function PricingCard({ icon, title, price, period, features, accent, iconColor, textColor = "text-gray-900" }: { icon?: React.ReactNode; title: string; price: number; period: string; features: string[]; accent: string; iconColor?: string; textColor?: string }) {
   return (
-    <motion.div whileHover={{ scale: 1.02 }} className={`rounded-3xl p-8 shadow-lg bg-gradient-to-b ${accent} ${textColor}`}>
+    <motion.div whileHover={{ scale: 1.02 }} className={`rounded-3xl p-8 shadow-lg bg-gradient-to-b ${accent} ${textColor} flex flex-col`}>
+      <div className="flex items-start justify-between mb-4">
+        {icon && iconColor && (
+          <div className={`w-14 h-14 rounded-xl flex items-center justify-center bg-gradient-to-br ${iconColor}`}>
+            {icon}
+          </div>
+        )}
+        <button className="px-4 py-2 rounded-full bg-black/90 text-white text-sm font-semibold hover:opacity-90 transition">Choisir</button>
+      </div>
+
       <h3 className="text-2xl font-bold mb-2">{title}</h3>
       <p className="text-3xl font-extrabold mb-3">
-        {price} <span className="text-base font-medium">FCFA</span>
+        {formatFCFA(price)}
       </p>
       <p className="text-sm mb-6">{period}</p>
 
-      <ul className="text-sm text-left space-y-2 mb-6">
+      <ul className="text-sm text-left space-y-2 mb-6 flex-1">
         {features.map((f, i) => (
           <li key={i}>• {f}</li>
         ))}
       </ul>
-
-      <button className="px-6 py-3 rounded-full bg-black/90 text-white font-semibold hover:opacity-90 transition">Choisir</button>
     </motion.div>
   );
 }

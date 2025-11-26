@@ -8,8 +8,8 @@ import UserMenu from "./UserMenu"
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-xl border-b shadow-sm">
-      <div className="h-16 px-6 flex items-center justify-between">
+    <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-xl border-b shadow-sm max-w-full">
+      <div className="h-16 px-6 flex items-center justify-between w-full">
         {/* LEFT */}
 
         {/* RIGHT ACTIONS */}
