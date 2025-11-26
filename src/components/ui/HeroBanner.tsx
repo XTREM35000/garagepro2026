@@ -22,7 +22,7 @@ export default function HeroBanner({
 }: HeroBannerProps) {
   return (
     <div className={`mt-4 w-full rounded-3xl overflow-hidden shadow relative ${mobileHeight} ${desktopHeight} ${className}`}>
-      <Image src={image} alt={alt} fill sizes="100vw" className="w-full h-full object-cover" />
+      <Image src={image} alt={alt} fill sizes="100%" className="w-full h-full object-cover" />
 
       <div className="absolute inset-0 flex items-end">
         <div className="p-6 md:p-8 w-full">

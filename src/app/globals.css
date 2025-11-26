@@ -43,7 +43,11 @@ body,
 html,
 body,
 #__next {
-  overflow-x: hidden;
+  /* Allow visible overflow on x-axis so absolute-positioned dropdowns and
+     mobile headers aren't clipped. Specific containers should handle
+     overflow when needed (eg. .container { overflow-x: auto }). */
+  overflow-x: visible;
+  max-width: 100%;
 }
 
 body {

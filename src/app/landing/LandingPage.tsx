@@ -118,7 +118,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans antialiased">
       {/* Sticky header */}
-      <header className="sticky top-0 z-50 max-w-full overflow-x-hidden">
+      <header className="sticky top-0 z-50 max-w-full overflow-x-visible w-full relative">
         <div className="backdrop-blur bg-white/60 dark:bg-gray-900/60 border-b border-white/10 dark:border-gray-800/60">
           <div className="w-full max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -253,7 +253,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
             <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="hidden md:block">
               <div className="rounded-3xl shadow-2xl overflow-hidden border">
                 <div className="relative h-64 bg-gradient-to-br from-green-50 to-white">
-                  <Image src="/images/atelier.jpg" alt="Illustration" fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
+                  <Image src="/images/atelier.jpg" alt="Illustration" fill sizes="(min-width: 768px) 33vw, 100%" className="object-cover" />
                 </div>
                 <div className="p-6 bg-white">
                   <h4 className="font-bold text-lg">Tableau de bord intelligent</h4>

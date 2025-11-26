@@ -54,7 +54,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen flex bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen flex bg-gray-50 overflow-x-visible">
       <Sidebar openMobile={mobileSidebarOpen} setOpenMobile={setMobileSidebarOpen} />
       <div className="flex-1 flex flex-col">
         <Header onOpenMobile={() => setMobileSidebarOpen(true)} isMobileOpen={mobileSidebarOpen} />
