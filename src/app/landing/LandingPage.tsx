@@ -118,7 +118,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans antialiased">
       {/* Sticky header */}
-      <header className="sticky top-0 z-50 max-w-full overflow-x-visible w-full relative">
+      <header className="sticky top-0 z-40 max-w-full overflow-x-visible w-full relative">
         <div className="backdrop-blur bg-white/60 dark:bg-gray-900/60 border-b border-white/10 dark:border-gray-800/60">
           <div className="w-full max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -128,11 +128,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
                 <span className="text-lg font-bold text-gray-900 dark:text-white">Multi-Garages</span>
               </div>
 
-              {/* Mobile: burger + logo (logo hidden on md+) */}
-              <button className="md:hidden p-2 mr-2 rounded-lg bg-gray-100" aria-label="Ouvrir le menu" onClick={() => setMobileOpen(true)}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12h18M3 6h18M3 18h18" /></svg>
-              </button>
-
+              {/* Mobile: logo (left) */}
               <div className="md:hidden">
                 <AnimatedLogoGarage size={40} animated showText={false} />
               </div>
@@ -154,6 +150,10 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
             </nav>
 
             <div className="flex items-center gap-3">
+              {/* Mobile burger moved to right actions so it's on the far-right */}
+              <button className="md:hidden p-2 rounded-lg bg-gray-100" aria-label="Ouvrir le menu" onClick={() => setMobileOpen(true)}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12h18M3 6h18M3 18h18" /></svg>
+              </button>
               <button
                 onClick={handleConnectClick}
                 className="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-green-600 text-white font-semibold shadow-md hover:bg-green-700 transition"
@@ -169,7 +169,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
         {/* Mobile drawer for landing nav */}
         {mobileOpen && (
-          <div className="fixed inset-0 z-50">
+          <div className="fixed inset-0 z-60">
             <div className="fixed inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
             <div className="fixed top-0 left-0 w-full max-w-[80vw] bg-white dark:bg-gray-900 h-full p-6">
               <div className="flex items-center justify-between mb-6">

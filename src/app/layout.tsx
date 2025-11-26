@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     shortcut: '/logo.png',
     apple: '/logo.png',
   },
+  viewport: 'width=device-width, initial-scale=1',
 }
 
 // Note: do not export a top-level `icons` binding — Next types expect only specific exports from layout modules.

@@ -99,11 +99,11 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
     return () => document.removeEventListener("open-mobile-sidebar", handler);
   }, [setOpenMobileProp]);
 
-  // Close mobile drawer on route change
+  // Close mobile drawer when the route changes (only run on pathname changes)
   React.useEffect(() => {
-    if (!openMobile) return
-    setOpenMobile(false)
-  }, [pathname, openMobile, setOpenMobile]);
+    if (!openMobile) return;
+    setOpenMobile(false);
+  }, [pathname]);
 
   /* ----------- ICON 3D EFFECT ----------- */
   const icon3D = {
