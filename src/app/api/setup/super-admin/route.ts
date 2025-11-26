@@ -84,16 +84,17 @@ export async function POST(req: Request) {
     const userId = crypto.randomUUID()
     const now = new Date().toISOString()
 
-    // First create user in auth.users
+    // First create user in auth.users. Control email confirmation via env var
+    const bypassConfirm = process.env.SUPABASE_BYPASS_EMAIL_CONFIRM === 'true'
     const createUserPayload: any = {
       email,
       password,
-      email_confirm: true,
       user_metadata: {
         name: `${firstName} ${lastName}`,
         avatarUrl: avatarUrl ?? null
       }
     }
+    if (bypassConfirm) createUserPayload.email_confirm = true
 
     const { data: authUser, error: authErr } = await client.auth.admin.createUser(createUserPayload)
 
