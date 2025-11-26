@@ -218,7 +218,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
               </h1>
 
               <p className="text-lg text-gray-700 max-w-xl">
-                Centralisez interventions, stock, facturation et relation client. Interface rapide, pensée pour l'Afrique — FCFA natif, mobile-first et usage terrain.
+                Centralisez interventions, stock, facturation et relation client. Interface rapide, pensée pour l&apos;Afrique — FCFA natif, mobile-first et usage terrain.
               </p>
 
               <div className="flex items-center gap-4">
@@ -418,7 +418,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
       <footer className="py-8">
         <div className="max-w-7xl mx-auto px-6 text-center text-sm text-gray-500">
-          © {new Date().getFullYear()} GaragePro — Conçu pour l'Afrique · FCFA nativement supporté
+          © {new Date().getFullYear()} GaragePro — Conçu pour l&apos;Afrique · FCFA nativement supporté
         </div>
       </footer>
     </div>
