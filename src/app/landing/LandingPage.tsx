@@ -212,7 +212,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
 
         <div className="relative max-w-7xl mx-auto px-6 py-12 md:py-26">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <motion.div initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} className="space-y-6">
+            <motion.div initial={{ opacity: 1, x: 0 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} className="space-y-6">
               <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-tight">
                 GaragePro — <span className="text-green-600">SaaS Multi-Garages</span>
               </h1>
@@ -250,7 +250,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
               )}
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="hidden md:block">
+            <motion.div initial={{ opacity: 1, scale: 1 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="hidden md:block">
               <div className="rounded-3xl shadow-2xl overflow-hidden border">
                 <div className="relative h-64 bg-gradient-to-br from-green-50 to-white">
                   <Image src="/images/atelier.jpg" alt="Illustration" fill sizes="(min-width: 768px) 33vw, 100%" className="object-cover" />
@@ -299,7 +299,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
             {features.map((f, i) => (
               <motion.article
                 key={i}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 1, y: 0 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.45, delay: i * 0.06 }}

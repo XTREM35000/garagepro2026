@@ -6,10 +6,12 @@ import SplashScreen from './splash/SplashScreen';
 import LandingPage from './landing/LandingPage';
 
 export default function SplashRoot({ children }: { children: React.ReactNode }) {
-  // Only show the splash in production by default to avoid blocking dev workflows
-  const [showSplash, setShowSplash] = useState(process.env.NODE_ENV === 'production');
+  // In dev: show landing if on root path and no super/tenant admin
+  // In production: show splash once per session, then optional landing
+  const isDev = process.env.NODE_ENV !== 'production';
+  const [showSplash, setShowSplash] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [showLanding, setShowLanding] = useState(false);
+  const [showLanding, setShowLanding] = useState(isDev); // Force landing in dev on root
   const pathname = usePathname();
 
   useEffect(() => {
