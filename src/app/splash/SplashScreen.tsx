@@ -11,7 +11,7 @@ interface SplashScreenProps {
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({
   onComplete,
-  duration = 3000
+  duration = 6000
 }) => {
   const [isVisible, setIsVisible] = useState(true);
 
