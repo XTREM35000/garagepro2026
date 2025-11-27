@@ -32,9 +32,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-[#128C7E]/5 to-[#25D366]/5"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-[#128C7E]/5 to-[#25D366]/5 overflow-y-auto"
         >
-          <div className="text-center max-w-md">
+          <div className="text-center max-w-sm py-8 px-4">
             {/* Photo de profil */}
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -44,9 +44,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                 ease: "easeOut",
                 delay: 0.2
               }}
-              className="mb-6 flex justify-center"
+              className="mb-4 flex justify-center"
             >
-              <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-[#128C7E] shadow-lg">
+              <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-[#128C7E] shadow-lg">
                 <Image
                   src="/images/profile01.png"
                   alt="Thierry Gogo"
@@ -66,21 +66,33 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                 ease: "easeOut",
                 delay: 0.4
               }}
-              className="mb-8"
+              className="mb-6"
             >
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-xs text-gray-600 mb-1">
                 De par votre serviteur :
               </p>
-              <h1 className="text-3xl font-bold text-[#128C7E] mb-3">
+              <h1 className="text-2xl font-bold text-[#128C7E] mb-2">
                 Thierry Gogo
               </h1>
-              <p className="text-lg text-gray-700 mb-3 leading-relaxed">
+              <p className="text-sm text-gray-700 mb-2 leading-tight">
                 Informaticien Développeur FullStack
               </p>
-              <p className="text-lg font-semibold text-[#128C7E]">
+              <p className="text-base font-semibold text-[#128C7E]">
                 225 0758966156
               </p>
             </motion.div>
+
+            {/* Divider */}
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{
+                duration: 0.6,
+                ease: "easeOut",
+                delay: 0.6
+              }}
+              className="my-4 h-px bg-gray-300 origin-center"
+            />
 
             {/* Logo de la plateforme */}
             <motion.div
@@ -91,10 +103,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                 ease: "easeOut",
                 delay: 0.6
               }}
-              className="mb-8 pt-6 border-t border-gray-300"
+              className="mb-3 flex justify-center"
             >
-              <p className="text-xs text-gray-500 mb-3">Plateforme</p>
-              <AnimatedLogo size={64} />
+              <AnimatedLogo size={56} />
             </motion.div>
 
             {/* Titre plateforme */}
@@ -106,7 +117,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                 ease: "easeOut",
                 delay: 0.8
               }}
-              className="text-2xl font-bold text-[#128C7E] mb-2"
+              className="text-xl font-bold text-[#128C7E] mb-1"
             >
               Multi-Garage-Connect (MGC)
             </motion.h2>
@@ -120,9 +131,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                 ease: "easeOut",
                 delay: 1.0
               }}
-              className="text-sm text-gray-600 mb-8"
+              className="text-xs text-gray-600 mb-6"
             >
-              Plateforme de gestion multi-garages professionnelle
+              Gestion multi-garages professionnelle
             </motion.p>
 
             {/* Barre de progression */}
@@ -134,7 +145,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                 ease: "linear",
                 delay: 1.2
               }}
-              className="w-48 h-2 bg-gray-200 rounded-full mx-auto overflow-hidden"
+              className="w-40 h-2 bg-gray-200 rounded-full mx-auto overflow-hidden"
             >
               <div className="h-full bg-gradient-to-r from-[#128C7E] to-[#25D366] rounded-full" />
             </motion.div>
@@ -147,9 +158,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                 duration: 0.5,
                 delay: 1.4
               }}
-              className="text-sm text-gray-500 mt-4"
+              className="text-xs text-gray-500 mt-3"
             >
-              Chargement de votre espace...
+              Chargement...
             </motion.p>
           </div>
         </motion.div>
