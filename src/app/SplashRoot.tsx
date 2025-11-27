@@ -6,12 +6,10 @@ import SplashScreen from './splash/SplashScreen';
 import LandingPage from './landing/LandingPage';
 
 export default function SplashRoot({ children }: { children: React.ReactNode }) {
-  // In dev: show landing if on root path and no super/tenant admin
-  // In production: show splash once per session, then optional landing
-  const isDev = process.env.NODE_ENV !== 'production';
-  const [showSplash, setShowSplash] = useState(false);
+  // Always show splash on first mount (dev and production)
+  const [showSplash, setShowSplash] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
-  const [showLanding, setShowLanding] = useState(isDev); // Force landing in dev on root
+  const [showLanding, setShowLanding] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -22,12 +20,12 @@ export default function SplashRoot({ children }: { children: React.ReactNode }) 
     const splashShown = sessionStorage.getItem('splashShown');
     if (splashShown) {
       setShowSplash(false);
-    }
-
-    // Check if landing was already shown in this session
-    const landingShown = sessionStorage.getItem('landingShown');
-    if (landingShown) {
-      setShowLanding(false);
+      // After splash is dismissed, check if landing should be shown
+      const landingShown = sessionStorage.getItem('landingShown');
+      if (!landingShown) {
+        setShowLanding(true);
+      }
+      return;
     }
 
     // Ensure landing is shown if the app is not yet configured (server-side check).
@@ -38,7 +36,7 @@ export default function SplashRoot({ children }: { children: React.ReactNode }) 
         const res = await fetch('/api/setup/status')
         if (res.ok) {
           const data = await res.json()
-          // If no super admin and no tenant admin, force show landing on root path
+          // If no super admin and no tenant admin, force show landing after splash on root path
           if (!data.superAdminExists && !data.tenantAdminExists && pathname === '/') {
             setShowLanding(true)
           }
