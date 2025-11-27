@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import AnimatedLogoGarage from "@/components/ui/AnimatedLogoGarage";
 import { useTheme } from "@/hooks/use-theme";
+import { useAuth } from "@/lib/auth-context";
 
 import {
   LayoutDashboard,
@@ -38,42 +39,43 @@ const groupColors: Record<string, string> = {
 };
 
 /* ---------------------------------------------
-   MENU STRUCTURE (rôles supprimés pour test)
+   MENU STRUCTURE (avec restrictions par rôle)
 ----------------------------------------------*/
 const groupedNav = [
   {
     group: "Général",
     items: [
-      { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+      { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/dashboard", roles: [] },
     ],
   },
   {
     group: "Atelier",
     items: [
-      { key: "interventions", label: "Interventions", icon: ClipboardList, href: "/dashboard/interventions" },
-      { key: "atelier", label: "Atelier", icon: Wrench, href: "/dashboard/atelier" },
-      { key: "stock", label: "Stock", icon: Package, href: "/dashboard/stock" },
-      { key: "photos", label: "Photos véhicules", icon: Camera, href: "/dashboard/photos" },
+      { key: "interventions", label: "Interventions", icon: ClipboardList, href: "/dashboard/interventions", roles: [] },
+      { key: "atelier", label: "Atelier", icon: Wrench, href: "/dashboard/atelier", roles: [] },
+      { key: "stock", label: "Stock", icon: Package, href: "/dashboard/stock", roles: [] },
+      { key: "photos", label: "Photos véhicules", icon: Camera, href: "/dashboard/photos", roles: [] },
     ],
   },
   {
     group: "Facturation",
     items: [
-      { key: "factures", label: "Factures", icon: FileText, href: "/dashboard/facturation" },
-      { key: "caisse", label: "Caisse", icon: Wallet, href: "/dashboard/caisse" },
+      { key: "factures", label: "Factures", icon: FileText, href: "/dashboard/facturation", roles: [] },
+      { key: "caisse", label: "Caisse", icon: Wallet, href: "/dashboard/caisse", roles: [] },
     ],
   },
   {
     group: "CRM",
     items: [
-      { key: "clients", label: "Clients", icon: Users, href: "/dashboard/clients" },
+      { key: "clients", label: "Clients", icon: Users, href: "/dashboard/clients", roles: [] },
     ],
   },
   {
     group: "Administration",
     items: [
-      { key: "settings", label: "Paramètres", icon: Settings, href: "/tenant/settings" },
-      { key: "super", label: "Super Admin", icon: ShieldCheck, href: "/dashboard/super" },
+      { key: "settings", label: "Paramètres", icon: Settings, href: "/tenant/settings", roles: ["SUPER_ADMIN", "TENANT_ADMIN"] },
+      { key: "super", label: "Super Admin", icon: ShieldCheck, href: "/dashboard/super", roles: ["SUPER_ADMIN"] },
+      { key: "tenant", label: "Tenant Admin", icon: ShieldCheck, href: "/dashboard/tenant", roles: ["TENANT_ADMIN"] },
     ],
   },
 ];
@@ -84,8 +86,20 @@ const groupedNav = [
 export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: setOpenMobileProp }: { openMobile?: boolean; setOpenMobile?: (v: boolean) => void } = {}) {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const { user } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [internalOpenMobile, setInternalOpenMobile] = useState(false);
+
+  // Récupérer le rôle de l'utilisateur
+  const userRole = (user as any)?.role || "VIEWER";
+
+  // Vérifier si un élément doit être affiché pour ce rôle
+  const canViewItem = (item: any) => {
+    // Si roles est vide, visible par tous
+    if (!item.roles || item.roles.length === 0) return true;
+    // Sinon, visible seulement si le rôle correspond
+    return item.roles.includes(userRole);
+  };
 
   // Controlled vs uncontrolled behavior: prefer parent props when provided
   const openMobile = typeof openMobileProp === 'boolean' ? openMobileProp : internalOpenMobile
@@ -201,7 +215,7 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
 
               {/* Liste des items */}
               <div className="space-y-3"> {/* ← ← ← ESPACE ENTRE LES OPTIONS */}
-                {group.items.map((item) => renderItem(item, group.group))}
+                {group.items.filter(canViewItem).map((item) => renderItem(item, group.group))}
               </div>
 
             </div>
@@ -260,7 +274,7 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
 
                     {/* ESPACES SUR MOBILE AUSSI */}
                     <div className="space-y-3">
-                      {group.items.map((item) => renderItem(item, group.group))}
+                      {group.items.filter(canViewItem).map((item) => renderItem(item, group.group))}
                     </div>
                   </div>
                 ))}
