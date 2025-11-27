@@ -39,3 +39,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 build_output.txt
+
+#agents  dossiers d'archivages dees fichiers obsolètes et lours
+agents
