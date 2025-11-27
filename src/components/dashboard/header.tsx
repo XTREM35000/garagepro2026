@@ -11,7 +11,7 @@ import {
   Moon,
   Menu,
 } from "lucide-react";
-import AnimatedLogoGarage from "@/components/ui/AnimatedLogoGarage";
+// Animated logo intentionally removed from global header — kept only in sidebar for desktop
 import UserMenu from "./user-menu";
 import { useTheme } from "@/hooks/use-theme";
 
@@ -29,12 +29,7 @@ export default function Header({ onOpenMobile, isMobileOpen }: { onOpenMobile?: 
       "
     >
       <div className="relative">
-        {/* absolute logo on extreme left */}
-        <div className="absolute left-0 top-0 h-16 flex items-center pl-4">
-          <AnimatedLogoGarage size={34} animated showText={false} />
-        </div>
-
-        <div className="h-16 px-4 md:px-8 pl-20 flex items-center justify-between max-w-full">
+        <div className="h-14 px-4 md:px-8 flex items-center justify-between max-w-full">
           {/* LEFT placeholder to keep layout centered */}
           <div className="flex items-center gap-4">
             <div className="hidden md:block" aria-hidden="true"></div>

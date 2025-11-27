@@ -34,14 +34,14 @@ export default function TenantAdminPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="mt-1 grid grid-cols-1 md:grid-cols-3 gap-6">
         <MetricsCard title="Utilisateurs" value="12" icon="Users" />
         <MetricsCard title="Mécaniciens" value="5" icon="Wrench" />
         <MetricsCard title="Réceptionnistes" value="2" icon="Users" />
       </div>
 
-      <div className="mt-8">
+      <div className="mt-4">
         <Card3D>
           <h3 className="text-lg font-semibold mb-4">Membres du garage</h3>
           <TablePro columns={columns} data={data} />

@@ -23,7 +23,7 @@ const heroImages: Record<string, string> = {
 
 const heroTitles: Record<string, string> = {
   dashboard: 'Tableau de bord',
-  atelier: 'Atelier & Interventions',
+  atelier: 'Atelier',
   stock: 'Stock & Matériel',
   clients: 'Clients',
   caisse: 'Caisse & Encaissements',

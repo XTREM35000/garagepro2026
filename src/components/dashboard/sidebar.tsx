@@ -151,17 +151,16 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
           <motion.div
             {...icon3D}
             className={`
-              w-10 h-10                         /* Taille icône plus visible */
+              w-9 h-9                         /* Taille icône réduite pour desktop compact */
               flex items-center justify-center 
               rounded-xl 
-              /* keep icon gradient/contrast but remove extra shadow */
               ${active
                 ? "bg-white/20 text-white"
                 : `bg-gradient-to-tr ${groupColors[group]} text-white`
               }
             `}
           >
-            <Icon size={22} strokeWidth={2.2} />
+            <Icon size={20} strokeWidth={2.0} />
           </motion.div>
 
           {!collapsed && (
@@ -190,12 +189,12 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
           hidden md:flex flex-col h-screen border-r shadow-2xl
           bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl
           transition-all duration-300
-          ${collapsed ? "w-28" : "w-[260px]"}
+          ${collapsed ? "w-24" : "w-[240px]"}
         `}
       >
         {/* Logo */}
         <div className="p-4 flex items-center justify-between border-b">
-          <AnimatedLogoGarage size={40} animated showText={!collapsed} />
+          <AnimatedLogoGarage size={36} animated showText={!collapsed} />
           <button onClick={() => setCollapsed(!collapsed)} className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg">
             {collapsed ? <ChevronRight /> : <ChevronLeft />}
           </button>
@@ -214,7 +213,7 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
               )}
 
               {/* Liste des items */}
-              <div className="space-y-3"> {/* ← ← ← ESPACE ENTRE LES OPTIONS */}
+              <div className="space-y-2"> {/* réduit espace entre les options pour desktop */}
                 {group.items.filter(canViewItem).map((item) => renderItem(item, group.group))}
               </div>
 
@@ -258,7 +257,6 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
               {/* Header (close only) */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <AnimatedLogoGarage size={36} animated showText={false} />
                   <div className="text-sm font-semibold">Menu</div>
                 </div>
                 <button onClick={() => setOpenMobile(false)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">

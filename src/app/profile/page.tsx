@@ -181,14 +181,15 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.38 }}
-              className="relative mb-6 rounded-xl overflow-hidden shadow-lg h-48"
+              className="relative mb-6 rounded-xl overflow-hidden shadow-lg"
+              style={{ height: "192px" }}
             >
               {/* Background image */}
               <Image
                 src="/images/stock.jpg"
                 alt="Background"
                 fill
-                className="object-cover"
+                className="object-cover absolute"
                 priority
                 sizes="(max-width: 768px) 100vw, 90vw"
               />

@@ -166,7 +166,7 @@ export default function InterventionsPage() {
   ]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -225,21 +225,41 @@ export default function InterventionsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="mb-6 flex gap-2 flex-wrap"
+        className="mb-6 flex gap-3 flex-wrap"
       >
-        {["TOUS", "EN_ATTENTE", "DIAGNOSTIC", "EN_COURS", "TERMINE", "FACTURE"].map(
-          (status) => (
-            <button
-              key={status}
-              onClick={() => setFilterStatus(status)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${filterStatus === status
-                  ? "bg-blue-500 text-white shadow-lg"
-                  : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                }`}
-            >
-              {status}
-            </button>
-          )
+        {["EN_ATTENTE", "DIAGNOSTIC", "EN_COURS", "TERMINE", "FACTURE"].map(
+          (status) => {
+            // Couleurs et icônes pour chaque statut
+            const statusConfig: Record<string, { bg: string; text: string; icon: string; border: string }> = {
+              EN_ATTENTE: { bg: "from-gray-400 to-gray-500", text: "text-white", icon: "⏳", border: "border-gray-300" },
+              DIAGNOSTIC: { bg: "from-blue-500 to-blue-600", text: "text-white", icon: "🔍", border: "border-blue-400" },
+              EN_COURS: { bg: "from-yellow-500 to-amber-600", text: "text-white", icon: "⚙️", border: "border-yellow-400" },
+              TERMINE: { bg: "from-green-500 to-emerald-600", text: "text-white", icon: "✅", border: "border-green-400" },
+              FACTURE: { bg: "from-purple-500 to-indigo-600", text: "text-white", icon: "💳", border: "border-purple-400" },
+            };
+
+            const config = statusConfig[status];
+            const isActive = filterStatus === status;
+
+            return (
+              <motion.button
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className={`
+                  px-4 py-2.5 rounded-xl font-semibold transition-all flex items-center gap-2
+                  ${isActive
+                    ? `bg-gradient-to-r ${config.bg} ${config.text} shadow-lg border-2 ${config.border}`
+                    : `bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700`
+                  }
+                `}
+              >
+                <span>{config.icon}</span>
+                {status}
+              </motion.button>
+            );
+          }
         )}
       </motion.div>
 
@@ -251,21 +271,52 @@ export default function InterventionsPage() {
       >
         <Card3D>
           <div className="p-6">
-            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-              Interventions en cours ({filteredData.length})
-            </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Interventions en cours ({filteredData.length})
+              </h3>
+              <motion.button
+                onClick={() => setFilterStatus("TOUS")}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className={`
+                  px-4 py-2.5 rounded-xl font-semibold transition-all flex items-center gap-2
+                  ${filterStatus === "TOUS"
+                    ? "bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg border-2 border-gray-400"
+                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  }
+                `}
+              >
+                <span>📋</span>
+                TOUS
+              </motion.button>
+            </div>
+            <div className="h-96 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+              <table className="w-full text-sm table-fixed">
                 <thead className="bg-gray-50 dark:bg-gray-900/20 border-b border-gray-200 dark:border-gray-700">
                   <tr>
-                    {columns.map((col) => (
-                      <th
-                        key={col}
-                        className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                      >
-                        {col}
-                      </th>
-                    ))}
+                    {(() => {
+                      const colWidths = [
+                        "w-28",
+                        "w-24",
+                        "w-72",
+                        "w-36",
+                        "w-36",
+                        "w-32",
+                        "w-36",
+                        "w-28",
+                        "w-24",
+                        "w-36",
+                      ];
+                      return columns.map((col, idx) => (
+                        <th
+                          key={col}
+                          className={`${colWidths[idx]} px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300`}
+                        >
+                          {col}
+                        </th>
+                      ));
+                    })()}
                   </tr>
                 </thead>
                 <tbody>
@@ -277,27 +328,23 @@ export default function InterventionsPage() {
                       transition={{ delay: idx * 0.05 }}
                       className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
                     >
-                      <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white">
-                        {int.id}
+                      <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white truncate">
+                        <div className="truncate max-w-[160px]">{int.id}</div>
                       </td>
-                      <td className={`px-4 py-3 font-semibold ${getPriorityColor(int.priority)}`}>
-                        {int.priority}
+                      <td className={`px-4 py-3 font-semibold ${getPriorityColor(int.priority)} truncate`}>
+                        <div className="truncate max-w-[120px]">{int.priority}</div>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="text-gray-900 dark:text-white font-medium">
-                          {int.client}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {int.vehicle}
-                        </div>
+                      <td className="px-4 py-3 max-w-[340px]">
+                        <div className="text-gray-900 dark:text-white font-medium truncate max-w-full">{int.client}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-full">{int.vehicle}</div>
                       </td>
-                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
+                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300 truncate max-w-[140px]">
                         {int.type}
                       </td>
-                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
+                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300 truncate max-w-[140px]">
                         {int.technician}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 truncate max-w-[140px]">
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(int.status)}`}>
                           {int.status}
                         </span>
@@ -313,10 +360,10 @@ export default function InterventionsPage() {
                           {int.progress}%
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-xs">
+                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-xs truncate max-w-[120px]">
                         {int.dueDate}
                       </td>
-                      <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white">
+                      <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white truncate max-w-[120px]">
                         {int.cost}
                       </td>
                       <td className="px-4 py-3 flex gap-2">
