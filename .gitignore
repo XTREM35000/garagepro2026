@@ -42,3 +42,6 @@ build_output.txt
 
 # Logs dossier agents
 agents
+ 
+# Archive (obsolete files)
+archive/
