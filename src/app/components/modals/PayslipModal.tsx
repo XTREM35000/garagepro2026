@@ -4,6 +4,8 @@ import React from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import DraggableModal from "@/app/components/ui/draggable-modal/DraggableModal";
+import { PhoneInput } from "@/components/ui/PhoneInput";
+import { EmailInput } from "@/components/ui/EmailInput";
 import { formatPrice } from "@/lib/utils";
 import { payslipSchema, type PayslipInput } from "@/lib/modal-schemas";
 
@@ -43,6 +45,7 @@ export default function PayslipModal({ isOpen, onClose, onSubmit, initialData }:
     formState: { errors: formErrors, isSubmitting: formIsSubmitting },
     reset: formReset,
     watch: formWatch,
+    setValue: formSetValue,
   } = form;
 
   // keep backwards-compatible names used below
@@ -50,6 +53,7 @@ export default function PayslipModal({ isOpen, onClose, onSubmit, initialData }:
   const isSubmitting = formIsSubmitting;
   const reset = formReset;
   const watch = formWatch;
+  const setValue = formSetValue;
 
   React.useEffect(() => {
     if (isOpen) {
@@ -93,14 +97,13 @@ export default function PayslipModal({ isOpen, onClose, onSubmit, initialData }:
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <input
-            {...reg("employeeEmail")}
-            type="email"
+          <EmailInput
+            value={watch("employeeEmail") || ""}
+            onChange={(value) => setValue("employeeEmail", value)}
+            label="Email"
             placeholder="jean@example.com"
-            className="w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:ring-sky-400"
+            error={errors.employeeEmail?.message}
           />
-          {errors.employeeEmail && <p className="text-xs text-red-600 mt-1">{errors.employeeEmail.message}</p>}
         </div>
 
         <div>

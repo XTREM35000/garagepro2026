@@ -1,23 +1,24 @@
-"use client"
+'use client';
 
-import React from "react"
-import { motion } from "framer-motion"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import AnimatedLogoGarage from "@/components/ui/AnimatedLogoGarage"
-import LoginForm from "./login-form"
-import SignupForm from "./signup-form"
-import { AuthTabProvider, useAuthTab } from "@/lib/auth-tab-context"
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import AnimatedLogoGarage from '@/components/ui/AnimatedLogoGarage';
+import LoginForm from './login-form';
+import SignupForm from './signup-form';
+import { AuthTabProvider, useAuthTab } from '@/lib/auth-tab-context';
+import { ModalDraggable } from '@/components/ui/ModalDraggable';
 
 function AuthCardContent() {
-  const { activeTab, setActiveTab } = useAuthTab()
+  const { activeTab, setActiveTab } = useAuthTab();
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 50, rotateX: 10 }}
       animate={{ opacity: 1, y: 0, rotateX: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="relative max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-gray-200"
-      style={{ perspective: "1500px" }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+      className="relative w-full bg-transparent"
+      style={{ perspective: '1500px' }}
     >
       {/* Logo animé et titre */}
       <div className="flex items-center gap-4 mb-8">
@@ -57,15 +58,22 @@ function AuthCardContent() {
         className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-24 h-24 rounded-full bg-green-100/50 blur-2xl"
       />
     </motion.div>
-  )
+  );
 }
 
 export default function AuthCard() {
+  const [isOpen] = useState(true);
+
   return (
     <AuthTabProvider>
-      <div className="fixed inset-0 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm z-50 p-4">
+      <ModalDraggable
+        isOpen={isOpen}
+        onClose={() => window.history.back()}
+        title="Auth - SaaS Manager"
+        maxWidth="max-w-md"
+      >
         <AuthCardContent />
-      </div>
+      </ModalDraggable>
     </AuthTabProvider>
-  )
+  );
 }

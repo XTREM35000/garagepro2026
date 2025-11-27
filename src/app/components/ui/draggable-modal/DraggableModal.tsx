@@ -17,9 +17,6 @@ export default function DraggableModal({ isOpen, onClose, title, children }: Dra
   const dragging = useRef(false);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -39,6 +36,10 @@ export default function DraggableModal({ isOpen, onClose, title, children }: Dra
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   const onHeaderMouseDown = (e: React.MouseEvent) => {
@@ -67,25 +68,29 @@ export default function DraggableModal({ isOpen, onClose, title, children }: Dra
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           />
-
           <div
             ref={ref}
-            className="relative z-10 w-[min(96%,720px)] rounded-lg bg-white p-0 shadow-lg dark:bg-gray-900"
-            style={{ touchAction: "none" }}
+            className="relative z-10 w-[min(96%,720px)] max-h-[85vh] rounded-lg bg-white p-0 shadow-lg dark:bg-gray-900 flex flex-col"
+            style={{ touchAction: "none", overflow: "hidden" }}
           >
             <div
               onMouseDown={onHeaderMouseDown}
-              className="cursor-grab rounded-t-lg bg-gradient-to-r from-sky-600 to-emerald-500 px-4 py-3 text-white"
+              className="cursor-grab active:cursor-grabbing rounded-t-lg bg-gradient-to-r from-sky-600 to-emerald-500 px-4 py-3 text-white flex-shrink-0 select-none"
             >
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-medium">{title}</h3>
-                <button aria-label="Close" onClick={onClose} className="ml-4 rounded-md bg-white/20 px-2 py-1 text-sm">
+                <button
+                  aria-label="Close"
+                  onClick={onClose}
+                  className="ml-4 rounded-md bg-white/20 px-2 py-1 text-sm hover:bg-white/30 transition-colors"
+                >
                   ✕
                 </button>
               </div>
             </div>
 
-            <div className="p-4">{children}</div>
+
+            <div className="overflow-hidden flex-1 p-4">{children}</div>
           </div>
         </motion.div>
       )}

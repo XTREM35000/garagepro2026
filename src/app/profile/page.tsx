@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { Mail, Shield, Activity, Save } from "lucide-react";
 import Image from "next/image";
 import AvatarUploader from "@/components/auth/avatar-uploader";
+import { PhoneInput } from "@/components/ui/PhoneInput";
+import { EmailInput } from "@/components/ui/EmailInput";
 import AnimatedLogoGarage from "@/components/ui/AnimatedLogoGarage";
 import Card3D from "@/components/ui/Card3D";
 import BackButton from "@/components/ui/BackButton";
@@ -27,6 +29,7 @@ export default function ProfilePage() {
   // local editable state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [password, setPassword] = useState("");
@@ -290,12 +293,20 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="mt-3">
-                    <label className="text-sm text-gray-600 dark:text-gray-300 block mb-1">Email</label>
-                    <input
-                      type="email"
+                    <PhoneInput
+                      value={phone}
+                      onChange={setPhone}
+                      label="Téléphone"
+                      className="mt-0"
+                    />
+                  </div>
+
+                  <div className="mt-3">
+                    <EmailInput
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full rounded-xl border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:text-gray-100"
+                      onChange={setEmail}
+                      label="Email"
+                      className="mt-0"
                     />
                   </div>
                 </div>

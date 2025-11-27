@@ -3,11 +3,14 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import AvatarUploader from "@/components/auth/avatar-uploader";
+import { PhoneInput } from "@/components/ui/PhoneInput";
+import { EmailInput } from "@/components/ui/EmailInput";
 import AnimatedLogoGarage from "@/components/ui/AnimatedLogoGarage";
 
 export default function SuperAdminForm({ onSuccess }: { onSuccess: () => void }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -118,14 +121,20 @@ export default function SuperAdminForm({ onSuccess }: { onSuccess: () => void })
         onUpload={(url) => setAvatarUrl(url)}
       />
 
-      {/* EMAIL */}
-      <input
-        type="email"
-        placeholder="Email"
+      {/* TELEPHONE */}
+      <PhoneInput
+        value={phone}
+        onChange={setPhone}
+        label="Téléphone"
         required
+      />
+
+      {/* EMAIL */}
+      <EmailInput
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="w-full rounded-xl border px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-400"
+        onChange={setEmail}
+        label="Email"
+        required
       />
 
       {/* MOT DE PASSE */}

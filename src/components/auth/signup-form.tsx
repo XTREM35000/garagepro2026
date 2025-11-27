@@ -5,6 +5,8 @@ import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import AvatarUploader from "@/components/auth/avatar-uploader"
+import { PhoneInput } from "@/components/ui/PhoneInput"
+import { EmailInput } from "@/components/ui/EmailInput"
 import { useAuthTab } from "@/lib/auth-tab-context"
 
 export default function SignupForm() {
@@ -14,6 +16,7 @@ export default function SignupForm() {
 
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
+  const [phone, setPhone] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -100,13 +103,20 @@ export default function SignupForm() {
         onUpload={(url) => setAvatarUrl(url)}
       />
 
-      <input
-        type="email"
-        placeholder="Email"
+      <PhoneInput
+        value={phone}
+        onChange={setPhone}
+        label="Téléphone"
+        placeholder="123456789"
         required
+      />
+
+      <EmailInput
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="w-full rounded-xl border px-3 py-2 focus:outline-none focus:ring-1 focus:ring-sky-400"
+        onChange={setEmail}
+        label="Email"
+        placeholder="nom.prenom@domain.com"
+        required
       />
 
       <div className="relative">

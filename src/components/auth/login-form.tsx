@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
+import { EmailInput } from "@/components/ui/EmailInput"
 
 const inputVariants = {
   focused: { scale: 1.02, boxShadow: "0 0 0 2px rgba(2, 132, 199, 0.3)" },
@@ -92,18 +93,13 @@ export default function LoginForm() {
         </motion.div>
       )}
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Email</label>
-        <motion.input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-0"
-          variants={inputVariants}
-          whileFocus="focused"
-        />
-      </div>
+      <EmailInput
+        value={email}
+        onChange={setEmail}
+        label="Email"
+        placeholder="votre@email.com"
+        required
+      />
 
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-700">Mot de passe</label>
@@ -129,14 +125,14 @@ export default function LoginForm() {
         <div className="mt-2 h-2 w-full bg-gray-200 rounded-xl overflow-hidden">
           <div
             className={`h-2 rounded transition-all ${strength === 0
-                ? "w-0"
-                : strength === 1
-                  ? "w-1/4 bg-red-500"
-                  : strength === 2
-                    ? "w-1/2 bg-yellow-400"
-                    : strength === 3
-                      ? "w-3/4 bg-green-400"
-                      : "w-full bg-green-600"
+              ? "w-0"
+              : strength === 1
+                ? "w-1/4 bg-red-500"
+                : strength === 2
+                  ? "w-1/2 bg-yellow-400"
+                  : strength === 3
+                    ? "w-3/4 bg-green-400"
+                    : "w-full bg-green-600"
               }`}
           />
         </div>
