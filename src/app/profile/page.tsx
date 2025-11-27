@@ -184,15 +184,31 @@ export default function ProfilePage() {
               {/* Hero banner small with page title (no huge banner per request) */}
               <div className="hero card-3d p-4">
                 <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 flex-1">
                     <AnimatedLogoGarage size={56} animated showText={false} />
                     <div className="flex-1">
                       <h1 className="text-xl font-extrabold text-gray-800 dark:text-gray-100 leading-tight">Mon profil</h1>
                       <p className="text-xs text-gray-500 dark:text-gray-300 mt-0.5">Gère tes informations et paramètres de compte</p>
+
+                      {/* Quick info */}
+                      <div className="flex gap-6 mt-3 text-xs">
+                        <div>
+                          <span className="text-gray-500 dark:text-gray-400">Rôle :</span>
+                          <span className="ml-2 font-medium text-gray-700 dark:text-gray-200">{(user as any).role || "Utilisateur"}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 dark:text-gray-400">Email :</span>
+                          <span className="ml-2 font-medium text-gray-700 dark:text-gray-200">{user.email}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 dark:text-gray-400">Vérifié :</span>
+                          <span className="ml-2 font-medium text-gray-700 dark:text-gray-200">{(user as any).email_confirmed_at ? "✓ Oui" : "✗ Non"}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="hidden sm:flex items-center gap-3">
+                  <div className="hidden sm:flex items-center gap-3 flex-shrink-0">
                     <BackButton />
                     <motion.button
                       onClick={() => void handleSubmit()}
