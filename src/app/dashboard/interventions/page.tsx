@@ -393,7 +393,7 @@ export default function InterventionsPage() {
         transition={{ delay: 0.4 }}
         className="mt-6 text-center text-gray-600 dark:text-gray-400 text-sm"
       >
-        📊 Total: {interventions.length} interventions | 💰 Chiffre d'affaires: 595.000 CFA
+        📊 Total: {interventions.length} interventions | 💰 Chiffre d&apos;affaires: 595.000 CFA
       </motion.div>
     </div>
   );

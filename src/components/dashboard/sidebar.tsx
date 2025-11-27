@@ -117,7 +117,7 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
   React.useEffect(() => {
     if (!openMobile) return;
     setOpenMobile(false);
-  }, [pathname]);
+  }, [pathname, openMobile, setOpenMobile]);
 
   /* ----------- ICON 3D EFFECT ----------- */
   const icon3D = {
