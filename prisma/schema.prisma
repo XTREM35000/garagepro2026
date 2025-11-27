@@ -27,25 +27,27 @@ model Tenant {
   subscriptions Subscription[]
   users         User[]
   vehicles      Vehicle[]
+  interventions Intervention[]
 
   @@index([stripeId])
 }
 
 model User {
-  id            String         @id @default(uuid()) @db.Uuid
-  name          String?
-  avatarUrl     String?
-  tenantId      String         @db.Uuid
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  email         String         @unique
-  password      String
-  role          UserRole       @default(VIEWER)
-  cashRegisters CashRegister[] @relation("UserCashRegisters")
-  expenses      Expense[]      @relation("UserExpenses")
-  invoices      Invoice[]      @relation("UserInvoices")
-  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  photos        VehiclePhoto[]
+  id              String         @id @default(uuid()) @db.Uuid
+  name            String?
+  avatarUrl       String?
+  tenantId        String         @db.Uuid
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  email           String         @unique
+  password        String
+  role            UserRole       @default(VIEWER)
+  cashRegisters   CashRegister[] @relation("UserCashRegisters")
+  expenses        Expense[]      @relation("UserExpenses")
+  invoices        Invoice[]      @relation("UserInvoices")
+  tenant          Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  photos          VehiclePhoto[]
+  interventions   Intervention[] @relation("TechnicianInterventions")
 
   @@index([tenantId])
   @@index([role])
@@ -53,17 +55,18 @@ model User {
 }
 
 model Vehicle {
-  id          String         @id @default(uuid()) @db.Uuid
-  marque      String
-  modele      String
-  immatricule String         @unique
-  tenantId    String         @db.Uuid
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  status      VehicleStatus  @default(EN_COURS)
-  invoices    Invoice[]
-  tenant      Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  photos      VehiclePhoto[]
+  id            String         @id @default(uuid()) @db.Uuid
+  marque        String
+  modele        String
+  immatricule   String         @unique
+  tenantId      String         @db.Uuid
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  status        VehicleStatus  @default(EN_COURS)
+  invoices      Invoice[]
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  photos        VehiclePhoto[]
+  interventions Intervention[]
 
   @@index([tenantId])
   @@index([status])
@@ -204,4 +207,108 @@ enum SubscriptionStatus {
   ACTIVE
   EXPIRE
   EN_ATTENTE
+}
+
+model Intervention {
+  id                 String                @id @default(cuid())
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  tenantId           String                @db.Uuid
+  tenant             Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  vehicleId          String                @db.Uuid
+  vehicle            Vehicle               @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  technicianId       String?               @db.Uuid
+  technician         User?                 @relation("TechnicianInterventions", fields: [technicianId], references: [id])
+  
+  status             InterventionStatus    @default(EN_ATTENTE)
+  priority           InterventionPriority  @default(NORMALE)
+  progress           Int                   @default(0)
+  
+  title              String
+  description        String?
+  diagnosis          String?
+  observations       String?
+  
+  startDate          DateTime?
+  estimatedEndDate   DateTime?
+  actualEndDate      DateTime?
+  
+  estimatedCost      Decimal?              @db.Decimal(10, 2)
+  actualCost         Decimal?              @db.Decimal(10, 2)
+  partsCost          Decimal?              @db.Decimal(10, 2)
+  laborCost          Decimal?              @db.Decimal(10, 2)
+  
+  usedParts          UsedPart[]
+  timeEntries        TimeEntry[]
+  photos             InterventionPhoto[]
+
+  @@index([tenantId])
+  @@index([vehicleId])
+  @@index([technicianId])
+  @@index([status])
+  @@map("interventions")
+}
+
+model UsedPart {
+  id             String       @id @default(cuid())
+  interventionId String
+  intervention   Intervention @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+  
+  partName       String
+  quantity       Int
+  unitPrice      Decimal      @db.Decimal(10, 2)
+  totalPrice     Decimal      @db.Decimal(10, 2)
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([interventionId])
+}
+
+model TimeEntry {
+  id             String       @id @default(cuid())
+  interventionId String
+  intervention   Intervention @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+  
+  startTime      DateTime
+  endTime        DateTime?
+  duration       Int?         // en minutes
+  description    String?
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([interventionId])
+}
+
+model InterventionPhoto {
+  id             String       @id @default(cuid())
+  interventionId String
+  intervention   Intervention @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+  
+  url            String
+  type           String       // AVANT, APRES, PROBLEME
+  description    String?
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([interventionId])
+}
+
+enum InterventionStatus {
+  EN_ATTENTE
+  DIAGNOSTIC
+  DEVIS_ENVOYE
+  EN_COURS
+  TERMINE
+  FACTURE
+  PAYE
+}
+
+enum InterventionPriority {
+  BASSE
+  NORMALE
+  HAUTE
+  URGENTE
 }
