@@ -3,6 +3,8 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Mail, Shield, Activity, Save } from "lucide-react";
+import Image from "next/image";
 import AvatarUploader from "@/components/auth/avatar-uploader";
 import AnimatedLogoGarage from "@/components/ui/AnimatedLogoGarage";
 import Card3D from "@/components/ui/Card3D";
@@ -179,62 +181,85 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.38 }}
-              className="relative -mt-8"
+              className="relative mb-6 rounded-xl overflow-hidden shadow-lg h-48"
             >
-              {/* Hero banner small with page title (no huge banner per request) */}
-              <div className="hero card-3d p-4">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 flex-1">
-                    <AnimatedLogoGarage size={56} animated showText={false} />
-                    <div className="flex-1">
-                      <h1 className="text-xl font-extrabold text-gray-800 dark:text-gray-100 leading-tight">Mon profil</h1>
-                      <p className="text-xs text-gray-500 dark:text-gray-300 mt-0.5">Gère tes informations et paramètres de compte</p>
+              {/* Background image */}
+              <Image
+                src="/images/stock.jpg"
+                alt="Background"
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 768px) 100vw, 90vw"
+              />
 
-                      {/* Quick info */}
-                      <div className="flex gap-6 mt-3 text-xs">
-                        <div>
-                          <span className="text-gray-500 dark:text-gray-400">Rôle :</span>
-                          <span className="ml-2 font-medium text-gray-700 dark:text-gray-200">{(user as any).role || "Utilisateur"}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500 dark:text-gray-400">Email :</span>
-                          <span className="ml-2 font-medium text-gray-700 dark:text-gray-200">{user.email}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500 dark:text-gray-400">Vérifié :</span>
-                          <span className="ml-2 font-medium text-gray-700 dark:text-gray-200">{(user as any).email_confirmed_at ? "✓ Oui" : "✗ Non"}</span>
-                        </div>
+              {/* Dark overlay for text readability */}
+              <div className="absolute inset-0 bg-black/40 dark:bg-black/60"></div>
+
+              {/* Content overlay */}
+              <div className="absolute inset-0 p-6 flex items-center justify-between">
+                <div className="flex items-center gap-4 flex-1">
+                  <div className="relative">
+                    <AnimatedLogoGarage size={48} animated showText={false} />
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h1 className="text-2xl font-bold text-white">
+                        Mon profil
+                      </h1>
+                      <span className="px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full">
+                        {(user as any).role || "Utilisateur"}
+                      </span>
+                    </div>
+
+                    <p className="text-sm text-gray-100 mb-3">
+                      Gère tes informations et paramètres de compte
+                    </p>
+
+                    {/* Quick info */}
+                    <div className="flex flex-wrap gap-6 text-sm text-gray-100">
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-4 h-4" />
+                        <span>{user.email}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Shield className="w-4 h-4" />
+                        <span>{(user as any).email_confirmed_at ? "✓ Vérifié" : "En attente"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Activity className="w-4 h-4" />
+                        <span>En ligne</span>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div className="hidden sm:flex items-center gap-3 flex-shrink-0">
-                    <BackButton />
-                    <motion.button
-                      onClick={() => void handleSubmit()}
-                      whileHover={{ scale: 1.03 }}
-                      className="btn"
-                      style={{ padding: "10px 16px" }}
-                    >
-                      Enregistrer
-                    </motion.button>
-                  </div>
+                <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
+                  <BackButton />
+                  <motion.button
+                    onClick={() => void handleSubmit()}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg shadow-lg flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    Enregistrer
+                  </motion.button>
                 </div>
               </div>
-            </motion.div>
-
-            {/* Main content card */}
+            </motion.div>            {/* Main content card */}
             <motion.form
               onSubmit={(e) => void handleSubmit(e)}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
-              className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6"
+              className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3"
             >
               {/* Left column - profile form */}
-              <div className="space-y-4">
-                <div className="card-3d p-6">
-                  <h2 className="text-lg font-semibold mb-3">Informations personnelles</h2>
+              <div className="space-y-3">
+                <div className="card-3d p-4">
+                  <h2 className="text-base font-semibold mb-2">Informations personnelles</h2>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input
@@ -274,8 +299,8 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="card-3d p-6">
-                  <h2 className="text-lg font-semibold mb-3">Sécurité</h2>
+                <div className="card-3d p-4">
+                  <h2 className="text-base font-semibold mb-2">Sécurité</h2>
 
                   <div className="relative">
                     <input
@@ -331,9 +356,9 @@ export default function ProfilePage() {
               </div>
 
               {/* Right column - summary / actions / activity */}
-              <div className="space-y-4">
-                <div className="card-3d p-6">
-                  <h3 className="text-lg font-semibold mb-3">Compte</h3>
+              <div className="space-y-3">
+                <div className="card-3d p-4">
+                  <h3 className="text-base font-semibold mb-2">Compte</h3>
 
                   <div className="grid grid-cols-1 gap-3">
                     <div className="flex items-center justify-between">
@@ -361,8 +386,8 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="card-3d p-6">
-                  <h3 className="text-lg font-semibold mb-3">Actions récentes</h3>
+                <div className="card-3d p-4">
+                  <h3 className="text-base font-semibold mb-2">Actions récentes</h3>
                   <div className="space-y-3 max-h-56 overflow-y-auto">
                     {/* Replace with real activity feed when available */}
                     <Card3D title="Connexion" subtitle="22 Nov 2025 — 09:12" />
@@ -371,8 +396,8 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="card-3d p-6">
-                  <h3 className="text-lg font-semibold mb-3">Préférences</h3>
+                <div className="card-3d p-4">
+                  <h3 className="text-base font-semibold mb-2">Préférences</h3>
 
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
