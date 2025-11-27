@@ -182,13 +182,13 @@ export default function ProfilePage() {
               className="relative -mt-8"
             >
               {/* Hero banner small with page title (no huge banner per request) */}
-              <div className="hero card-3d p-6">
+              <div className="hero card-3d p-4">
                 <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <AnimatedLogoGarage size={56} animated showText={false} />
-                    <div>
-                      <h1 className="text-2xl font-extrabold text-gray-800 dark:text-gray-100">Mon profil</h1>
-                      <p className="text-sm text-gray-500 dark:text-gray-300">Gère tes informations et paramètres de compte</p>
+                    <div className="flex-1">
+                      <h1 className="text-xl font-extrabold text-gray-800 dark:text-gray-100 leading-tight">Mon profil</h1>
+                      <p className="text-xs text-gray-500 dark:text-gray-300 mt-0.5">Gère tes informations et paramètres de compte</p>
                     </div>
                   </div>
 
