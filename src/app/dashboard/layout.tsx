@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import HeroBanner from '@/components/ui/HeroBanner'
 import Sidebar from '@/components/dashboard/sidebar'
 import Header from '@/components/dashboard/header'
-import BackButton from '@/components/ui/BackButton'
+// BackButton removed from global layout; use the in-image back button in HeroBanner instead
 import Button from '@/components/ui/Button'
 import { UserPlus } from 'lucide-react'
 import { usePathname } from 'next/navigation'
@@ -58,10 +58,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <Sidebar openMobile={mobileSidebarOpen} setOpenMobile={setMobileSidebarOpen} />
       <div className="flex-1 flex flex-col">
         <Header onOpenMobile={() => setMobileSidebarOpen(true)} isMobileOpen={mobileSidebarOpen} />
-        <main className="flex-1 p-6">
-          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="mb-4">
-              <BackButton />
+        <main className="flex-1 p-3">
+          <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-2">
+            <div className="mb-2">
+              {/* BackButton removed from above image; HeroBanner now shows in-image back button */}
 
               {/* Hero image with title/subtitle overlay (filigramme blanc) */}
               {/* Centralized hero banner */}
