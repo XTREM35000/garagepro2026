@@ -51,6 +51,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                   src="/images/profile01.png"
                   alt="Thierry Gogo"
                   fill
+                  sizes="(max-width: 768px) 112px, 112px"
                   className="object-cover"
                   priority
                 />
