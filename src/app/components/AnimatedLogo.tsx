@@ -1,4 +1,4 @@
-// AnimatedLogo avancé pour SaaS Multi-Garages
+// AnimatedLogo avancé pour SaaS GaragePro
 // Conçu pour Next.js + Prisma + Supabase
 // Développeur : Thierry Gogo
 // Contact : 2250103644527 / 2250758966156 — 2024dibo@gmail.com
@@ -56,7 +56,7 @@ export const AnimatedLogo = ({
 
   return (
     <div
-      aria-label="SaaS Multi-Garages - logo animé"
+      aria-label="SaaS GaragePro - logo animé"
       role="img"
       className={`flex items-center ${gapClass} ${className}`}
     >
@@ -109,7 +109,7 @@ export const AnimatedLogo = ({
       {/* Branding text (optional) */}
       {showText && (
         <div className="flex flex-col leading-tight -ml-1">
-          <span className="text-lg font-bold text-green-700">Multi-Garages</span>
+          <span className="text-lg font-bold text-green-700">GaragePro</span>
         </div>
       )}
     </div>

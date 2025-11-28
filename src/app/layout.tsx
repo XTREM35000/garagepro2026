@@ -1,10 +1,10 @@
-import './globals.css'
+import '@/app/globals.css'
 import React from 'react'
 import { Providers } from './Providers'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Multi-Garages',
+  title: 'GaragePro',
   description: 'SaaS multi-tenant starter',
   icons: {
     icon: '/logo.png',

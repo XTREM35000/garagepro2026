@@ -125,7 +125,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
               {/* Desktop: Logo + Title */}
               <div className="hidden md:flex items-center gap-3">
                 <AnimatedLogoGarage size={40} animated showText={false} />
-                <span className="text-lg font-bold text-gray-900 dark:text-white">Multi-Garages</span>
+                <span className="text-lg font-bold text-gray-900 dark:text-white">GaragePro</span>
               </div>
 
               {/* Mobile: logo (left) */}
@@ -214,7 +214,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div initial={{ opacity: 1, x: 0 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} className="space-y-6">
               <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-tight">
-                GaragePro — <span className="text-green-600">SaaS Multi-Garages</span>
+                GaragePro — <span className="text-green-600">SaaS GaragePro</span>
               </h1>
 
               <p className="text-lg text-gray-700 max-w-xl">

@@ -10,6 +10,7 @@ import {
   Sun,
   Moon,
   Menu,
+  HelpCircle,
 } from "lucide-react";
 // Animated logo intentionally removed from global header — kept only in sidebar for desktop
 import UserMenu from "./user-menu";
@@ -33,6 +34,17 @@ export default function Header({ onOpenMobile, isMobileOpen }: { onOpenMobile?: 
           {/* LEFT placeholder to keep layout centered */}
           <div className="flex items-center gap-4">
             <div className="hidden md:block" aria-hidden="true"></div>
+            {/* HELP BUTTON - déplacé à gauche */}
+            <button
+              aria-label="Aide"
+              title="Aide & Documentation"
+              onClick={() => {
+                if (typeof window !== "undefined") window.location.href = "/help"
+              }}
+              className="p-2 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow hover:scale-105 transition"
+            >
+              <HelpCircle size={18} />
+            </button>
           </div>
 
           {/* RIGHT : MOBILE BURGER + ICONS + USER */}

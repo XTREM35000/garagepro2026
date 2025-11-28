@@ -134,7 +134,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
               }}
               className="text-xs text-gray-600 mb-6"
             >
-              Gestion multi-garages professionnelle
+              Gestion GaragePro professionnelle
             </motion.p>
 
             {/* Barre de progression */}
