@@ -253,7 +253,7 @@ export default function LandingPage({ onClose = () => { }, initialSetupState }: 
             <motion.div initial={{ opacity: 1, scale: 1 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="hidden md:block">
               <div className="rounded-3xl shadow-2xl overflow-hidden border">
                 <div className="relative h-64 bg-gradient-to-br from-green-50 to-white">
-                  <Image src="/images/atelier.jpg" alt="Illustration" fill sizes="(min-width: 768px) 33vw, 100%" className="object-cover" />
+                  <Image src="/images/hero-bg.jpg" alt="Illustration" fill sizes="(min-width: 768px) 33vw, 100%" className="object-cover" />
                 </div>
                 <div className="p-6 bg-white">
                   <h4 className="font-bold text-lg">Tableau de bord intelligent</h4>

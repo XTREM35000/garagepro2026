@@ -189,7 +189,7 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
           hidden md:flex flex-col h-screen border-r shadow-2xl
           bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl
           transition-all duration-300
-          ${collapsed ? "w-24" : "w-[240px]"}
+          ${collapsed ? "w-28" : "w-[240px]"}
         `}
       >
         {/* Logo */}

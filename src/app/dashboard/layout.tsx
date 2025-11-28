@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import HeroBanner from '@/components/ui/HeroBanner'
 import Sidebar from '@/components/dashboard/sidebar'
 import Header from '@/components/dashboard/header'
+import { PageHelpButton } from '@/components/ui/PageHelpButton'
 // BackButton removed from global layout; use the in-image back button in HeroBanner instead
 import Button from '@/components/ui/Button'
 import { UserPlus } from 'lucide-react'
@@ -58,6 +59,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <Sidebar openMobile={mobileSidebarOpen} setOpenMobile={setMobileSidebarOpen} />
       <div className="flex-1 flex flex-col">
         <Header onOpenMobile={() => setMobileSidebarOpen(true)} isMobileOpen={mobileSidebarOpen} />
+        {/* Help Button Contextuel */}
+        <PageHelpButton />
         <main className="flex-1 p-3">
           <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-2">
             <div className="mb-2">
