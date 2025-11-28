@@ -62,18 +62,18 @@ function AuthCardContent() {
 }
 
 export default function AuthCard() {
-  const [isOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <AuthTabProvider>
-      <ModalDraggable
-        isOpen={isOpen}
-        onClose={() => window.history.back()}
-        title="Auth - SaaS Manager"
-        maxWidth="max-w-md"
-      >
+    <ModalDraggable
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      title="Auth - SaaS Manager"
+      description="Connectez-vous ou créez un compte"
+    >
+      <AuthTabProvider>
         <AuthCardContent />
-      </ModalDraggable>
-    </AuthTabProvider>
+      </AuthTabProvider>
+    </ModalDraggable>
   );
 }
