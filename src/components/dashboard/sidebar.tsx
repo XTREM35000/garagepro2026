@@ -25,57 +25,93 @@ import {
   X,
   ClipboardList,
   Package,
+  Home,
+  BarChart3,
+  Inbox,
+  Clock,
+  TrendingUp,
+  AlertCircle,
+  Truck,
+  DollarSign,
 } from "lucide-react";
 
 /* ---------------------------------------------
-   GROUP COLORS (Très contrastés + visibles)
+   GROUP COLORS - CONTRASTE FORT entre groupes
 ----------------------------------------------*/
 const groupColors: Record<string, string> = {
-  Général: "from-emerald-500 to-emerald-700",
-  Atelier: "from-blue-500 to-blue-700",
-  Facturation: "from-amber-500 to-amber-700",
-  CRM: "from-violet-500 to-violet-700",
-  Administration: "from-rose-500 to-rose-700",
+  "Accueil": "from-emerald-500 to-emerald-700",           // VERT
+  "Réception": "from-blue-500 to-blue-700",               // BLEU 
+  "Atelier": "from-orange-500 to-orange-700",             // ORANGE
+  "Interventions": "from-purple-500 to-purple-700",       // VIOLET
+  "Stock": "from-indigo-500 to-indigo-700",               // INDIGO
+  "Facturation": "from-amber-500 to-amber-700",           // JAUNE/OR
+  "Administration": "from-rose-500 to-rose-700",          // ROSE
 };
 
 /* ---------------------------------------------
-   MENU STRUCTURE (avec restrictions par rôle)
+   MENU STRUCTURE - Groupes scindés + titres courts
 ----------------------------------------------*/
 const groupedNav = [
   {
-    group: "Général",
+    group: "Accueil",
+    color: groupColors["Accueil"],
     items: [
-      { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/dashboard", roles: [] },
+      { key: "dashboard", label: "Tableau de Bord", icon: LayoutDashboard, href: "/dashboard", roles: [] },
+      { key: "overview", label: "Vue Atelier", icon: BarChart3, href: "/dashboard/overview", roles: [] },
+    ],
+  },
+  {
+    group: "Réception",
+    color: groupColors["Réception"],
+    items: [
+      { key: "reception", label: "Réception", icon: Inbox, href: "/dashboard/reception", roles: [] },
+      { key: "clients", label: "Clients", icon: Users, href: "/dashboard/clients", roles: [] },
+      { key: "photos", label: "Photos", icon: Camera, href: "/dashboard/photos_vehicules", roles: [] },
     ],
   },
   {
     group: "Atelier",
+    color: groupColors["Atelier"],
     items: [
-      { key: "interventions", label: "Interventions", icon: ClipboardList, href: "/dashboard/interventions", roles: [] },
-      { key: "atelier", label: "Atelier", icon: Wrench, href: "/dashboard/atelier", roles: [] },
-      { key: "stock", label: "Stock", icon: Package, href: "/dashboard/stock", roles: [] },
-      { key: "photos", label: "Photos véhicules", icon: Camera, href: "/dashboard/photos", roles: [] },
+      { key: "file-attente", label: "File Attente", icon: Clock, href: "/dashboard/atelier/file-attente", roles: [] },
+      { key: "en-cours", label: "En Cours", icon: Wrench, href: "/dashboard/atelier/en-cours", roles: [] },
+      { key: "termines", label: "Terminés", icon: ClipboardList, href: "/dashboard/atelier/termines", roles: [] },
+    ],
+  },
+  {
+    group: "Interventions",
+    color: groupColors["Interventions"],
+    items: [
+      { key: "interventions", label: "Interventions", icon: Wrench, href: "/dashboard/interventions", roles: [] },
+      { key: "planning", label: "Planning", icon: Clock, href: "/dashboard/interventions/planning", roles: [] },
+      { key: "historique", label: "Historique", icon: TrendingUp, href: "/dashboard/interventions/historique", roles: [] },
+    ],
+  },
+  {
+    group: "Stock",
+    color: groupColors["Stock"],
+    items: [
+      { key: "stock", label: "Stock Pièces", icon: Package, href: "/dashboard/stock", roles: [] },
+      { key: "commandes", label: "Commandes", icon: Truck, href: "/dashboard/stock/commandes", roles: [] },
+      { key: "alertes", label: "Alertes", icon: AlertCircle, href: "/dashboard/stock/alertes", roles: [] },
     ],
   },
   {
     group: "Facturation",
+    color: groupColors["Facturation"],
     items: [
-      { key: "factures", label: "Factures", icon: FileText, href: "/dashboard/facturation", roles: [] },
+      { key: "facturation", label: "Facturation", icon: FileText, href: "/dashboard/facturation", roles: [] },
       { key: "caisse", label: "Caisse", icon: Wallet, href: "/dashboard/caisse", roles: [] },
-    ],
-  },
-  {
-    group: "CRM",
-    items: [
-      { key: "clients", label: "Clients", icon: Users, href: "/dashboard/clients", roles: [] },
+      { key: "factures", label: "Factures", icon: DollarSign, href: "/dashboard/factures", roles: [] },
     ],
   },
   {
     group: "Administration",
+    color: groupColors["Administration"],
     items: [
-      { key: "settings", label: "Paramètres", icon: Settings, href: "/tenant/settings", roles: ["SUPER_ADMIN", "TENANT_ADMIN"] },
-      { key: "super", label: "Super Admin", icon: ShieldCheck, href: "/dashboard/super", roles: ["SUPER_ADMIN"] },
-      { key: "tenant", label: "Tenant Admin", icon: ShieldCheck, href: "/dashboard/tenant", roles: ["TENANT_ADMIN"] },
+      { key: "equipe", label: "Équipe", icon: Users, href: "/dashboard/equipe", roles: ["TENANT_ADMIN", "SUPER_ADMIN"] },
+      { key: "parametres", label: "Paramètres", icon: Settings, href: "/tenant/settings", roles: ["SUPER_ADMIN", "TENANT_ADMIN"] },
+      { key: "super-admin", label: "Super Admin", icon: ShieldCheck, href: "/dashboard/super", roles: ["SUPER_ADMIN"] },
     ],
   },
 ];
@@ -90,30 +126,23 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
   const [collapsed, setCollapsed] = useState(false);
   const [internalOpenMobile, setInternalOpenMobile] = useState(false);
 
-  // Récupérer le rôle de l'utilisateur
   const userRole = (user as any)?.role || "VIEWER";
 
-  // Vérifier si un élément doit être affiché pour ce rôle
   const canViewItem = (item: any) => {
-    // Si roles est vide, visible par tous
     if (!item.roles || item.roles.length === 0) return true;
-    // Sinon, visible seulement si le rôle correspond
     return item.roles.includes(userRole);
   };
 
-  // Controlled vs uncontrolled behavior: prefer parent props when provided
   const openMobile = typeof openMobileProp === 'boolean' ? openMobileProp : internalOpenMobile
   const setOpenMobile = setOpenMobileProp ?? setInternalOpenMobile
 
   React.useEffect(() => {
-    // legacy support: listen to document event only when no parent controller provided
     if (setOpenMobileProp) return
     const handler = () => setInternalOpenMobile(true);
     document.addEventListener("open-mobile-sidebar", handler);
     return () => document.removeEventListener("open-mobile-sidebar", handler);
   }, [setOpenMobileProp]);
 
-  // Close mobile drawer when the route changes (only run on pathname changes)
   React.useEffect(() => {
     if (!openMobile) return;
     setOpenMobile(false);
@@ -127,7 +156,7 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
   };
 
   /* ----------- RENDER ITEM ----------- */
-  const renderItem = (item: any, group: string) => {
+  const renderItem = (item: any, group: any) => {
     const Icon = item.icon;
     const active = pathname?.startsWith(item.href);
 
@@ -138,11 +167,10 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
           whileTap={{ scale: 0.97 }}
           className={`
             flex items-center gap-3 
-            px-3 py-2                          /* Hauteur réduite */
-            rounded-xl cursor-pointer 
+            px-3 py-2 rounded-xl cursor-pointer 
             transition-all 
             ${active
-              ? `bg-gradient-to-r ${groupColors[group]} text-white`
+              ? `bg-gradient-to-r ${group.color} text-white`
               : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
             }
           `}
@@ -151,12 +179,11 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
           <motion.div
             {...icon3D}
             className={`
-              w-9 h-9                         /* Taille icône réduite pour desktop compact */
-              flex items-center justify-center 
+              w-9 h-9 flex items-center justify-center 
               rounded-xl 
               ${active
                 ? "bg-white/20 text-white"
-                : `bg-gradient-to-tr ${groupColors[group]} text-white`
+                : `bg-gradient-to-tr ${group.color} text-white`
               }
             `}
           >
@@ -177,12 +204,8 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
     );
   };
 
-  /* ---------------------------------------------
-     RETURN
-  ----------------------------------------------*/
   return (
     <>
-
       {/* ---------------- DESKTOP SIDEBAR ---------------- */}
       <aside
         className={`
@@ -201,22 +224,20 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-6 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-4 overflow-y-auto"> {/* Reduced space between groups */}
           {groupedNav.map((group) => (
             <div key={group.group} className="space-y-2">
-
-              {/* Titre du groupe */}
+              {/* Titre du groupe - PLUS COURT */}
               {!collapsed && (
-                <div className="px-2 pb-1 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <div className="px-2 pb-1 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
                   {group.group}
                 </div>
               )}
 
               {/* Liste des items */}
-              <div className="space-y-2"> {/* réduit espace entre les options pour desktop */}
-                {group.items.filter(canViewItem).map((item) => renderItem(item, group.group))}
+              <div className="space-y-1"> {/* Reduced space between items */}
+                {group.items.filter(canViewItem).map((item) => renderItem(item, group))}
               </div>
-
             </div>
           ))}
         </nav>
@@ -254,7 +275,7 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
               exit={{ x: '-100%' }}
               transition={{ type: "spring", stiffness: 240 }}
             >
-              {/* Header (close only) */}
+              {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className="text-sm font-semibold">Menu</div>
@@ -265,14 +286,12 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
               </div>
 
               {/* Items */}
-              <nav className="space-y-6">
+              <nav className="space-y-4"> {/* Reduced space on mobile too */}
                 {groupedNav.map((group) => (
                   <div key={group.group} className="space-y-2">
-                    <div className="text-xs font-bold text-gray-500 uppercase px-2">{group.group}</div>
-
-                    {/* ESPACES SUR MOBILE AUSSI */}
-                    <div className="space-y-3">
-                      {group.items.filter(canViewItem).map((item) => renderItem(item, group.group))}
+                    <div className="text-xs font-bold text-gray-500 uppercase px-2 truncate">{group.group}</div>
+                    <div className="space-y-1"> {/* Reduced space between items */}
+                      {group.items.filter(canViewItem).map((item) => renderItem(item, group))}
                     </div>
                   </div>
                 ))}

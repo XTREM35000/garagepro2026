@@ -13,6 +13,7 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
     📄 ai-crud-prompt.md
     📄 ai-dashboard-prompt.md
     📄 ai-modal-prompt.md
+📄 build_output.txt
 📄 DELIVERY_FINAL.md
 📄 deploy-fast.ps1
 📄 deploy.ps1
@@ -22,19 +23,23 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
   📄 DELIVERY_CHECKLIST.md
   📄 DELIVERY_FINAL.md
   📄 documentation.md
+  📄 email_confirmed.md
   📄 EXEC_SUMMARY.md
   📄 instructions.md
   📄 instructions_full.md
+  📄 MODALDRAGGABLE_GUIDE.md
   📄 MODALS_GUIDE.md
   📄 resolve01.md
   📄 setup-avatars-bucket.md
   📄 signup-trigger-setup.md
   📄 structure.md
+📄 lint_output.txt
 📄 liste.mjs
 📄 next-env.d.ts
 📄 next.config.mjs
 📄 package-lock.json
 📄 package.json
+📄 pooler.js
 📄 postcss.config.js
 📁 prisma
   📁 migrations
@@ -46,10 +51,11 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
       📄 migration.sql
     📁 20251115123000_remove_email_password
       📄 migration.sql
+    📁 20251127_add_interventions
+      📄 migration.sql
     📄 migration_lock.toml
   📄 rls.sql
   📄 schema.prisma
-  📄 seed.ts
 📄 project_structure.txt
 📄 README.md
 📁 scripts
@@ -61,6 +67,8 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
       📁 agents
         📄 route.ts
       📁 auth
+        📁 signin
+          📄 route.ts
         📁 signup
           📁 debug
             📄 route.ts
@@ -77,10 +85,14 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
           📄 route.ts
         📁 overview
           📄 route.ts
+      📁 db-proxy
+        📄 route.ts
       📁 debug
         📁 cookies
           📄 route.ts
         📁 session
+      📁 debug-env
+        📄 route.ts
       📁 photos_vehicules
         📄 route.ts
       📁 setup
@@ -94,6 +106,13 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
         📄 route.ts
       📁 tenant
         📄 route.ts
+        📁 settings
+          📄 route.ts
+      📁 test-db
+        📄 route.ts
+      📁 test-db-simple
+        📄 route.ts
+      📄 test-db.ts
       📁 upload
         📁 avatar
           📄 route.ts
@@ -118,24 +137,78 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
           📄 ConfirmModal.tsx
           📄 WhatsAppModal.tsx
     📁 dashboard
+      📁 admin
+        📄 page.tsx
       📁 agents
         📄 page.tsx
+      📁 atelier
+        📄 page.tsx
+      📁 caisse
+        📄 page.tsx
+      📁 clients
+        📄 page.tsx
+      📁 equipe
+        📄 page.tsx
+      📁 facturation
+        📄 page.tsx
+      📁 factures
+        📄 page.tsx
+      📁 interventions
+        📁 history
+          📄 page.tsx
+        📄 page.tsx
+        📁 planning
+          📄 page.tsx
+        📁 queue
+          📄 page.tsx
+        📁 [id]
+          📄 page.tsx
       📄 layout.tsx
+      📁 overview
+        📄 page.tsx
       📄 page.tsx
+      📁 photos
+        📄 page.tsx
       📁 photos_vehicules
         📄 page.tsx
+      📁 reception
+        📄 ClientSearch.tsx
+        📄 page.tsx
+        📄 ReceptionForm.tsx
+        📄 VehicleForm.tsx
+      📁 stock
+        📁 alerts
+          📄 page.tsx
+        📁 orders
+          📄 page.tsx
+        📄 page.tsx
       📁 stock_materiel
+        📄 page.tsx
+      📁 super
+        📄 page.tsx
+      📁 tenant
         📄 page.tsx
       📁 [role]
         📄 page.tsx
     📄 error.tsx
     📄 globals.css
+    📁 help
+      📄 page.tsx
     📁 landing
       📄 LandingPage.tsx
     📄 layout.tsx
     📄 not-found.tsx
+    📁 onboarding
+      📁 super-admin
+        📄 page.tsx
+      📄 SuperAdminClient.tsx
+      📁 tenant-admin
+        📄 page.tsx
+      📄 TenantAdminClient.tsx
     📄 page.tsx
     📁 pricing
+      📄 page.tsx
+    📁 profile
       📄 page.tsx
     📄 Providers.tsx
     📁 setup
@@ -159,31 +232,78 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
       📄 login-form.tsx
       📄 signup-form.tsx
     📁 dashboard
+      📄 AffectationTechnicien.tsx
+      📄 BesoinPieces.tsx
       📄 header.tsx
+      📄 InterventionWorkflow.tsx
+      📄 MetricsCard.tsx
       📄 overview.tsx
       📄 sidebar.tsx
       📄 user-menu.tsx
+    📁 garage
+      📄 ClientBadge.tsx
+      📄 FactureCard.tsx
+      📄 InterventionRow.tsx
+      📄 StatusTag.tsx
+      📄 VehicleBadge.tsx
     📁 hero
       📄 hero.tsx
+      📄 HeroBanner.tsx
+    📁 layout
+      📄 PageSection.tsx
     📁 tenant
+      📄 SettingsForm.tsx
       📄 tenant-settings.tsx
     📁 ui
+      📄 ActionBar.tsx
       📄 AnimatedLogoGarage.tsx
+      📄 BackButton.tsx
+      📄 badge.tsx
       📄 base-modal.tsx
+      📄 Button.tsx
+      📄 card.tsx
+      📄 Card3D.tsx
+      📄 ClientBadge.tsx
       📄 confirm-modal.tsx
+      📄 DataTableMobile.tsx
       📄 draggable-modal-wrapper.tsx
       📄 draggable-modal.tsx
+      📄 EmailInput.tsx
+      📄 Header.tsx
+      📄 HeroBanner.tsx
+      📄 icon-button.tsx
+      📄 input.tsx
+      📄 ListCard.tsx
+      📄 ListRow.tsx
       📄 logo-animated.tsx
+      📄 MobileFloatingButton.tsx
+      📄 ModalDraggable.tsx
+      📄 ModalPro.tsx
+      📄 NavbarMobile.tsx
+      📄 PageHeader.tsx
+      📄 PageHelpButton.tsx
+      📄 PhoneInput.tsx
+      📄 select.tsx
       📄 sidebar.tsx
+      📄 StatusTag.tsx
+      📄 table-pro.tsx
+      📄 TablePro.tsx
+      📄 TableProMobile.tsx
       📄 tabs.tsx
       📄 toast.tsx
+      📄 UserMenu.tsx
+      📄 VehicleBadge.tsx
   📁 config
     📄 subscriptions.ts
+  📁 hooks
+    📄 use-theme.ts
   📁 lib
     📄 auth-context.tsx
     📄 auth-hoc.tsx
     📄 auth-server.ts
     📄 auth-tab-context.tsx
+    📄 build-info.ts
+    📄 helpMessages.ts
     📄 modal-schemas.ts
     📄 prisma.ts
     📄 stripe.ts
@@ -201,5 +321,11 @@ Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .n
 📄 START_HERE.md
 📄 tailwind.config.js
 📄 test-avatar-upload.mjs
+📄 test-endpoint.js
+📄 test-no-ssl.js
+📄 tmp.html
 📄 tsconfig.json
 📄 tsconfig.tsbuildinfo
+📄 tsc_output.txt
+📄 vercel-deploy.js
+📄 vercel.json
