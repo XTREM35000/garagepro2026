@@ -82,24 +82,33 @@ export async function POST(req: Request) {
     }
     if (bypassConfirm) createUserPayload.email_confirm = true
 
-    const { data: authUser, error: authErr } = await clientAny.auth.admin.createUser(createUserPayload)
-
-    if (authErr) {
-      console.error('failed to create auth user', authErr)
-      return NextResponse.json({ error: 'Failed to create auth user' }, { status: 500 })
+    // Try to create user in auth.users, fallback to direct public.User insert on failure
+    let authUserId = null as string | null
+    let authCreatedSuccessfully = false
+    try {
+      const { data: authUser, error: authErr } = await clientAny.auth.admin.createUser(createUserPayload)
+      if (authErr) {
+        console.error('failed to create auth user', authErr)
+      } else {
+        authUserId = authUser?.user?.id ?? null
+        if (authUserId) authCreatedSuccessfully = true
+      }
+    } catch (e: any) {
+      console.error('exception creating auth user', e)
     }
 
-    // Then create user in User table with auth user id
-    const authUserId = authUser?.user?.id ?? userId
-    const { data: createdUsers, error: createUserErr } = await clientAny
-      .from('User')
+    // If no auth id, generate one for public.User
+    if (!authUserId) authUserId = userId
+
+    // Then create user in User table with auth user id (role lowercase)
+    const { data: createdUsers, error: createUserErr } = await (clientAny.from('User') as any)
       .insert({
         id: authUserId,
         email,
         password: hashed,
         name: `${firstName} ${lastName}`,
         avatarUrl: avatarUrl ?? null,
-        role: 'TENANT_ADMIN',
+        role: 'tenant_admin',
         tenantId: tenant.id,
         createdAt: userNow,
         updatedAt: userNow
@@ -109,12 +118,18 @@ export async function POST(req: Request) {
 
     if (createUserErr) {
       console.error('failed to create user', createUserErr);
+      // If we created auth user but failed to sync, consider deleting the auth user (best-effort)
+      try {
+        if (authCreatedSuccessfully && authUserId) await clientAny.auth.admin.deleteUser(authUserId)
+      } catch (delErr) {
+        console.error('failed to rollback auth user after sync failure', delErr)
+      }
       return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
     }
 
     const user = (createdUsers as any[])[0];
 
-    return NextResponse.json({ ok: true, tenant, admin: user }, { status: 201 });
+    return NextResponse.json({ ok: true, tenant, admin: user, authCreated: authCreatedSuccessfully, fallback: !authCreatedSuccessfully }, { status: 201 });
   } catch (err: any) {
     console.error(err);
     return NextResponse.json({ error: err.message || "Server error" }, { status: 500 });

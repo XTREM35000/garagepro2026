@@ -57,8 +57,15 @@ export default function TenantAdminForm({ onSuccess }: { onSuccess: () => void }
       if (!res.ok) {
         setError(json?.error || "Erreur création admin client");
       } else {
-        setMessage("Admin client créé avec succès !");
-        setTimeout(onSuccess, 1200);
+        // Handle fallback mode from server
+        if (json?.fallback) {
+          setMessage("Admin client créé (mode fallback) — l'utilisateur a été ajouté dans la table métier mais la création dans Supabase Auth a échoué.");
+          // still proceed to next step
+          setTimeout(onSuccess, 1400);
+        } else {
+          setMessage("Admin client créé avec succès !");
+          setTimeout(onSuccess, 1200);
+        }
       }
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
