@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import AnimatedLogoGarage from "@/components/ui/AnimatedLogoGarage";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/lib/auth-context";
+import { mockReceptions } from '@/lib/mocks_reception';
 
 import {
   LayoutDashboard,
@@ -33,6 +34,7 @@ import {
   AlertCircle,
   Truck,
   DollarSign,
+  PlusSquare,
 } from "lucide-react";
 
 /* ---------------------------------------------
@@ -65,6 +67,7 @@ const groupedNav = [
     color: groupColors["Réception"],
     items: [
       { key: "reception", label: "Réception", icon: Inbox, href: "/dashboard/reception", roles: [] },
+      { key: "reception_new", label: "Nouvelle réception", icon: PlusSquare, href: "/dashboard/reception/nouveau", roles: [] },
       { key: "clients", label: "Clients", icon: Users, href: "/dashboard/clients", roles: [] },
       { key: "photos", label: "Photos", icon: Camera, href: "/dashboard/photos_vehicules", roles: [] },
     ],
@@ -109,9 +112,9 @@ const groupedNav = [
     group: "Administration",
     color: groupColors["Administration"],
     items: [
-      { key: "equipe", label: "Équipe", icon: Users, href: "/dashboard/equipe", roles: ["TENANT_ADMIN", "SUPER_ADMIN"] },
-      { key: "parametres", label: "Paramètres", icon: Settings, href: "/tenant/settings", roles: ["SUPER_ADMIN", "TENANT_ADMIN"] },
-      { key: "super-admin", label: "Super Admin", icon: ShieldCheck, href: "/dashboard/super", roles: ["SUPER_ADMIN"] },
+      { key: "equipe", label: "Équipe", icon: Users, href: "/dashboard/equipe", roles: ["admin", "super_admin"] },
+      { key: "parametres", label: "Paramètres", icon: Settings, href: "/tenant/settings", roles: ["super_admin", "admin"] },
+      { key: "super-admin", label: "Super Admin", icon: ShieldCheck, href: "/dashboard/super", roles: ["super_admin"] },
     ],
   },
 ];
@@ -159,6 +162,7 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
   const renderItem = (item: any, group: any) => {
     const Icon = item.icon;
     const active = pathname?.startsWith(item.href);
+    const receptionCount = mockReceptions.filter((r: any) => r.statut === 'EN_COURS').length;
 
     return (
       <Link key={item.key} href={item.href} onClick={() => setOpenMobile(false)}>
@@ -198,6 +202,9 @@ export default function Sidebar({ openMobile: openMobileProp, setOpenMobile: set
             >
               {item.label}
             </motion.span>
+          )}
+          {!collapsed && item.key === 'reception' && receptionCount > 0 && (
+            <div className="ml-auto text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-600 text-white">{receptionCount}</div>
           )}
         </motion.div>
       </Link>

@@ -8,21 +8,22 @@ export async function GET() {
   try {
     // Use admin client to bypass RLS and ensure we can read all users
     if (!supabaseAdmin) {
+      // Don't throw 500 here; return a 200 with dbConnected false so the frontend can show setup hints
       return NextResponse.json({
         superAdminExists: false,
         tenantAdminExists: false,
         dbConnected: false,
-        error: 'Supabase admin client not configured'
-      }, { status: 500 });
+        error: 'Supabase admin client not configured (check SUPABASE_SERVICE_ROLE_KEY)'
+      }, { status: 200 });
     }
 
     const clientAny = supabaseAdmin as any;
 
-    // Query for SUPER_ADMIN role
+    // Query for super_admin role (matching DB values)
     const { data: superAdminUsers, error: superErr } = await clientAny
       .from('User')
       .select('id, role')
-      .eq('role', 'SUPER_ADMIN')
+      .eq('role', 'super_admin')
       .limit(1);
 
     if (superErr) {
@@ -30,11 +31,11 @@ export async function GET() {
       throw superErr;
     }
 
-    // Query for TENANT_ADMIN role
+    // Query for tenant admin role (named 'admin' in Prisma schema)
     const { data: tenantAdminUsers, error: tenantErr } = await clientAny
       .from('User')
       .select('id, role')
-      .eq('role', 'TENANT_ADMIN')
+      .eq('role', 'admin')
       .limit(1);
 
     if (tenantErr) {

@@ -20,7 +20,7 @@ export default function TenantSettingsPage() {
     if (loading) return;
 
     // only allow tenant admin / super admin
-    if (!user || !["TENANT_ADMIN", "SUPER_ADMIN"].includes((user.role ?? "").toString())) {
+    if (!user || !["admin", "super_admin"].includes((user.role ?? "").toString())) {
       alert("Vous n'avez pas accès à cette page. Privilèges élevés requis.");
       setTimeout(() => {
         router.push("/dashboard");

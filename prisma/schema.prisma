@@ -9,17 +9,22 @@ datasource db {
 }
 
 model Tenant {
-  id            String         @id @default(uuid()) @db.Uuid
+  id            String         @id @default(uuid())
   name          String
   address       String?
   logoUrl       String?
   rccm          String?
+  phone         String?
+  email         String?
+  website       String?
+  businessHours String?
   plan          String         @default("basic")
   stripeId      String?        @unique
   trialEnds     DateTime?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   isPlatform    Boolean        @default(false)
+  superAdminId  String?
   cashRegisters CashRegister[]
   expenses      Expense[]
   invoices      Invoice[]
@@ -28,55 +33,77 @@ model Tenant {
   users         User[]
   vehicles      Vehicle[]
   interventions Intervention[]
+  clients       Client[]
+  superAdmin    User?          @relation("SuperAdminTenants", fields: [superAdminId], references: [id], onDelete: SetNull)
 
   @@index([stripeId])
+  @@index([superAdminId])
+  @@index([name])
 }
 
 model User {
-  id              String         @id @default(uuid()) @db.Uuid
+  id              String         @id @default(uuid())
   name            String?
   avatarUrl       String?
-  tenantId        String         @db.Uuid
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
   email           String         @unique
   password        String
-  role            UserRole       @default(VIEWER)
+  phone           String?
+  specialty       String?
+  hireDate        DateTime?
+  status          UserStatus     @default(active)
+  tenantId        String?
+  role            UserRole       @default(viewer)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
   cashRegisters   CashRegister[] @relation("UserCashRegisters")
   expenses        Expense[]      @relation("UserExpenses")
   invoices        Invoice[]      @relation("UserInvoices")
-  tenant          Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant          Tenant?        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  managedTenants  Tenant[]       @relation("SuperAdminTenants")
   photos          VehiclePhoto[]
   interventions   Intervention[] @relation("TechnicianInterventions")
+  receivedReceptions Reception[]
 
   @@index([tenantId])
   @@index([role])
+  @@index([status])
+  @@index([specialty])
   @@map("User")
 }
 
 model Vehicle {
-  id            String         @id @default(uuid()) @db.Uuid
+  id            String         @id @default(uuid())
   marque        String
   modele        String
   immatricule   String         @unique
-  tenantId      String         @db.Uuid
+  annee         Int?
+  couleur       String?
+  kilometrage   Int?
+  carburant     String?
+  chassis       String?
+  tenantId      String
+  clientId      String?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  status        VehicleStatus  @default(EN_COURS)
+  status        VehicleStatus  @default(en_cours)
   invoices      Invoice[]
   tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  client        Client?        @relation("ClientVehicles", fields: [clientId], references: [id])
   photos        VehiclePhoto[]
   interventions Intervention[]
+  receptions    Reception[]
 
   @@index([tenantId])
+  @@index([clientId])
   @@index([status])
+  @@index([marque])
 }
 
 model VehiclePhoto {
-  id        String           @id @default(uuid()) @db.Uuid
+  id        String           @id @default(uuid())
   url       String
-  takenById String?          @db.Uuid
-  vehicleId String           @db.Uuid
+  takenById String?
+  vehicleId String
   createdAt DateTime         @default(now())
   updatedAt DateTime         @default(now())
   type      VehiclePhotoType
@@ -88,14 +115,14 @@ model VehiclePhoto {
 }
 
 model StockItem {
-  id          String   @id @default(uuid()) @db.Uuid
+  id          String   @id @default(uuid())
   nom         String
   categorie   String
   quantite    Int
   prixAchat   Decimal
   prixVente   Decimal
   seuilAlerte Int
-  tenantId    String   @db.Uuid
+  tenantId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -105,11 +132,11 @@ model StockItem {
 }
 
 model CashRegister {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        String   @id @default(uuid())
   montant   Decimal
   motif     String
-  faitParId String?  @db.Uuid
-  tenantId  String   @db.Uuid
+  faitParId String?
+  tenantId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   type      CashType
@@ -122,32 +149,33 @@ model CashRegister {
 }
 
 model Invoice {
-  id          String        @id @default(uuid()) @db.Uuid
+  id          String        @id @default(uuid())
   numero      String        @unique
   total       Decimal
-  vehicleId   String?       @db.Uuid
-  clientNom   String
-  clientTel   String?
-  createdById String?       @db.Uuid
-  tenantId    String        @db.Uuid
+  vehicleId   String?
+  clientId    String?
+  createdById String?
+  tenantId    String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  statut      InvoiceStatus @default(BROUILLON)
+  statut      InvoiceStatus @default(brouillon)
   createdBy   User?         @relation("UserInvoices", fields: [createdById], references: [id])
   tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   vehicle     Vehicle?      @relation(fields: [vehicleId], references: [id])
+  client      Client?       @relation(fields: [clientId], references: [id])
 
   @@index([tenantId])
   @@index([vehicleId])
+  @@index([clientId])
   @@index([statut])
 }
 
 model Subscription {
-  id                   String             @id @default(uuid()) @db.Uuid
+  id                   String             @id @default(uuid())
   plan                 String
   stripeCustomerId     String?
   stripeSubscriptionId String?
-  tenantId             String             @db.Uuid
+  tenantId             String
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
   status               SubscriptionStatus
@@ -158,12 +186,12 @@ model Subscription {
 }
 
 model Expense {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        String   @id @default(uuid())
   libelle   String
   montant   Decimal
   categorie String
-  faitParId String?  @db.Uuid
-  tenantId  String   @db.Uuid
+  faitParId String?
+  tenantId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   faitPar   User?    @relation("UserExpenses", fields: [faitParId], references: [id])
@@ -174,54 +202,90 @@ model Expense {
 }
 
 enum UserRole {
-  SUPER_ADMIN
-  TENANT_ADMIN
-  AGENT
-  VIEWER
+  super_admin
+  admin
+  agent_photo
+  caissier
+  comptable
+  comptable_instance
+  technicien
+  viewer
+}
+
+enum UserStatus {
+  active
+  inactive
+  suspended
 }
 
 enum VehicleStatus {
-  EN_COURS
-  TERMINE
-  LIVRE
+  en_cours
+  termine
+  livre
 }
 
 enum VehiclePhotoType {
-  ENTREE
-  SORTIE
-  DEGAT
+  entree
+  sortie
+  degat
 }
 
 enum CashType {
-  ENTREE
-  SORTIE
+  entree
+  sortie
 }
 
 enum InvoiceStatus {
-  BROUILLON
-  PAYEE
-  ANNULEE
+  brouillon
+  payee
+  annulee
 }
 
 enum SubscriptionStatus {
-  ACTIVE
-  EXPIRE
-  EN_ATTENTE
+  active
+  expire
+  en_attente
+}
+
+model Client {
+  id        String    @id @default(uuid())
+  nom       String
+  prenom    String?
+  email     String?
+  telephone String?
+  adresse   String?
+  tenantId  String
+  typeClient ClientType @default(particulier)
+  numeroPermis String?
+  preferences Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  vehicles  Vehicle[] @relation("ClientVehicles")
+  invoices  Invoice[]
+  receptions Reception[]
+
+  @@index([tenantId])
+  @@index([nom])
+  @@index([telephone])
+  @@unique([tenantId, email])
 }
 
 model Intervention {
   id                 String                @id @default(cuid())
   createdAt          DateTime              @default(now())
   updatedAt          DateTime              @updatedAt
-  tenantId           String                @db.Uuid
+  tenantId           String                
   tenant             Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  vehicleId          String                @db.Uuid
+  vehicleId          String                
   vehicle            Vehicle               @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  technicianId       String?               @db.Uuid
+  technicianId       String?               
   technician         User?                 @relation("TechnicianInterventions", fields: [technicianId], references: [id])
+  receptionId        String?
+  reception          Reception?            @relation(fields: [receptionId], references: [id], onDelete: Cascade)
   
-  status             InterventionStatus    @default(EN_ATTENTE)
-  priority           InterventionPriority  @default(NORMALE)
+  status             InterventionStatus    @default(en_attente)
+  priority           InterventionPriority  @default(normale)
   progress           Int                   @default(0)
   
   title              String
@@ -241,6 +305,8 @@ model Intervention {
   usedParts          UsedPart[]
   timeEntries        TimeEntry[]
   photos             InterventionPhoto[]
+  
+  @@index([receptionId])
 
   @@index([tenantId])
   @@index([vehicleId])
@@ -297,18 +363,148 @@ model InterventionPhoto {
 }
 
 enum InterventionStatus {
-  EN_ATTENTE
-  DIAGNOSTIC
-  DEVIS_ENVOYE
-  EN_COURS
-  TERMINE
-  FACTURE
-  PAYE
+  en_attente
+  diagnostic
+  devis_envoye
+  en_cours
+  termine
+  facture
+  paye
 }
 
 enum InterventionPriority {
-  BASSE
-  NORMALE
-  HAUTE
-  URGENTE
+  basse
+  normale
+  haute
+  urgente
 }
+
+// --- Reception workflow enums and models ---
+enum ClientType {
+  particulier
+  professionnel
+}
+
+enum UrgenceLevel {
+  normale
+  urgente
+  express
+}
+
+enum ReceptionStatus {
+  en_cours
+  terminee
+  annulee
+}
+
+enum NiveauCarburant {
+  plein
+  trois_quarts
+  demi
+  quart
+  reserve
+  vide
+}
+
+enum PhotoType {
+  avant
+  arriere
+  cote_gauche
+  cote_droit
+  interieur
+  tableau_bord
+  coffre
+  capot
+  carte_grise
+  assurance
+  dommage
+}
+
+enum DamageType {
+  rayure
+  bosse
+  casse
+  felure
+  enfoncement
+  usure
+}
+
+enum WorkshopSection {
+  mecanique_generale
+  motorisation
+  carrosserie
+  electricite_auto
+  climatisation
+  vidange_entretien
+  pneumatiques
+  LAVAGE_NAPAGE
+  CONTROLE_TECHNIQUE
+}
+
+model Reception {
+  id               String           @id @default(cuid())
+  numeroBT         String           @unique
+  dateReception    DateTime         @default(now())
+  clientId         String
+  vehicleId        String
+  receptionnisteId String
+  motifVisite      String
+  urgence          UrgenceLevel
+  observations     String?
+  statut           ReceptionStatus  @default(en_cours)
+
+  client           Client           @relation(fields: [clientId], references: [id])
+  vehicle          Vehicle          @relation(fields: [vehicleId], references: [id])
+  receptionniste   User             @relation(fields: [receptionnisteId], references: [id])
+  inspection       VehicleInspection?
+  interventions    Intervention[]
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model VehicleInspection {
+  id           String            @id @default(cuid())
+  receptionId  String            @unique
+  kilometrage  Int
+  niveauCarburant NiveauCarburant
+  presenceOutils Boolean
+  notes        String?
+
+  reception    Reception         @relation(fields: [receptionId], references: [id])
+  photos       InspectionPhoto[]
+  dommages     Damage[]
+
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model InspectionPhoto {
+  id           String            @id @default(cuid())
+  inspectionId String
+  type         PhotoType
+  url          String
+  description  String?
+
+  inspection   VehicleInspection @relation(fields: [inspectionId], references: [id])
+
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model Damage {
+  id           String   @id @default(cuid())
+  inspectionId String
+  localisation String
+  type         DamageType
+  gravite      String
+  photo        String
+  notes        String?
+
+  inspection   VehicleInspection @relation(fields: [inspectionId], references: [id])
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// (Reception workflow models added above)

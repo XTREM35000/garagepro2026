@@ -40,7 +40,7 @@ export async function verifyUserAndRole(
     const { role, tenantId } = userProfile as any
 
     // Check role if required
-    if (requiredRole && role !== requiredRole && role !== 'SUPER_ADMIN') {
+    if (requiredRole && role !== requiredRole && role !== 'super_admin') {
       throw new Error(`Forbidden: requires ${requiredRole}`)
     }
 

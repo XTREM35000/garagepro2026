@@ -21,10 +21,17 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
   : null
 
 // Admin client for server-side operations (nullable if env missing)
+// Configuration ULTIME pour bypass RLS
 export const supabaseAdmin = (supabaseUrl && supabaseServiceKey)
   ? createClient<Database>(supabaseUrl, supabaseServiceKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: { fetch },
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false
+    },
+    db: {
+      schema: 'public'
+    }
   })
   : null
 

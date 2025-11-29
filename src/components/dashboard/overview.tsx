@@ -85,7 +85,7 @@ export default function DashboardOverview({ tenantId, role }: Props) {
       </div>
 
       {/* display metrics sparklines for admins */}
-      {(role === 'SUPER_ADMIN' || role === 'TENANT_ADMIN') && metrics && (
+      {(role === 'super_admin' || role === 'admin') && metrics && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 bg-white rounded shadow">
             <div className="text-xs text-gray-500">Véhicules (7j)</div>

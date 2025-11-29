@@ -20,13 +20,13 @@ export default async function Page() {
     const { data: superAdminRows, error: superErr } = await supabaseAdmin
       .from('User')
       .select('id')
-      .eq('role', 'SUPER_ADMIN')
+      .eq('role', 'super_admin')
       .limit(1)
 
     const { data: tenantAdminRows, error: tenantErr } = await supabaseAdmin
       .from('User')
       .select('id')
-      .eq('role', 'TENANT_ADMIN')
+      .eq('role', 'admin')
       .limit(1)
 
     if (superErr || tenantErr) {
