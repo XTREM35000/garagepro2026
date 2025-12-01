@@ -203,6 +203,7 @@ model Expense {
 
 enum UserRole {
   super_admin
+  tenant_admin
   admin
   agent_photo
   caissier
