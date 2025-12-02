@@ -53,11 +53,29 @@ export default function SignupForm() {
       if (!res.ok) {
         setError(json?.error || "Erreur inscription")
       } else {
-        setMessage("✅ Inscription réussie ! Connexion...")
-        // Sign in with the credentials - email_confirm=true allows this without email verification
-        await auth.signIn(email, password)
-        await new Promise((r) => setTimeout(r, 1200))
-        router.push("/dashboard/agents")
+        // If auth was created in Supabase Auth, attempt auto-login
+        if (json?.authCreated) {
+          setMessage("✅ Inscription réussie ! Connexion...")
+          try {
+            await auth.signIn(email, password)
+            await new Promise((r) => setTimeout(r, 1200))
+            router.push("/dashboard/agents")
+          } catch (e: any) {
+            // Auto-login failed even though auth was created — send user to login
+            setMessage("Compte créé mais la connexion automatique a échoué. Veuillez vous connecter.")
+            router.push('/auth')
+          }
+        } else if (json?.fallback) {
+          // Auth creation failed server-side, but user was inserted into public.User via fallback
+          setMessage("✅ Compte créé (fallback). Veuillez vous connecter manuellement.")
+          await new Promise((r) => setTimeout(r, 1200))
+          router.push('/auth')
+        } else {
+          // Generic success path
+          setMessage("✅ Inscription réussie !")
+          await new Promise((r) => setTimeout(r, 800))
+          router.push('/auth')
+        }
       }
     } catch (err: any) {
       setError(err?.message || "Erreur inconnue")

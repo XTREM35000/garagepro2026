@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 // Animated logo intentionally removed from global header — kept only in sidebar for desktop
 import UserMenu from "./user-menu";
+import ThemeToggle from '@/components/ui/ThemeToggle';
 import { useTheme } from "@/hooks/use-theme";
 
 export default function Header({ onOpenMobile, isMobileOpen }: { onOpenMobile?: () => void; isMobileOpen?: boolean }) {
@@ -63,13 +64,9 @@ export default function Header({ onOpenMobile, isMobileOpen }: { onOpenMobile?: 
             </button>
 
             {/* THEME TOGGLE */}
-            <motion.button
-              whileHover={{ scale: 1.12 }}
-              onClick={toggleTheme}
-              className="p-2 rounded-xl bg-gray-200 dark:bg-gray-700 shadow hover:bg-gray-300 dark:hover:bg-gray-600"
-            >
-              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-            </motion.button>
+            <div className="flex items-center">
+              <ThemeToggle />
+            </div>
 
             {/* USER MENU */}
             <UserMenu />

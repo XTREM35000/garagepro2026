@@ -106,13 +106,32 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       setLoading(true)
       console.log('[AuthContext] loading set to true')
 
-      const { error } = await supabase!.auth.signInWithPassword({
-        email,
-        password,
-      })
+      const { error } = await supabase!.auth.signInWithPassword({ email, password })
       console.log('[AuthContext] Supabase.auth.signInWithPassword response - error:', error)
 
       if (error) {
+        console.warn('[AuthContext] Supabase signIn failed, attempting local-login fallback', error.message)
+        // Try local-login against public.User (fallback for users created without auth.user)
+        try {
+          const res = await fetch('/api/auth/local-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          })
+          if (res.ok) {
+            const json = await res.json()
+            if (json?.ok && json?.user) {
+              const u = json.user
+              setUser({ id: u.id, email: u.email ?? null, name: u.name ?? null, role: u.role ?? null, app_metadata: null, user_metadata: null })
+              setLoading(false)
+              console.log('[AuthContext] ✅ local-login successful')
+              return
+            }
+          }
+        } catch (e) {
+          console.warn('[AuthContext] local-login attempt failed', e)
+        }
+
         console.error('[AuthContext] ❌ Supabase error:', error.message)
         throw error
       }

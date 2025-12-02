@@ -155,7 +155,10 @@ body {
   .nav-item-active {
     @apply text-light-accent dark:text-dark-accent bg-light-accent/5 dark:bg-dark-accent/5 font-medium;
   }
-
+      --secondary: 210 14% 96%;
+      /* Theme specific colors (H S% L%) - used by ThemeToggle */
+      --theme-whatsapp: 145 72% 34%; /* WhatsApp green (used for dark theme) */
+      --theme-apple: 210 100% 55%; /* Apple blue (used for light theme) */
   /* Tables */
   .table-pro {
     @apply w-full rounded-xl overflow-hidden bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border;
