@@ -31,11 +31,11 @@ export async function GET() {
       throw superErr;
     }
 
-    // Query for tenant admin role (named 'admin' in Prisma schema)
+    // Query for tenant admin role (named 'tenant_admin' in DB)
     const { data: tenantAdminUsers, error: tenantErr } = await clientAny
       .from('User')
       .select('id, role')
-      .eq('role', 'admin')
+      .eq('role', 'tenant_admin')
       .limit(1);
 
     if (tenantErr) {
