@@ -1,7 +1,5 @@
 "use client"
 
-"use client"
-
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sun, Moon } from 'lucide-react'
@@ -25,6 +23,28 @@ export default function ThemeToggle({ className }: { className?: string }) {
 
   const knobX = theme === 'dark' ? 36 : 2
 
+  const trackStyle: React.CSSProperties = theme === 'dark'
+    ? {
+      background: 'linear-gradient(90deg, hsl(var(--theme-whatsapp) / 1), hsl(var(--theme-whatsapp) / 0.8))',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)'
+    }
+    : {
+      background: 'linear-gradient(90deg, hsl(var(--theme-apple) / 1), hsl(var(--theme-apple) / 0.85))',
+      boxShadow: 'inset 0 1px 0 rgba(0,0,0,0.03)'
+    }
+
+  const knobStyle: React.CSSProperties = theme === 'dark'
+    ? {
+      background: 'white',
+      boxShadow: '0 10px 30px hsl(var(--theme-whatsapp) / 0.22)'
+    }
+    : {
+      background: 'white',
+      boxShadow: '0 10px 30px hsl(var(--theme-apple) / 0.16)'
+    }
+
+  const iconColor = theme === 'dark' ? 'hsl(var(--theme-whatsapp) / 1)' : 'hsl(var(--theme-apple) / 1)'
+
   return (
     <button
       aria-label="Basculer le thème"
@@ -35,29 +55,31 @@ export default function ThemeToggle({ className }: { className?: string }) {
     >
       {/* Background track */}
       <div
-        className={`absolute inset-0 rounded-full transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 border border-gray-700' : 'bg-gradient-to-r from-white via-surface-muted to-white border border-gray-200'}`}
-        style={{ boxShadow: theme === 'dark' ? 'inset 0 1px 0 rgba(255,255,255,0.02)' : 'inset 0 1px 0 rgba(0,0,0,0.03)' }}
+        className={`absolute inset-0 rounded-full transition-colors duration-300 border`}
+        style={{ ...trackStyle }}
       />
 
       {/* Icons and knob */}
       <div className="relative z-10 flex items-center justify-between w-full px-2">
-        <span className="text-yellow-400"><Sun size={14} /></span>
+        <span style={{ color: iconColor }}>
+          <Sun size={14} />
+        </span>
 
         <AnimatePresence initial={false} mode="popLayout">
           <motion.div
             aria-hidden
             key={theme}
-            className="h-8 w-8 rounded-full bg-white dark:bg-gray-900 flex items-center justify-center shadow-md"
+            className="h-8 w-8 rounded-full flex items-center justify-center"
             initial={reducedMotion ? {} : { x: theme === 'dark' ? 2 : 36 }}
             animate={{ x: knobX }}
             transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 500, damping: 40 }}
-            style={{ boxShadow: theme === 'dark' ? '0 6px 18px rgba(0,0,0,0.6)' : '0 8px 24px rgba(16,24,40,0.08)' }}
+            style={{ ...knobStyle }}
           >
-            {theme === 'dark' ? <Moon size={14} className="text-white" /> : <Sun size={14} className="text-yellow-500" />}
+            {theme === 'dark' ? <Moon size={14} style={{ color: 'white' }} /> : <Sun size={14} style={{ color: 'hsl(var(--theme-apple) / 1)' }} />}
           </motion.div>
         </AnimatePresence>
 
-        <span className="text-sky-500 opacity-0">.</span>
+        <span className="opacity-0">.</span>
       </div>
     </button>
   )

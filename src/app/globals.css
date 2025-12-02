@@ -21,7 +21,15 @@
     --muted-foreground: 210 8% 45%;
     --accent: 145 72% 34%;
     --accent-foreground: 0 0% 100%;
+    /* Semantic colors */
+    --success: 145 72% 34%;
+    /* green - used for positive states (tables, badges) */
+    --success-foreground: 0 0% 100%;
+    --warning: 42 95% 55%;
+    /* amber/yellow for warnings */
+    --warning-foreground: 220 20% 10%;
     --destructive: 0 84% 60%;
+    /* keep for true errors only */
     --destructive-foreground: 0 0% 100%;
     --border: 210 14% 89%;
     --input: 210 14% 89%;
@@ -105,7 +113,15 @@ body {
 
   /* Buttons */
   .btn-primary {
-    @apply bg-light-accent dark:bg-dark-accent text-white px-6 py-3 rounded-full font-medium shadow-accent dark:shadow-accent-dark hover:opacity-90 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-light-accent/50 dark:focus:ring-dark-accent/50;
+    @apply text-white px-6 py-3 rounded-full font-medium hover:opacity-90 active:scale-95 transition-all duration-200 focus:outline-none;
+    background-color: rgb(var(--success) / 1);
+    box-shadow: 0 8px 30px rgb(var(--success) / 0.14);
+  }
+
+  .dark .btn-primary {
+    background-color: rgb(var(--apple-blue) / 1);
+    box-shadow: 0 8px 30px rgb(var(--apple-blue) / 0.12);
+    color: rgb(var(--primary-foreground) / 1);
   }
 
   .btn-secondary {
@@ -153,19 +169,24 @@ body {
   }
 
   .nav-item-active {
-    @apply text-light-accent dark:text-dark-accent bg-light-accent/5 dark:bg-dark-accent/5 font-medium;
+    @apply text-light-success dark:text-dark-success bg-light-success/5 dark:bg-dark-success/5 font-medium;
   }
-      --secondary: 210 14% 96%;
-      /* Theme specific colors (H S% L%) - used by ThemeToggle */
-      --theme-whatsapp: 145 72% 34%; /* WhatsApp green (used for dark theme) */
-      --theme-apple: 210 100% 55%; /* Apple blue (used for light theme) */
+
+  --secondary: 210 14% 96%;
+  /* Theme specific colors (H S% L%) - used by ThemeToggle */
+  --theme-whatsapp: 145 72% 34%;
+  /* WhatsApp green (used for dark theme) */
+  --theme-apple: 210 100% 55%;
+
+  /* Apple blue (used for light theme) */
   /* Tables */
   .table-pro {
     @apply w-full rounded-xl overflow-hidden bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border;
   }
 
   .table-pro th {
-    @apply bg-light-surface-2 dark:bg-dark-surface-2 text-left px-6 py-4 text-light-text-secondary dark:text-dark-text-secondary font-semibold text-sm uppercase tracking-wider;
+    @apply bg-light-surface-2 dark:bg-dark-surface-2 text-left px-6 py-4 text-light-success dark:text-dark-success font-semibold text-sm uppercase tracking-wider;
+    border-bottom: 1px solid rgb(var(--success) / 0.08);
   }
 
   .table-pro td {
@@ -192,7 +213,14 @@ body {
 
   /* Avatars */
   .avatar-pro {
-    @apply w-12 h-12 rounded-full bg-gradient-brand dark:bg-gradient-apple flex items-center justify-center text-white font-semibold shadow-accent dark:shadow-accent-dark;
+    @apply w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold;
+    background: linear-gradient(180deg, rgb(var(--success) / 1) 0%, rgb(var(--success) / 0.85) 100%);
+    box-shadow: 0 8px 24px rgb(var(--success) / 0.12);
+  }
+
+  .dark .avatar-pro {
+    background: linear-gradient(180deg, rgb(var(--apple-blue) / 1) 0%, rgb(var(--apple-blue) / 0.85) 100%);
+    box-shadow: 0 8px 24px rgb(var(--apple-blue) / 0.12);
   }
 
   /* Status indicators */
@@ -312,6 +340,43 @@ body {
     color: rgb(var(--muted-foreground) / 1);
   }
 
+  /* Success / Warning text & borders */
+  .text-light-success {
+    color: rgb(var(--success-foreground) / 1);
+  }
+
+  .text-dark-success {
+    color: rgb(var(--success-foreground) / 1);
+  }
+
+  .text-light-warning {
+    color: rgb(var(--warning-foreground) / 1);
+  }
+
+  .text-dark-warning {
+    color: rgb(var(--warning-foreground) / 1);
+  }
+
+  .border-light-success {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--success) / var(--tw-border-opacity));
+  }
+
+  .border-dark-success {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--success) / var(--tw-border-opacity));
+  }
+
+  .border-light-warning {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--warning) / var(--tw-border-opacity));
+  }
+
+  .border-dark-warning {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--warning) / var(--tw-border-opacity));
+  }
+
   /* Accent colors */
   .bg-light-accent {
     background-color: rgb(var(--accent) / 1);
@@ -348,23 +413,23 @@ body {
 
   /* Success / warning colors */
   .bg-light-success {
-    background-color: rgb(var(--destructive) / 0.12);
+    background-color: rgb(var(--success) / 0.12);
   }
 
   .bg-dark-success {
-    background-color: rgb(var(--destructive) / 0.12);
+    background-color: rgb(var(--success) / 0.12);
   }
 
   .bg-light-warning {
-    background-color: rgba(250, 200, 60, 0.12);
+    background-color: rgb(var(--warning) / 0.12);
   }
 
   .bg-dark-warning {
-    background-color: rgba(250, 200, 60, 0.12);
+    background-color: rgb(var(--warning) / 0.12);
   }
 
   /* Rings & focus */
   .ring-light-accent\/50 {
-    box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.12);
+    box-shadow: 0 0 0 4px rgb(var(--success) / 0.12);
   }
 }

@@ -72,7 +72,7 @@ export default function BesoinPieces({
               className={`
                 p-3 text-left rounded-lg border text-sm transition-all
                 ${item.stock === 0
-                  ? "opacity-50 cursor-not-allowed border-red-200 dark:border-red-800"
+                  ? "opacity-50 cursor-not-allowed border-light-border dark:border-dark-border"
                   : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }
               `}
@@ -93,13 +93,13 @@ export default function BesoinPieces({
           <h4 className="font-semibold">Pièces sélectionnées</h4>
 
           {ruptures.length > 0 && (
-            <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <AlertCircle size={18} className="text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="flex gap-2 p-3 bg-light-surface-2/50 dark:bg-dark-surface-2/50 border border-light-border dark:border-dark-border rounded-lg">
+              <AlertCircle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
               <div className="text-sm">
-                <p className="font-semibold text-red-800 dark:text-red-200">
+                <p className="font-semibold text-amber-800 dark:text-amber-200">
                   ⚠️ Rupture de stock détectée
                 </p>
-                <p className="text-red-700 dark:text-red-300">
+                <p className="text-amber-700 dark:text-amber-300">
                   {ruptures.map((p) => `${p.nom} (besoin: ${p.quantite}, stock: ${p.stock})`).join(", ")}
                 </p>
               </div>
@@ -149,7 +149,7 @@ export default function BesoinPieces({
 
                 <button
                   onClick={() => removePiece(piece.id)}
-                  className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                  className="p-2 text-red-600 hover:bg-light-surface-2/50 dark:hover:bg-dark-surface-2/50 rounded"
                 >
                   <Trash2 size={18} />
                 </button>

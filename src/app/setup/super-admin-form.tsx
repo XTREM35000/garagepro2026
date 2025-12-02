@@ -91,7 +91,7 @@ export default function SuperAdminForm({ onSuccess }: { onSuccess: () => void })
         Ce compte contrôle la plateforme (gérants, abonnements, support…)
       </p>
 
-      {error && <div className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</div>}
+      {error && <div className="text-sm text-red-600 bg-light-surface-2/50 dark:bg-dark-surface-2/50 p-2 rounded">{error}</div>}
       {message && <div className="text-sm text-green-600 bg-green-50 p-2 rounded">{message}</div>}
 
       {/* NOM + PRENOM */}
@@ -162,7 +162,7 @@ export default function SuperAdminForm({ onSuccess }: { onSuccess: () => void })
           className={`h-2 rounded transition-all ${strength === 0
             ? "w-0"
             : strength === 1
-              ? "w-1/4 bg-red-500"
+              ? "w-1/4 bg-amber-500"
               : strength === 2
                 ? "w-1/2 bg-yellow-400"
                 : strength === 3
