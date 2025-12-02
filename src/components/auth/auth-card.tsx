@@ -68,6 +68,8 @@ export default function AuthCard() {
     <ModalDraggable
       open={isOpen}
       onOpenChange={setIsOpen}
+      // Prevent closing when clicking outside the auth modal to avoid accidental reload/navigation
+      closeOnOutsideClick={false}
       title="Auth - SaaS Manager"
       description="Connectez-vous ou créez un compte"
     >

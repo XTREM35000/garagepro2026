@@ -11,6 +11,7 @@ interface DraggableModalProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   className?: string;
+  closeOnOutsideClick?: boolean;
 }
 
 export function ModalDraggable({
@@ -21,6 +22,7 @@ export function ModalDraggable({
   open = true,
   onOpenChange,
   className
+  , closeOnOutsideClick = true
 }: DraggableModalProps) {
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = React.useState(false);
@@ -117,7 +119,16 @@ export function ModalDraggable({
       {/* Backdrop */}
       <div
         className="fixed inset-0 z-40 bg-black/40"
-        onClick={() => onOpenChange?.(false)}
+        onClick={(e) => {
+          // Only close on outside click if allowed
+          if (!closeOnOutsideClick) {
+            // prevent default actions that could trigger navigation/reload
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+          onOpenChange?.(false);
+        }}
       />
 
       {/* Modal */}

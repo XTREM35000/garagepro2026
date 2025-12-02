@@ -255,3 +255,113 @@ body {
 .text-gradient-apple {
   @apply bg-gradient-apple bg-clip-text text-transparent;
 }
+
+/* Utility definitions for custom token-based classes used with @apply */
+@layer utilities {
+
+  /* Borders */
+  .border-border,
+  .border-light-border,
+  .border-dark-border {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--border) / var(--tw-border-opacity));
+  }
+
+  /* Backgrounds & surfaces */
+  .bg-light-background {
+    background-color: rgb(var(--background) / 1);
+  }
+
+  .bg-dark-background {
+    background-color: rgb(var(--background) / 1);
+  }
+
+  .bg-light-surface {
+    background-color: rgb(var(--card) / 1);
+  }
+
+  .bg-dark-surface {
+    background-color: rgb(var(--card) / 1);
+  }
+
+  .bg-light-surface-2 {
+    background-color: rgb(var(--secondary) / 1);
+  }
+
+  .bg-dark-surface-2 {
+    background-color: rgb(var(--secondary) / 1);
+  }
+
+  /* Text colors */
+  .text-light-text {
+    color: rgb(var(--foreground) / 1);
+  }
+
+  .text-dark-text {
+    color: rgb(var(--foreground) / 1);
+  }
+
+  .text-light-text-secondary {
+    color: rgb(var(--muted-foreground) / 1);
+  }
+
+  .text-dark-text-secondary {
+    color: rgb(var(--muted-foreground) / 1);
+  }
+
+  /* Accent colors */
+  .bg-light-accent {
+    background-color: rgb(var(--accent) / 1);
+  }
+
+  .bg-dark-accent {
+    background-color: rgb(var(--accent) / 1);
+  }
+
+  .text-light-accent {
+    color: rgb(var(--accent-foreground) / 1);
+  }
+
+  .text-dark-accent {
+    color: rgb(var(--accent-foreground) / 1);
+  }
+
+  /* Shadows (simple mapping) */
+  .shadow-light {
+    box-shadow: 0 10px 30px rgba(8, 10, 20, 0.06);
+  }
+
+  .shadow-light-lg {
+    box-shadow: 0 14px 48px rgba(8, 10, 20, 0.06);
+  }
+
+  .shadow-dark {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  }
+
+  .shadow-dark-lg {
+    box-shadow: 0 14px 48px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Success / warning colors */
+  .bg-light-success {
+    background-color: rgb(var(--destructive) / 0.12);
+  }
+
+  .bg-dark-success {
+    background-color: rgb(var(--destructive) / 0.12);
+  }
+
+  .bg-light-warning {
+    background-color: rgba(250, 200, 60, 0.12);
+  }
+
+  .bg-dark-warning {
+    background-color: rgba(250, 200, 60, 0.12);
+  }
+
+  /* Rings & focus */
+  .ring-light-accent\/50 {
+    box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.12);
+  }
+}
