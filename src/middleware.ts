@@ -55,12 +55,52 @@ export async function middleware(request: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
 
+  console.log('[middleware] session present?', !!session, 'path=', pathname)
+
   // En DEV → pas de blocage
   if (isDev) return res;
 
   // --- AUTH PRODUCTION ---
   // Si pas de session → redirection vers /auth
   if (!session) {
+    // Check for signed fallback cookie set by local-login API
+    try {
+      const cookie = request.cookies.get?.('saas_local_auth')?.value || null
+      if (cookie) {
+        console.log('[middleware] found saas_local_auth cookie — verifying')
+        const parts = cookie.split('.')
+        if (parts.length === 2) {
+          const payloadStr = Buffer.from(parts[0], 'base64').toString('utf8')
+          const signature = parts[1]
+          const secret = process.env.SESSION_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+          if (secret) {
+            const expected = require('crypto').createHmac('sha256', secret).update(payloadStr).digest('hex')
+            if (expected === signature) {
+              try {
+                const payload = JSON.parse(payloadStr)
+                const now = Math.floor(Date.now() / 1000)
+                if (payload.exp && payload.exp > now) {
+                  console.log('[middleware] saas_local_auth cookie valid — allowing request for user', payload.id)
+                  return res
+                } else {
+                  console.log('[middleware] saas_local_auth cookie expired')
+                }
+              } catch (e) {
+                console.warn('[middleware] failed parsing saas_local_auth payload', e)
+              }
+            } else {
+              console.warn('[middleware] saas_local_auth invalid signature')
+            }
+          } else {
+            console.warn('[middleware] no secret available to verify saas_local_auth')
+          }
+        } else {
+          console.warn('[middleware] saas_local_auth cookie malformed')
+        }
+      }
+    } catch (e) {
+      console.error('[middleware] error while checking saas_local_auth cookie', e)
+    }
     return NextResponse.redirect(
       new URL("/auth", request.url)
     );

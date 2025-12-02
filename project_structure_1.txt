@@ -1,0 +1,391 @@
+Structure du projet (exclusions : node_modules, dist, public, nhost, .vscode, .nuxt, .output, .git, .bolt, .next)
+========================================
+
+📄 .env
+📄 .eslintrc.json
+📄 .gitignore
+📄 .prettierrc
+📁 .vercel
+  📄 project.json
+  📄 README.txt
+📄 add-tenant-admin-role.js
+📄 add_tenant_admin_role.sql
+📁 agents
+  📁 prompts
+    📄 ai-crud-prompt.md
+    📄 ai-dashboard-prompt.md
+    📄 ai-modal-prompt.md
+📄 build_log.txt
+📄 build_output.txt
+📄 DELIVERY_FINAL.md
+📄 deploy-fast.ps1
+📄 deploy.ps1
+📁 docs
+  📄 01-setup.md
+  📄 COMPLETE_GUIDE.md
+  📄 DELIVERY_CHECKLIST.md
+  📄 DELIVERY_FINAL.md
+  📄 documentation.md
+  📄 email_confirmed.md
+  📄 EXEC_SUMMARY.md
+  📄 instructions.md
+  📄 instructions_full.md
+  📄 MODALDRAGGABLE_GUIDE.md
+  📄 MODALS_GUIDE.md
+  📄 resolve01.md
+  📄 setup-avatars-bucket.md
+  📄 signup-trigger-setup.md
+  📄 structure.md
+📄 lint_output.txt
+📄 liste.mjs
+📄 next-env.d.ts
+📄 next.config.mjs
+📄 package-lock.json
+📄 package.json
+📄 pooler.js
+📄 postcss.config.js
+📁 prisma
+  📁 migrations
+    📁 20251111110509_init
+      📄 migration.sql
+    📁 20251111120000_add-avatar
+      📄 migration.sql
+    📁 20251111140000_trigger_auto_create_user
+      📄 migration.sql
+    📁 20251115123000_remove_email_password
+      📄 migration.sql
+    📁 20251127_add_interventions
+      📄 migration.sql
+    📁 20251128180000_fix_super_admin_schema
+      📄 migration.sql
+    📁 20251129_complete_garage_schema
+      📄 migration.sql
+    📁 20251129_convert_ids_to_uuid
+      📄 migration.sql
+    📁 20251130_054649_add_tenant_admin_role
+    📁 20251130_add_reception_workflow
+      📄 migration.sql
+    📄 migration_lock.toml
+  📄 rls.sql
+  📄 schema.prisma
+📄 project_structure.txt
+📄 project_structure_1.txt
+📄 README.md
+📁 scripts
+  📄 apply-rls.sh
+  📄 generate-env.js
+  📄 supabase_rls_setup.sql
+📁 src
+  📁 app
+    📁 api
+      📁 admin
+        📁 sync-fallback-users
+          📄 route.ts
+      📁 agents
+        📄 route.ts
+      📁 auth
+        📁 local-login
+          📄 route.ts
+        📁 signin
+          📄 route.ts
+        📁 signup
+          📁 debug
+            📄 route.ts
+          📄 route.ts
+        📁 user
+          📁 [id]
+            📄 route.ts
+        📁 [...supabase]
+          📄 route.ts
+      📁 checkout
+        📄 route.ts
+      📁 dashboard
+        📁 metrics
+          📄 route.ts
+        📁 overview
+          📄 route.ts
+      📁 db-proxy
+        📄 route.ts
+      📁 debug
+        📁 cookies
+          📄 route.ts
+        📁 session
+      📁 debug-env
+        📄 route.ts
+      📁 diagnostic
+        📄 route.ts
+      📁 photos_vehicules
+        📄 route.ts
+        📁 [id]
+          📄 route.ts
+      📁 reception
+        📄 route.ts
+        📁 [id]
+          📄 route.ts
+      📁 setup
+        📁 status
+          📄 route.ts
+        📁 super-admin
+          📄 route.ts
+        📁 super-admin-debug
+          📄 route.ts
+        📁 tenant-admin
+          📄 route.ts
+      📁 stock_materiel
+        📄 route.ts
+      📁 tenant
+        📄 route.ts
+        📁 settings
+          📄 route.ts
+      📁 test-auth
+        📄 route.ts
+      📁 test-connection
+        📄 route.ts
+      📁 test-db
+        📄 route.ts
+      📁 test-db-simple
+        📄 route.ts
+      📄 test-db.ts
+      📁 test-service-role
+        📄 route.ts
+      📁 ultime-test
+        📄 route.ts
+      📁 upload
+        📁 avatar
+          📄 route.ts
+      📁 webhooks
+        📁 stripe
+          📄 route.ts
+    📁 auth
+      📄 page.tsx
+    📁 billing
+      📄 page.tsx
+    📁 components
+      📄 AnimatedLogo.tsx
+      📁 modals
+        📄 AddMaterielModal.tsx
+        📄 ModifyVehicleModal.tsx
+        📄 PayslipModal.tsx
+      📁 ui
+        📁 draggable-modal
+          📄 DraggableModal.tsx
+        📁 modal
+          📄 BaseModal.tsx
+          📄 ConfirmModal.tsx
+          📄 WhatsAppModal.tsx
+    📁 dashboard
+      📁 admin
+        📄 page.tsx
+      📁 agents
+        📄 page.tsx
+      📁 atelier
+        📁 en-cours
+          📄 page.tsx
+        📁 file-attente
+          📄 page.tsx
+        📄 page.tsx
+        📁 termines
+          📄 page.tsx
+      📁 caisse
+        📄 page.tsx
+      📁 clients
+        📄 page.tsx
+      📁 equipe
+        📄 page.tsx
+      📁 facturation
+        📄 page.tsx
+      📁 factures
+        📄 page.tsx
+      📁 interventions
+        📁 historique
+          📄 page.tsx
+        📁 history
+          📄 page.tsx
+        📄 page.tsx
+        📁 planning
+          📄 page.tsx
+        📁 queue
+          📄 page.tsx
+        📁 [id]
+          📄 page.tsx
+      📄 layout.tsx
+      📁 overview
+        📄 page.tsx
+      📄 page.tsx
+      📁 photos
+        📄 page.tsx
+      📁 photos_vehicules
+        📄 page.tsx
+      📁 reception
+        📄 ClientSearch.tsx
+        📁 nouveau
+          📄 page.tsx
+        📄 page.tsx
+        📄 ReceptionForm.tsx
+        📄 VehicleForm.tsx
+        📁 [id]
+          📄 page.tsx
+      📁 stock
+        📁 alertes
+          📄 page.tsx
+        📁 alerts
+          📄 page.tsx
+        📁 commandes
+          📄 page.tsx
+        📁 orders
+          📄 page.tsx
+        📄 page.tsx
+      📁 stock_materiel
+        📄 page.tsx
+      📁 super
+        📄 page.tsx
+      📁 tenant
+        📄 page.tsx
+      📁 [role]
+        📄 page.tsx
+    📄 error.tsx
+    📄 globals.css
+    📁 help
+      📄 page.tsx
+    📁 landing
+      📄 LandingPage.tsx
+    📄 layout.tsx
+    📄 not-found.tsx
+    📁 onboarding
+      📁 super-admin
+        📄 page.tsx
+      📄 SuperAdminClient.tsx
+      📁 tenant-admin
+        📄 page.tsx
+      📄 TenantAdminClient.tsx
+    📄 page.tsx
+    📁 pricing
+      📄 page.tsx
+    📁 profile
+      📄 page.tsx
+    📄 Providers.tsx
+    📁 setup
+      📄 page.tsx
+      📄 setup-root.tsx
+      📄 super-admin-form.tsx
+      📄 tenant-admin-form.tsx
+    📁 splash
+      📄 SplashScreen.tsx
+    📄 SplashRoot.tsx
+    📁 tenant
+      📁 settings
+        📄 page.tsx
+  📁 components
+    📁 auth
+      📄 auth-card.tsx
+      📄 AuthCard.tsx
+      📄 AuthCardLegacy.tsx
+      📄 avatar-uploader.tsx
+      📄 index.ts
+      📄 login-form.tsx
+      📄 signup-form.tsx
+    📁 dashboard
+      📄 AffectationTechnicien.tsx
+      📄 BesoinPieces.tsx
+      📄 header.tsx
+      📄 InterventionWorkflow.tsx
+      📄 MetricsCard.tsx
+      📄 overview.tsx
+      📄 sidebar.tsx
+      📄 user-menu.tsx
+    📁 garage
+      📄 ClientBadge.tsx
+      📄 FactureCard.tsx
+      📄 InterventionRow.tsx
+      📄 StatusTag.tsx
+      📄 VehicleBadge.tsx
+    📁 hero
+      📄 hero.tsx
+      📄 HeroBanner.tsx
+    📁 layout
+      📄 PageSection.tsx
+    📁 reception
+      📄 DamageSelector.tsx
+      📄 PhotoInspectionGuide.tsx
+    📁 tenant
+      📄 SettingsForm.tsx
+      📄 tenant-settings.tsx
+    📁 ui
+      📄 ActionBar.tsx
+      📄 AnimatedLogoGarage.tsx
+      📄 BackButton.tsx
+      📄 badge.tsx
+      📄 base-modal.tsx
+      📄 Button.tsx
+      📄 card.tsx
+      📄 Card3D.tsx
+      📄 ClientBadge.tsx
+      📄 confirm-modal.tsx
+      📄 DataTableMobile.tsx
+      📄 draggable-modal-wrapper.tsx
+      📄 draggable-modal.tsx
+      📄 EmailInput.tsx
+      📄 Header.tsx
+      📄 HeroBanner.tsx
+      📄 icon-button.tsx
+      📄 input.tsx
+      📄 ListCard.tsx
+      📄 ListRow.tsx
+      📄 logo-animated.tsx
+      📄 MobileFloatingButton.tsx
+      📄 ModalDraggable.tsx
+      📄 ModalPro.tsx
+      📄 NavbarMobile.tsx
+      📄 PageHeader.tsx
+      📄 PageHelpButton.tsx
+      📄 PhoneInput.tsx
+      📄 select.tsx
+      📄 sidebar.tsx
+      📄 StatusTag.tsx
+      📄 table-pro.tsx
+      📄 TablePro.tsx
+      📄 TableProMobile.tsx
+      📄 tabs.tsx
+      📄 ThemeToggle.tsx
+      📄 toast.tsx
+      📄 UserMenu.tsx
+      📄 VehicleBadge.tsx
+  📁 config
+    📄 subscriptions.ts
+  📁 hooks
+    📄 use-theme.ts
+    📄 use-toast.ts
+  📁 lib
+    📄 auth-context.tsx
+    📄 auth-hoc.tsx
+    📄 auth-server.ts
+    📄 auth-tab-context.tsx
+    📄 build-info.ts
+    📄 helpMessages.ts
+    📄 mocks.ts
+    📄 mocks_reception.ts
+    📄 modal-schemas.ts
+    📄 prisma.ts
+    📄 stripe.ts
+    📄 supabase.ts
+    📄 utils.ts
+  📄 middleware.ts
+  📁 scripts
+    📄 move-to-target.ps1
+  📁 types
+    📄 env.d.ts
+    📄 global.d.ts
+    📄 index.ts
+    📄 subscriptions.ts
+    📄 supabase.ts
+📄 START_HERE.md
+📄 tailwind.config.js
+📄 test-avatar-upload.mjs
+📄 test-endpoint.js
+📄 test-no-ssl.js
+📄 tmp.html
+📄 tsconfig.json
+📄 tsconfig.tsbuildinfo
+📄 tsc_output.txt
+📄 vercel-deploy.js
+📄 vercel.json

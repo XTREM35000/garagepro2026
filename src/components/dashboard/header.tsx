@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 // Animated logo intentionally removed from global header — kept only in sidebar for desktop
 import UserMenu from "./user-menu";
-import ThemeToggle from '@/components/ui/ThemeToggle';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useTheme } from "@/hooks/use-theme";
 
 export default function Header({ onOpenMobile, isMobileOpen }: { onOpenMobile?: () => void; isMobileOpen?: boolean }) {

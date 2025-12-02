@@ -93,7 +93,7 @@ export default function BesoinPieces({
           <h4 className="font-semibold">Pièces sélectionnées</h4>
 
           {ruptures.length > 0 && (
-            <div className="flex gap-2 p-3 bg-light-surface-2/50 dark:bg-dark-surface-2/50 border border-light-border dark:border-dark-border rounded-lg">
+            <div className="flex gap-2 p-3 bg-light-surface-2-50 dark:bg-dark-surface-2-50 border border-light-border dark:border-dark-border rounded-lg">
               <AlertCircle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
               <div className="text-sm">
                 <p className="font-semibold text-amber-800 dark:text-amber-200">
@@ -149,7 +149,7 @@ export default function BesoinPieces({
 
                 <button
                   onClick={() => removePiece(piece.id)}
-                  className="p-2 text-red-600 hover:bg-light-surface-2/50 dark:hover:bg-dark-surface-2/50 rounded"
+                  className="p-2 text-red-600 hover:bg-light-surface-2-50 dark:hover:bg-dark-surface-2-50 rounded"
                 >
                   <Trash2 size={18} />
                 </button>

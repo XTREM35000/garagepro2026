@@ -63,7 +63,7 @@ export default function SplashRoot({ children }: { children: React.ReactNode }) 
   };
 
   if (!isMounted) {
-    return <div className="min-h-screen bg-gray-50 text-gray-900">{children}</div>;
+    return <div className="min-h-screen bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text">{children}</div>;
   }
 
   if (showSplash) {
@@ -73,11 +73,11 @@ export default function SplashRoot({ children }: { children: React.ReactNode }) 
   if (showLanding) {
     // If user navigated to a different route (e.g. /auth), render children instead
     if (pathname && pathname !== '/') {
-      return <div className="min-h-screen bg-gray-50 text-gray-900">{children}</div>;
+      return <div className="min-h-screen bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text">{children}</div>;
     }
 
     return <LandingPage onClose={handleLandingComplete} />;
   }
 
-  return <div className="min-h-screen bg-gray-50 text-gray-900">{children}</div>;
+  return <div className="min-h-screen bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text">{children}</div>;
 }

@@ -72,7 +72,7 @@ export default function LoginForm() {
     >
       {error && (
         <motion.div
-          className="text-sm text-red-600 bg-light-surface-2/50 dark:bg-dark-surface-2/50 rounded p-2"
+          className="text-sm text-red-600 bg-light-surface-2-50 dark:bg-dark-surface-2-50 rounded p-2"
           variants={alertVariants}
           initial="initial"
           animate="animate"
@@ -126,7 +126,7 @@ export default function LoginForm() {
           <div
             className={`h-2 rounded transition-all ${strength === 0
               ? "w-0"
-                  : strength === 1
+              : strength === 1
                 ? "w-1/4 bg-amber-500"
                 : strength === 2
                   ? "w-1/2 bg-yellow-400"

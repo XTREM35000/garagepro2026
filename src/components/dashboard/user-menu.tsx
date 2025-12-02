@@ -77,7 +77,7 @@ export default function UserMenu() {
 
           <Menu.Item>
             {({ active }) => (
-              <button onClick={async () => { await signOut(); router.push("/auth"); }} className={`flex items-center gap-3 px-4 py-2 w-full text-left text-red-600 ${active ? "bg-red-50" : ""}`}>
+              <button onClick={async () => { await signOut(); router.push("/auth"); }} className={`flex items-center gap-3 px-4 py-2 w-full text-left text-red-600 ${active ? "bg-light-surface-2-50 dark:bg-dark-surface-2-50" : ""}`}>
                 <ArrowRightOnRectangleIcon className="h-5 w-5 text-red-500" /> Déconnexion
               </button>
             )}

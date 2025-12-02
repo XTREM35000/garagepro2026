@@ -92,7 +92,7 @@ export default function SignupForm() {
       transition={{ duration: 0.4 }}
       className="space-y-4"
     >
-      {error && <div className="text-sm text-red-600 bg-light-surface-2/50 dark:bg-dark-surface-2/50 p-2 rounded">{error}</div>}
+      {error && <div className="text-sm text-red-600 bg-light-surface-2-50 dark:bg-dark-surface-2-50 p-2 rounded">{error}</div>}
       {message && <div className="text-sm text-green-600 bg-green-50 p-2 rounded">{message}</div>}
 
       <div className="grid grid-cols-2 gap-4">
